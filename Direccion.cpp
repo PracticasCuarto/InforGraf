@@ -27,7 +27,7 @@ double Direccion::operator*(const Direccion& otroDireccion) const {
     return x * otroDireccion.x + y * otroDireccion.y + z * otroDireccion.z;
 }
 
- // Sobrecarga del operador de multiplicación escalar (dot product)
+// Sobrecarga del operador de multiplicación escalar (dot product)
 Direccion Direccion::operator*(const float& escalar) const {
     return Direccion(x * escalar, y * escalar, z * escalar);
 }
@@ -52,7 +52,7 @@ double Direccion::modulo() const {
 }
 
 // Función para normalizar un vector
-Direccion Direccion::normalizar() const{
+Direccion Direccion::normalizar() const {
     float mod = modulo();
     return Direccion(x / mod, y / mod, z / mod);
 }

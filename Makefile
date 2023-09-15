@@ -2,19 +2,29 @@
 CXX = g++
 CXXFLAGS = -std=c++14
 
-# Archivos fuente y ejecutable
-SRCS = Punto.cpp Direccion.cpp main.cpp
-OBJS = $(SRCS:.cpp=.o)
-EXEC = main
+# Directorio de objetos y ejecutables
+OBJDIR = exec
+BINDIR = exec
 
-all: $(EXEC)
+# Archivos fuente y ejecutable
+SRCS = Punto.cpp Direccion.cpp tests.cpp
+OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+EXEC = $(BINDIR)/tests
+
+all: $(BINDIR) $(OBJDIR) $(EXEC)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
 $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
 
 # Regla genérica para compilar archivos fuente a objetos
-%.o: %.cpp
+$(OBJDIR)/%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -rf $(OBJS) $(BINDIR)
