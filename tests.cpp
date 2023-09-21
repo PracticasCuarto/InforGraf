@@ -3,6 +3,7 @@
 
 #include "Direccion.hpp"
 #include "Punto.hpp"
+#include "Matriz.hpp"
 
 
 int main() {
@@ -73,6 +74,17 @@ int main() {
 
     std::cout << "----------------------------------------------------" << std::endl;
 
+    // Crear objetos de matriz para las pruebas
+    Matriz matriz1(1.0, 2.0, 3.0, 4.0,
+        5.0, 6.0, 7.0, 8.0,
+        9.0, 10.0, 11.0, 12.0,
+        13.0, 14.0, 15.0, 16.0);
+
+    std::cout << "Matriz1: " << std::endl << matriz1 << std::endl;
+
+    // Probar la matriz inversa
+    Matriz inversa = matriz1.transformadaInversa();
+    std::cout << "Inversa de Matriz1: " << std::endl << inversa << std::endl;
 
     return 0;
 }

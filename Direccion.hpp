@@ -5,6 +5,7 @@
 #include <string> 
 #include <ostream>
 #include <math.h>
+#include "Matriz.hpp"
 
 using namespace std;
 
@@ -36,6 +37,25 @@ public:
 
     // Función para normalizar un vector
     Direccion normalizar() const;
+
+    // Operaciones con matrices
+    // Operación de tranlación de un punto con una matriz
+    Direccion escala(double sx, double sy, double sz) const;
+
+    // Operación de rotación en el eje X de un punto con una matriz
+    Direccion rotacionX(double angulo) const;
+
+    // Operación de rotación en el eje Y de un punto con una matriz
+    Direccion rotacionY(double angulo) const;
+
+    // Operación de rotación en el eje Z de un punto con una matriz
+    Direccion rotacionZ(double angulo) const;
+
+    // Operación de cambio de base de un punto con una matriz
+    Direccion cambioBase(const Matriz matriz) const;
+
+    // Multiplicación de una direccion por una matriz
+    Direccion multiplicarMatriz(const Matriz matriz) const;
 
 };
 

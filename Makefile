@@ -7,7 +7,7 @@ OBJDIR = exec
 BINDIR = exec
 
 # Archivos fuente y ejecutable
-SRCS = Punto.cpp Direccion.cpp tests.cpp
+SRCS = Punto.cpp Direccion.cpp Matriz.cpp Esfera.cpp tests.cpp
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 EXEC = $(BINDIR)/tests
 

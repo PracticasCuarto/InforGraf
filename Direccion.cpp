@@ -57,8 +57,64 @@ Direccion Direccion::normalizar() const {
     return Direccion(x / mod, y / mod, z / mod);
 }
 
+// 
+
+// Multiplicación de una direccion por una matriz
+Direccion Direccion::multiplicarMatriz(const Matriz matriz) const {
+    return Direccion((x * matriz(0, 0) + y * matriz(0, 1) + z * matriz(0, 2) + matriz(0, 3)),
+        (x * matriz(1, 0) + y * matriz(1, 1) + z * matriz(1, 2) + matriz(1, 3)),
+        (x * matriz(2, 0) + y * matriz(2, 1) + z * matriz(2, 2) + matriz(2, 3)));
+}
+
+// Operaciones con matrices
+// Operación de tranlación de un punto con una matriz
+Direccion Direccion::escala(double sx, double sy, double sz) const {
+    // Crear objetos de matriz para las pruebas
+    Matriz matriz(sx, 0.0, 0.0, 0.0,
+        0.0, sy, 0.0, 0.0,
+        0.0, 0.0, sz, 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    return multiplicarMatriz(matriz);
+}
+
+// Operación de rotación en el eje X de un punto con una matriz
+Direccion Direccion::rotacionX(double angulo) const {
+    // Crear objetos de matriz para las pruebas
+    Matriz matriz(1.0, 0.0, 0.0, 0.0,
+        0.0, cos(angulo), -sin(angulo), 0.0,
+        0.0, sin(angulo), cos(angulo), 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    return multiplicarMatriz(matriz);
+}
+
+// Operación de rotación en el eje Y de un punto con una matriz
+Direccion Direccion::rotacionY(double angulo) const {
+    // Crear objetos de matriz para las pruebas
+    Matriz matriz(cos(angulo), 0.0, sin(angulo), 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        -sin(angulo), 0.0, cos(angulo), 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    return multiplicarMatriz(matriz);
+}
+
+// Operación de rotación en el eje Z de un punto con una matriz
+Direccion Direccion::rotacionZ(double angulo) const {
+    // Crear objetos de matriz para las pruebas
+    Matriz matriz(cos(angulo), -sin(angulo), 0.0, 0.0,
+        sin(angulo), cos(angulo), 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    return multiplicarMatriz(matriz);
+}
+
+// Operación de cambio de base de un punto con una matriz
+Direccion Direccion::cambioBase(const Matriz matriz) const {
+    return multiplicarMatriz(matriz);
+}
+
 // Sobrecarga del operador de salida por pantalla
 ostream& operator<<(ostream& salida, const Direccion& d) {
     salida << "(" << d.x << ", " << d.y << ", " << d.z << ")";
     return salida;
+
 }
