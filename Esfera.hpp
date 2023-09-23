@@ -15,8 +15,19 @@ private:
     Punto centro;
     Punto ciudad;
     Direccion eje;
+
+    // Valor del radio de la esfera
+    double radio;
 public:
     // Constructor de la esfera
     Esfera(Punto _centro, Punto _ciudad, Direccion _eje);
 
+    // Getters de la esfera
+    Punto getCentro() const;
+    Punto getCiudad() const;
+    Direccion getEje() const;
+    double getRadio() const;
+
 };
+
+#endif

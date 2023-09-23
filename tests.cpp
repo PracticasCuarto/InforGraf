@@ -4,6 +4,8 @@
 #include "Direccion.hpp"
 #include "Punto.hpp"
 #include "Matriz.hpp"
+#include "Estacion.hpp"
+#include "Esfera.hpp"
 
 
 int main() {
@@ -75,16 +77,32 @@ int main() {
     std::cout << "----------------------------------------------------" << std::endl;
 
     // Crear objetos de matriz para las pruebas
-    Matriz matriz1(1.0, 2.0, 3.0, 4.0,
-        5.0, 6.0, 7.0, 8.0,
-        9.0, 10.0, 11.0, 12.0,
-        13.0, 14.0, 15.0, 16.0);
+    Matriz matriz1(1.0, 3.0, 23.0, 14.0,
+        5.0, 125.0, 7.0, 8.0,
+        91.0, 10.0, 17.0, 12.0,
+        13.0, 1.0, 15.0, 21.0);
 
     std::cout << "Matriz1: " << std::endl << matriz1 << std::endl;
 
     // Probar la matriz inversa
     Matriz inversa = matriz1.transformadaInversa();
     std::cout << "Inversa de Matriz1: " << std::endl << inversa << std::endl;
+
+    // Probar los calculos relacionados con la estacion y esfera
+    // centro, eje, ciudad de referencia
+    Esfera esfera(Punto(0.0, 0.0, 0.0), Punto(0.0, 0.0, 1.0), Direccion(0.0, 1.0, 0.0));
+
+    // Crear una estacion y verificar sus valores
+    Estacion estacion(esfera, 0.0, 0.0);
+    std::cout << "getPosicion().x: " << std::endl << estacion.getPosicion().x << std::endl;
+    std::cout << "getPosicion().y: " << std::endl << estacion.getPosicion().y << std::endl;
+    std::cout << "getPosicion().z: " << std::endl << estacion.getPosicion().z << std::endl;
+    std::cout << "getRadio()" << std::endl << esfera.getRadio() << std::endl;
+
+    assert(estacion.getPosicion().x == 1.0 && estacion.getPosicion().y == 0.0 && estacion.getPosicion().z == 0.0);
+    assert(estacion.getNormal().x == 1.0 && estacion.getNormal().y == 0.0 && estacion.getNormal().z == 0.0);
+    assert(estacion.getTangenteLongitud().x == 1.0 && estacion.getTangenteLongitud().y == 0.0 && estacion.getTangenteLongitud().z == 0.0);
+    assert(estacion.getTangenteLatitud().x == 0.0 && estacion.getTangenteLatitud().y == 1.0 && estacion.getTangenteLatitud().z == 0.0);
 
     return 0;
 }
