@@ -112,6 +112,12 @@ Direccion Direccion::cambioBase(const Matriz matriz) const {
     return multiplicarMatriz(matriz);
 }
 
+// Devuelve el angulo que forman dos vectores
+double Direccion::angulo(const Direccion& otroDireccion) const {
+    // Devolver el angulo en grados
+    return acos((*this * otroDireccion) / (modulo() * otroDireccion.modulo())) * 180 / M_PI;
+}
+
 // Sobrecarga del operador de salida por pantalla
 ostream& operator<<(ostream& salida, const Direccion& d) {
     salida << "(" << d.x << ", " << d.y << ", " << d.z << ")";

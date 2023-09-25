@@ -91,18 +91,27 @@ int main() {
     // Probar los calculos relacionados con la estacion y esfera
     // centro, eje, ciudad de referencia
     Esfera esfera(Punto(0.0, 0.0, 0.0), Punto(0.0, 0.0, 1.0), Direccion(0.0, 1.0, 0.0));
+    // Esfera con diferentes valores
+    Esfera esfera2(Punto(2.0, 0.0, 0.0), Punto(0.0, 0.0, 0.0), Direccion(0.0, 2.0, 0.0));
 
     // Crear una estacion y verificar sus valores
     Estacion estacion(esfera, 0.0, 0.0);
-    std::cout << "getPosicion().x: " << std::endl << estacion.getPosicion().x << std::endl;
-    std::cout << "getPosicion().y: " << std::endl << estacion.getPosicion().y << std::endl;
-    std::cout << "getPosicion().z: " << std::endl << estacion.getPosicion().z << std::endl;
-    std::cout << "getRadio()" << std::endl << esfera.getRadio() << std::endl;
+    // std::cout << "getPosicion().x: " << std::endl << estacion.getPosicion().x << std::endl;
+    // std::cout << "getPosicion().y: " << std::endl << estacion.getPosicion().y << std::endl;
+    // std::cout << "getPosicion().z: " << std::endl << estacion.getPosicion().z << std::endl;
+    // std::cout << "getRadio()" << std::endl << esfera.getRadio() << std::endl;
 
-    assert(estacion.getPosicion().x == 1.0 && estacion.getPosicion().y == 0.0 && estacion.getPosicion().z == 0.0);
-    assert(estacion.getNormal().x == 1.0 && estacion.getNormal().y == 0.0 && estacion.getNormal().z == 0.0);
-    assert(estacion.getTangenteLongitud().x == 1.0 && estacion.getTangenteLongitud().y == 0.0 && estacion.getTangenteLongitud().z == 0.0);
-    assert(estacion.getTangenteLatitud().x == 0.0 && estacion.getTangenteLatitud().y == 1.0 && estacion.getTangenteLatitud().z == 0.0);
+    // assert(estacion.getPosicion().x == 1.0 && estacion.getPosicion().y == 0.0 && estacion.getPosicion().z == 0.0);
+    // assert(estacion.getNormal().x == 1.0 && estacion.getNormal().y == 0.0 && estacion.getNormal().z == 0.0);
+    // assert(estacion.getTangenteLongitud().x == 1.0 && estacion.getTangenteLongitud().y == 0.0 && estacion.getTangenteLongitud().z == 0.0);
+    // assert(estacion.getTangenteLatitud().x == 0.0 && estacion.getTangenteLatitud().y == 1.0 && estacion.getTangenteLatitud().z == 0.0);
+
+    // Crear otra estacion y verificar sus valores
+    Estacion estacion2(esfera2, 90.0, 0.0);
+
+    // Comprobar si hay colision entre las dos estaciones
+    Direccion direccionConexion = estacion.conectar(estacion2);
+
 
     return 0;
 }

@@ -57,6 +57,9 @@ public:
     // Multiplicación de una direccion por una matriz
     Direccion multiplicarMatriz(const Matriz matriz) const;
 
+    // Devuelve el angulo que forman dos vectores
+    double angulo(const Direccion& otroDireccion) const;
+
 };
 
 // Sobrecarga del operador de salida por pantalla
