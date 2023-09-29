@@ -29,6 +29,11 @@ double ImagenHDR::getResolucionColor() {
     return resolucionColor;
 }
 
+// Setters
+void ImagenHDR::setMatriz(vector<vector<double>>& _matriz) {
+    this->matriz = _matriz;
+}
+
 // Sobrecargar operacion de comparacion de igualdad (==)
 bool ImagenHDR::operator==(ImagenHDR& imagen) {
     return (matriz == imagen.getMatriz() && ancho == imagen.getAncho() && alto == imagen.getAlto() && valorMaximo == imagen.getValorMaximo() && resolucionColor == imagen.getResolucionColor());

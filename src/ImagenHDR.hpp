@@ -28,6 +28,9 @@ public:
     double getValorMaximo();
     double getResolucionColor();
 
+    // Setters
+    void setMatriz(vector<vector<double>>& matriz);
+
     // Sobrecargar operacion de comparacion de igualdad (==)
     bool operator==(ImagenHDR& imagen);
 

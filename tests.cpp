@@ -117,7 +117,7 @@ int main() {
 
     // Probar a leer la imagen "ppms/forest_path.ppm"
     LectorHDR lector;
-    ImagenHDR imagen = lector.leerImagenHDR("ppms/bosque.ppm");
+    ImagenHDR imagen = lector.leerImagenHDR("ppms/forest_path.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
     EscritorHDR escritor;
     escritor.escribirImagenHDR("ppms/bosqueEscrito.ppm", imagen);
@@ -126,22 +126,24 @@ int main() {
     assert(imagen == imagen);
 
     // Probar las operaciones de tone mapping sobre la imagen
+    cout << "Cargando imagen..." << endl;
     ImagenHDR imagenClamp = imagen;
-    // ImagenHDR imagenEcualizacion = imagen;
+    ImagenHDR imagenEcualizacion = imagen;
     // ImagenHDR imagenEcualizacionHastaV = imagen;
     // ImagenHDR imagenClampEcualizacion = imagen;
     // ImagenHDR imagenGamma = imagen;
     // ImagenHDR imagenClampGamma = imagen;
 
+    cout << "Aplicando tone mapping..." << endl;
     ToneMapping toneMappingClamp(imagenClamp);
-    // ToneMapping toneMappingEcualizacion(imagenEcualizacion);
+    ToneMapping toneMappingEcualizacion(imagenEcualizacion);
     // ToneMapping toneMappingEcualizacionHastaV(imagenEcualizacionHastaV);
     // ToneMapping toneMappingClampEcualizacion(imagenClampEcualizacion);
     // ToneMapping toneMappingGamma(imagenGamma);
     // ToneMapping toneMappingClampGamma(imagenClampGamma);
 
     toneMappingClamp.clamping();
-    // toneMappingEcualizacion.ecualizacion();
+    toneMappingEcualizacion.ecualizacion();
     // toneMappingEcualizacionHastaV.ecualizacionHastaV(0.5);
     // toneMappingClampEcualizacion.clamping();
     // toneMappingClampEcualizacion.ecualizacion();
@@ -149,8 +151,9 @@ int main() {
     // toneMappingClampGamma.clampCurvaGamma(0.5, 2.0);
 
     // Probar a escribir las imagenes resultantes
+    cout << "Escribiendo imagenes..." << endl;
     escritor.escribirImagenHDR("ppms/bosqueClamp.ppm", imagenClamp);
-    // escritor.escribirImagenHDR("ppms/forest_path_ecualizacion.ppm", imagenEcualizacion);
+    escritor.escribirImagenHDR("ppms/forest_path_ecualizacion.ppm", imagenEcualizacion);
     // escritor.escribirImagenHDR("ppms/forest_path_ecualizacionHastaV.ppm", imagenEcualizacionHastaV);
     // escritor.escribirImagenHDR("ppms/forest_path_clampEcualizacion.ppm", imagenClampEcualizacion);
     // escritor.escribirImagenHDR("ppms/forest_path_gamma.ppm", imagenGamma);
