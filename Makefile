@@ -6,9 +6,14 @@ CXXFLAGS = -std=c++14
 OBJDIR = exec
 BINDIR = exec
 
+# Carpeta de código fuente
+SRCDIR = src
+
 # Archivos fuente y ejecutable
-SRCS = Punto.cpp Direccion.cpp Matriz.cpp Esfera.cpp Estacion.cpp tests.cpp
-OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+SRCS := $(wildcard $(SRCDIR)/*.cpp)
+SRCS := $(filter-out $(SRCDIR)/tests.cpp, $(SRCS))
+SRCS += tests.cpp
+OBJS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 EXEC = $(BINDIR)/tests
 
 all: $(BINDIR) $(OBJDIR) $(EXEC)
@@ -23,8 +28,8 @@ $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
 
 # Regla genérica para compilar archivos fuente a objetos
-$(OBJDIR)/%.o: %.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJS) $(BINDIR)
+	rm -rf $(BINDIR)

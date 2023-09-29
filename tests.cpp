@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cassert>
 
-#include "Direccion.hpp"
-#include "Punto.hpp"
-#include "Matriz.hpp"
-#include "Estacion.hpp"
-#include "Esfera.hpp"
+#include "src/Direccion.hpp"
+#include "src/Punto.hpp"
+#include "src/Matriz.hpp"
+#include "src/Estacion.hpp"
+#include "src/Esfera.hpp"
+#include "src/LectorHDR.hpp"
+#include "src/EscritorHDR.hpp"
 
 
 int main() {
@@ -112,6 +114,12 @@ int main() {
     // Comprobar si hay colision entre las dos estaciones
     Direccion direccionConexion = estacion.conectar(estacion2);
 
+    // Probar a leer la imagen "ppms/forest_path.ppm"
+    LectorHDR lector;
+    ImagenHDR imagen = lector.leerImagenHDR("ppms/forest_path.ppm");
+    // Probar a escribir la imagen "ppms/forest_path.ppm"
+    EscritorHDR escritor;
+    escritor.escribirImagenHDR("ppms/forest_path_MOLON.ppm", imagen);
 
     return 0;
 }
