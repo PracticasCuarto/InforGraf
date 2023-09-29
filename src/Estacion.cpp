@@ -34,7 +34,7 @@ Direccion Estacion::conectar(Estacion otraEstacion) {
     // Si el angulo es > 90º, y el cohete sale de ese planeta, hay colision
     if (normal.angulo(direccionLocal) > 90 && normal.angulo(direccionLocal) < 270) {
         cout << "Angulo de la normal -->> " << normal.angulo(direccionLocal);
-        cout << "Hay ¡¡¡COLISION!!!";
+        cout << "Hay ¡¡¡COLISION!!!" << endl;
         return Direccion(0, 0, 0);
     }
 

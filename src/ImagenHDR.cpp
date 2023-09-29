@@ -10,8 +10,6 @@ ImagenHDR::ImagenHDR(vector<vector<double>>& _matriz, int ancho, int alto, doubl
 // Getters
 
 vector<vector<double>> ImagenHDR::getMatriz() {
-    cout << matriz[0][0] << endl;
-    cout << matriz.size() << endl;
     return matriz;
 }
 
@@ -29,4 +27,14 @@ double ImagenHDR::getValorMaximo() {
 
 double ImagenHDR::getResolucionColor() {
     return resolucionColor;
+}
+
+// Sobrecargar operacion de comparacion de igualdad (==)
+bool ImagenHDR::operator==(ImagenHDR& imagen) {
+    return (matriz == imagen.getMatriz() && ancho == imagen.getAncho() && alto == imagen.getAlto() && valorMaximo == imagen.getValorMaximo() && resolucionColor == imagen.getResolucionColor());
+}
+
+// Sobrecargar operacion de desigualdad (!=)
+bool ImagenHDR::operator!=(ImagenHDR& imagen) {
+    return (matriz != imagen.getMatriz() || ancho != imagen.getAncho() || alto != imagen.getAlto() || valorMaximo != imagen.getValorMaximo() || resolucionColor != imagen.getResolucionColor());
 }

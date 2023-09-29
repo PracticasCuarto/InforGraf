@@ -5,25 +5,82 @@
 
 using namespace std;
 
-ToneMapping::ToneMapping(vector<vector<double>> _imagenHDR, float _v, float _gamma) {
-    imagenHDR = _imagenHDR;
-    v = _v;
-    gamma = _gamma;
-}
+// Constructor por defecto
+ToneMapping::ToneMapping(ImagenHDR& imagen) : imagen(imagen) {}
 
 // Operadores de Tone Mapping
 // Clamping: Acotar todos los valores superiores a 255 (1 en coma flotante).
-void clamping(ImagenHDR imagenHDR);
+void ToneMapping::clamping() {
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            if (imagen.getMatriz()[i][j] > 1) {
+                imagen.getMatriz()[i][j] = 1;
+            }
+        }
+    }
+}
 
 // Ecualización: Transformación lineal de los valores desde el mínimo hasta el máximo (normalización).
-void ecualizacion(ImagenHDR imagenHDR);
+void ToneMapping::ecualizacion() {
+    float min = 1;
+    float max = 0;
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            if (imagen.getMatriz()[i][j] < min) {
+                min = imagen.getMatriz()[i][j];
+            }
+            if (imagen.getMatriz()[i][j] > max) {
+                max = imagen.getMatriz()[i][j];
+            }
+        }
+    }
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            imagen.getMatriz()[i][j] = (imagen.getMatriz()[i][j] - min) / (max - min);
+        }
+    }
+}
+
+// Ecualización hasta el valor v: Transformación lineal de los valores desde el mínimo hasta v.
+void ToneMapping::ecualizacionHastaV(float v) {
+    float min = 1;
+    float max = 0;
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            if (imagen.getMatriz()[i][j] < min) {
+                min = imagen.getMatriz()[i][j];
+            }
+            if (imagen.getMatriz()[i][j] > max) {
+                max = imagen.getMatriz()[i][j];
+            }
+        }
+    }
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            imagen.getMatriz()[i][j] = (imagen.getMatriz()[i][j] - min) / (v - min);
+        }
+    }
+}
 
 // Ecualización y clamp: Combinar los dos anteriores según un parámetro de ”clamping.” Nótese que los dos operadores anteriores pueden considerarse casos particularesde este operador.
-void ecualizacionClamp(ImagenHDR imagenHDR, float v);
+void ToneMapping::ecualizacionClamp(float v) {
+    ecualizacionHastaV(v);
+    clamping();
+}
 
 // Curva gamma: Aplicar una curva gamma a todos los valores (necesita ecualización primero).
-void curvaGamma(ImagenHDR imagenHDR, float gamma);
+void ToneMapping::curvaGamma(float gamma) {
+    ecualizacion();
+    for (int i = 0; i < imagen.getAlto(); i++) {
+        for (int j = 0; j < imagen.getAncho(); j++) {
+            imagen.getMatriz()[i][j] = pow(imagen.getMatriz()[i][j], gamma);
+        }
+    }
+}
 
 // Clamp y curva gamma: Aplicar una curva gamma después de una operación de clamping (necesita ecualización primero). Nótese que todos los operadores anteriores pueden verse como casos particulares de este operador.
-void clampCurvaGamma(ImagenHDR imagenHDR, float v, float gamma);
+void ToneMapping::clampCurvaGamma(float v, float gamma) {
+    ecualizacionClamp(v);
+    curvaGamma(gamma);
+}
 

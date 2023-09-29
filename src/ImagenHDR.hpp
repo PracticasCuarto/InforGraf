@@ -27,6 +27,12 @@ public:
     int getAlto();
     double getValorMaximo();
     double getResolucionColor();
+
+    // Sobrecargar operacion de comparacion de igualdad (==)
+    bool operator==(ImagenHDR& imagen);
+
+    // Sobrecargar operacion de desigualdad (!=)
+    bool operator!=(ImagenHDR& imagen);
 };
 
 #endif
