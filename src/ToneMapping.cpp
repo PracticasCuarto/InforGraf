@@ -136,20 +136,20 @@ void ToneMapping::reinhard(float max_white_l) {
     double ancho = this->imagen.getAncho();
 
     for (int i = 0; i < alto; i++) {
-        for (int j = 0; j < ancho; j++) {
+        for (int j = 0; j < ancho * 3; j += 3) {
             // Obtén el pixel actual
             vec3 pixel;
-            pixel.x = matriz[i][j * 3];
-            pixel.y = matriz[i][j * 3 + 1];
-            pixel.z = matriz[i][j * 3 + 2];
+            pixel.x = matriz[i][j];
+            pixel.y = matriz[i][j + 1];
+            pixel.z = matriz[i][j + 2];
 
             // Aplica el operador Reinhard al pixel
             vec3 resultado = reinhard_extended_luminance(pixel, max_white_l);
 
             // Actualiza los valores de color en la matriz
-            matriz[i][j * 3] = resultado.x;
-            matriz[i][j * 3 + 1] = resultado.y;
-            matriz[i][j * 3 + 2] = resultado.z;
+            matriz[i][j] = resultado.x;
+            matriz[i][j + 1] = resultado.y;
+            matriz[i][j + 2] = resultado.z;
         }
     }
 
