@@ -35,7 +35,12 @@ public:
 
     // Clamp y curva gamma: Aplicar una curva gamma después de una operación de clamping (necesita ecualización primero). Nótese que todos los operadores anteriores pueden verse como casos particulares de este operador.
     void clampCurvaGamma(float v, float gamma);
-};
 
+    // // Calcula la luminancia de la imagen HDR
+    double calcularLuminancia();
+
+    // Aplica el algoritmo de tone mapping de Reinhard
+    void toneMappingReinhard(double alpha);
+};
 
 #endif

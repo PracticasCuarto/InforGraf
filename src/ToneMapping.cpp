@@ -105,3 +105,57 @@ void ToneMapping::clampCurvaGamma(float v, float gamma) {
     curvaGamma(gamma);
 }
 
+// Calcula la luminancia de la imagen HDR
+double ToneMapping::calcularLuminancia() {
+    vector<vector<double>> matriz = this->imagen.getMatriz();
+    double luminancia = 0.0;
+    double alto = this->imagen.getAlto();
+    double ancho = this->imagen.getAncho();
+
+    // Calcular la luminancia como el promedio ponderado de los canales RGB
+    for (int i = 0; i < alto; i++) {
+        for (int j = 0; j < ancho; j++) {
+            double r = matriz[i][j * 3];
+            double g = matriz[i][j * 3 + 1];
+            double b = matriz[i][j * 3 + 2];
+            luminancia += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+    }
+
+    // Normalizar la luminancia dividiendo por el número total de píxeles
+    luminancia /= (alto * ancho);
+
+    return luminancia;
+}
+
+// Aplica el algoritmo de tone mapping de Reinhard
+void ToneMapping::toneMappingReinhard(double alpha) {
+    double luminancia = calcularLuminancia();
+
+    // Calcular la media logarítmica de la luminancia
+    double logMedia = log(1.0 + alpha * luminancia);
+
+    // Escalar la luminancia de acuerdo a la media logarítmica
+    vector<vector<double>> matriz = this->imagen.getMatriz();
+    double alto = this->imagen.getAlto();
+    double ancho = this->imagen.getAncho();
+
+    for (int i = 0; i < alto; i++) {
+        for (int j = 0; j < ancho; j++) {
+            double r = matriz[i][j * 3];
+            double g = matriz[i][j * 3 + 1];
+            double b = matriz[i][j * 3 + 2];
+
+            // Escalar los canales RGB de acuerdo a la media logarítmica
+            r = (r / (1.0 + alpha * luminancia)) * logMedia;
+            g = (g / (1.0 + alpha * luminancia)) * logMedia;
+            b = (b / (1.0 + alpha * luminancia)) * logMedia;
+
+            matriz[i][j * 3] = r;
+            matriz[i][j * 3 + 1] = g;
+            matriz[i][j * 3 + 2] = b;
+        }
+    }
+
+    this->imagen.setMatriz(matriz);
+}

@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include "src/Direccion.hpp"
+#include "src/ImagenHDR.hpp"
 #include "src/Punto.hpp"
 #include "src/Matriz.hpp"
 #include "src/Estacion.hpp"
@@ -120,44 +121,48 @@ int main() {
     ImagenHDR imagen = lector.leerImagenHDR("ppms/forest_path.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
     EscritorHDR escritor;
-    escritor.escribirImagenHDR("ppms/bosqueEscrito.ppm", imagen);
 
     // Asegurar que el operador de igualdad de imagenes esta bien implementado
     assert(imagen == imagen);
 
     // Probar las operaciones de tone mapping sobre la imagen
     cout << "Cargando imagen..." << endl;
-    ImagenHDR imagenClamp = imagen;
-    ImagenHDR imagenEcualizacion = imagen;
-    ImagenHDR imagenEcualizacionHastaV = imagen;
-    ImagenHDR imagenClampEcualizacion = imagen;
-    ImagenHDR imagenGamma = imagen;
-    ImagenHDR imagenClampGamma = imagen;
+    // ImagenHDR imagenClamp = imagen;
+    // ImagenHDR imagenEcualizacion = imagen;
+    // ImagenHDR imagenEcualizacionHastaV = imagen;
+    // ImagenHDR imagenClampEcualizacion = imagen;
+    // ImagenHDR imagenGamma = imagen;
+    // ImagenHDR imagenClampGamma = imagen;
+    ImagenHDR imagenReinhard = imagen;
+
 
     cout << "Aplicando tone mapping..." << endl;
-    ToneMapping toneMappingClamp(imagenClamp);
-    ToneMapping toneMappingEcualizacion(imagenEcualizacion);
-    ToneMapping toneMappingEcualizacionHastaV(imagenEcualizacionHastaV);
-    ToneMapping toneMappingClampEcualizacion(imagenClampEcualizacion);
-    ToneMapping toneMappingGamma(imagenGamma);
-    ToneMapping toneMappingClampGamma(imagenClampGamma);
+    // ToneMapping toneMappingClamp(imagenClamp);
+    // ToneMapping toneMappingEcualizacion(imagenEcualizacion);
+    // ToneMapping toneMappingEcualizacionHastaV(imagenEcualizacionHastaV);
+    // ToneMapping toneMappingClampEcualizacion(imagenClampEcualizacion);
+    // ToneMapping toneMappingGamma(imagenGamma);
+    // ToneMapping toneMappingClampGamma(imagenClampGamma);
+    ToneMapping toneMappingReinhard(imagenReinhard);
 
-    toneMappingClamp.clamping();
-    toneMappingEcualizacion.ecualizacion();
-    toneMappingEcualizacionHastaV.ecualizacionHastaV(0.5);
-    toneMappingClampEcualizacion.clamping();
-    toneMappingClampEcualizacion.ecualizacion();
-    toneMappingGamma.curvaGamma(2.0);
-    toneMappingClampGamma.clampCurvaGamma(0.5, 2.0);
+    // toneMappingClamp.clamping();
+    // toneMappingEcualizacion.ecualizacion();
+    // toneMappingEcualizacionHastaV.ecualizacionHastaV(0.8);
+    // toneMappingClampEcualizacion.clamping();
+    // toneMappingClampEcualizacion.ecualizacion();
+    // toneMappingGamma.curvaGamma(0.6);
+    // toneMappingClampGamma.clampCurvaGamma(0.8, 0.6);
+    toneMappingReinhard.toneMappingReinhard(0.36);
 
     // Probar a escribir las imagenes resultantes
     cout << "Escribiendo imagenes..." << endl;
-    escritor.escribirImagenHDR("ppms/forest_path_clamp.ppm", imagenClamp);
-    escritor.escribirImagenHDR("ppms/forest_path_ecualizacion.ppm", imagenEcualizacion);
-    escritor.escribirImagenHDR("ppms/forest_path_ecualizacionHastaV.ppm", imagenEcualizacionHastaV);
-    escritor.escribirImagenHDR("ppms/forest_path_clampEcualizacion.ppm", imagenClampEcualizacion);
-    escritor.escribirImagenHDR("ppms/forest_path_gamma.ppm", imagenGamma);
-    escritor.escribirImagenHDR("ppms/forest_path_clampGamma.ppm", imagenClampGamma);
+    // escritor.escribirImagenHDR("ppms/forest_path_clamp.ppm", imagenClamp);
+    // escritor.escribirImagenHDR("ppms/forest_path_ecualizacion.ppm", imagenEcualizacion);
+    // escritor.escribirImagenHDR("ppms/forest_path_ecualizacionHastaV.ppm", imagenEcualizacionHastaV);
+    // escritor.escribirImagenHDR("ppms/forest_path_clampEcualizacion.ppm", imagenClampEcualizacion);
+    // escritor.escribirImagenHDR("ppms/forest_path_gamma.ppm", imagenGamma);
+    // escritor.escribirImagenHDR("ppms/forest_path_clampGamma.ppm", imagenClampGamma);
+    escritor.escribirImagenHDR("ppms/forest_path_reinhard.ppm", imagenReinhard);
 
     std::cout << "Todas las pruebas de tone mapping pasaron con éxito." << std::endl;
 
