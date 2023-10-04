@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 // Constructor por defecto
 ToneMapping::ToneMapping(ImagenHDR& imagen) : imagen(imagen) {}
 
@@ -105,55 +106,50 @@ void ToneMapping::clampCurvaGamma(float v, float gamma) {
     curvaGamma(gamma);
 }
 
-// Calcula la luminancia de la imagen HDR
-double ToneMapping::calcularLuminancia() {
-    vector<vector<double>> matriz = this->imagen.getMatriz();
-    double luminancia = 0.0;
-    double alto = this->imagen.getAlto();
-    double ancho = this->imagen.getAncho();
 
-    // Calcular la luminancia como el promedio ponderado de los canales RGB
-    for (int i = 0; i < alto; i++) {
-        for (int j = 0; j < ancho; j++) {
-            double r = matriz[i][j * 3];
-            double g = matriz[i][j * 3 + 1];
-            double b = matriz[i][j * 3 + 2];
-            luminancia += 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        }
-    }
-
-    // Normalizar la luminancia dividiendo por el número total de píxeles
-    luminancia /= (alto * ancho);
-
-    return luminancia;
+float luminance(vec3 v) {
+    return v.x * 0.2126f + v.y * 0.7152f + v.z * 0.0722f;
 }
 
-// Aplica el algoritmo de tone mapping de Reinhard
-void ToneMapping::toneMappingReinhard(double alpha) {
-    double luminancia = calcularLuminancia();
+vec3 change_luminance(vec3 c_in, float l_out) {
+    float l_in = luminance(c_in);
+    // return c_in * (l_out / l_in);
+    // Para cada pixel del color, multiplica por el ratio entre la luminancia deseada y la luminancia actual
+    float x = c_in.x * (l_out / l_in);
+    float y = c_in.y * (l_out / l_in);
+    float z = c_in.z * (l_out / l_in);
+    return { x, y, z };
+}
 
-    // Calcular la media logarítmica de la luminancia
-    double logMedia = log(1.0 + alpha * luminancia);
+vec3 reinhard_extended_luminance(vec3 v, float max_white_l) {
+    float l_old = luminance(v);
+    float numerator = l_old * (1.0f + (l_old / (max_white_l * max_white_l)));
+    float l_new = numerator / (1.0f + l_old);
+    return change_luminance(v, l_new);
+}
 
-    // Escalar la luminancia de acuerdo a la media logarítmica
+
+// Función para aplicar el operador Reinhard a toda la imagen
+void ToneMapping::reinhard(float max_white_l) {
     vector<vector<double>> matriz = this->imagen.getMatriz();
     double alto = this->imagen.getAlto();
     double ancho = this->imagen.getAncho();
 
     for (int i = 0; i < alto; i++) {
         for (int j = 0; j < ancho; j++) {
-            double r = matriz[i][j * 3];
-            double g = matriz[i][j * 3 + 1];
-            double b = matriz[i][j * 3 + 2];
+            // Obtén el pixel actual
+            vec3 pixel;
+            pixel.x = matriz[i][j * 3];
+            pixel.y = matriz[i][j * 3 + 1];
+            pixel.z = matriz[i][j * 3 + 2];
 
-            // Escalar los canales RGB de acuerdo a la media logarítmica
-            r = (r / (1.0 + alpha * luminancia)) * logMedia;
-            g = (g / (1.0 + alpha * luminancia)) * logMedia;
-            b = (b / (1.0 + alpha * luminancia)) * logMedia;
+            // Aplica el operador Reinhard al pixel
+            vec3 resultado = reinhard_extended_luminance(pixel, max_white_l);
 
-            matriz[i][j * 3] = r;
-            matriz[i][j * 3 + 1] = g;
-            matriz[i][j * 3 + 2] = b;
+            // Actualiza los valores de color en la matriz
+            matriz[i][j * 3] = resultado.x;
+            matriz[i][j * 3 + 1] = resultado.y;
+            matriz[i][j * 3 + 2] = resultado.z;
         }
     }
 

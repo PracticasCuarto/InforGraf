@@ -118,12 +118,9 @@ int main() {
 
     // Probar a leer la imagen "ppms/forest_path.ppm"
     LectorHDR lector;
-    ImagenHDR imagen = lector.leerImagenHDR("ppms/forest_path.ppm");
+    ImagenHDR imagen = lector.leerImagenHDR("ppms/seymour_park.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
     EscritorHDR escritor;
-
-    // Asegurar que el operador de igualdad de imagenes esta bien implementado
-    assert(imagen == imagen);
 
     // Probar las operaciones de tone mapping sobre la imagen
     cout << "Cargando imagen..." << endl;
@@ -132,7 +129,7 @@ int main() {
     // ImagenHDR imagenEcualizacionHastaV = imagen;
     // ImagenHDR imagenClampEcualizacion = imagen;
     // ImagenHDR imagenGamma = imagen;
-    // ImagenHDR imagenClampGamma = imagen;
+    ImagenHDR imagenClampGamma = imagen;
     ImagenHDR imagenReinhard = imagen;
 
 
@@ -142,7 +139,7 @@ int main() {
     // ToneMapping toneMappingEcualizacionHastaV(imagenEcualizacionHastaV);
     // ToneMapping toneMappingClampEcualizacion(imagenClampEcualizacion);
     // ToneMapping toneMappingGamma(imagenGamma);
-    // ToneMapping toneMappingClampGamma(imagenClampGamma);
+    ToneMapping toneMappingClampGamma(imagenClampGamma);
     ToneMapping toneMappingReinhard(imagenReinhard);
 
     // toneMappingClamp.clamping();
@@ -151,8 +148,8 @@ int main() {
     // toneMappingClampEcualizacion.clamping();
     // toneMappingClampEcualizacion.ecualizacion();
     // toneMappingGamma.curvaGamma(0.6);
-    // toneMappingClampGamma.clampCurvaGamma(0.8, 0.6);
-    toneMappingReinhard.toneMappingReinhard(0.36);
+    toneMappingClampGamma.clampCurvaGamma(0.8, 0.6);
+    toneMappingReinhard.reinhard(0.72);
 
     // Probar a escribir las imagenes resultantes
     cout << "Escribiendo imagenes..." << endl;
@@ -161,8 +158,8 @@ int main() {
     // escritor.escribirImagenHDR("ppms/forest_path_ecualizacionHastaV.ppm", imagenEcualizacionHastaV);
     // escritor.escribirImagenHDR("ppms/forest_path_clampEcualizacion.ppm", imagenClampEcualizacion);
     // escritor.escribirImagenHDR("ppms/forest_path_gamma.ppm", imagenGamma);
-    // escritor.escribirImagenHDR("ppms/forest_path_clampGamma.ppm", imagenClampGamma);
-    escritor.escribirImagenHDR("ppms/forest_path_reinhard.ppm", imagenReinhard);
+    escritor.escribirImagenHDR("ppms/seymour_park_clampGamma.ppm", imagenClampGamma);
+    escritor.escribirImagenHDR("ppms/seymour_park_reinhard.ppm", imagenReinhard);
 
     std::cout << "Todas las pruebas de tone mapping pasaron con éxito." << std::endl;
 

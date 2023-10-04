@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Ppms
+*.ppm
+./ppms/*.ppm
