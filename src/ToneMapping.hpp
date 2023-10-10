@@ -37,6 +37,7 @@ public:
     void clampCurvaGamma(float v, float gamma);
 
     // Función para aplicar el operador Reinhard a toda la imagen
+    // Funcion y sus auxiliares obtenidas de: https://64.github.io/tonemapping/#extended-reinhard-luminance-tone-map
     void reinhard(float max_white_l);
 };
 

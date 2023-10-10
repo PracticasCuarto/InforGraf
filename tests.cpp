@@ -5,11 +5,12 @@
 #include "src/ImagenHDR.hpp"
 #include "src/Punto.hpp"
 #include "src/Matriz.hpp"
-#include "src/Estacion.hpp"
-#include "src/Esfera.hpp"
+// #include "src/Estacion.hpp"
+// #include "src/Esfera.hpp"
 #include "src/LectorHDR.hpp"
 #include "src/EscritorHDR.hpp"
 #include "src/ToneMapping.hpp"
+#include "src/Geometria.hpp"
 
 
 int main() {
@@ -94,12 +95,12 @@ int main() {
 
     // Probar los calculos relacionados con la estacion y esfera
     // centro, eje, ciudad de referencia
-    Esfera esfera(Punto(0.0, 0.0, 0.0), Punto(0.0, 0.0, 1.0), Direccion(0.0, 1.0, 0.0));
+    // Esfera esfera(Punto(0.0, 0.0, 0.0), Punto(0.0, 0.0, 1.0), Direccion(0.0, 1.0, 0.0));
     // Esfera con diferentes valores
-    Esfera esfera2(Punto(2.0, 0.0, 0.0), Punto(0.0, 0.0, 0.0), Direccion(0.0, 2.0, 0.0));
+    // Esfera esfera2(Punto(2.0, 0.0, 0.0), Punto(0.0, 0.0, 0.0), Direccion(0.0, 2.0, 0.0));
 
     // Crear una estacion y verificar sus valores
-    Estacion estacion(esfera, 0.0, 0.0);
+    // Estacion estacion(esfera, 0.0, 0.0);
     // std::cout << "getPosicion().x: " << std::endl << estacion.getPosicion().x << std::endl;
     // std::cout << "getPosicion().y: " << std::endl << estacion.getPosicion().y << std::endl;
     // std::cout << "getPosicion().z: " << std::endl << estacion.getPosicion().z << std::endl;
@@ -111,10 +112,10 @@ int main() {
     // assert(estacion.getTangenteLatitud().x == 0.0 && estacion.getTangenteLatitud().y == 1.0 && estacion.getTangenteLatitud().z == 0.0);
 
     // Crear otra estacion y verificar sus valores
-    Estacion estacion2(esfera2, 90.0, 0.0);
+    // Estacion estacion2(esfera2, 90.0, 0.0);
 
     // Comprobar si hay colision entre las dos estaciones
-    Direccion direccionConexion = estacion.conectar(estacion2);
+    // Direccion direccionConexion = estacion.conectar(estacion2);
 
     // Probar a leer la imagen "ppms/forest_path.ppm"
     LectorHDR lector;
@@ -130,7 +131,7 @@ int main() {
     // ImagenHDR imagenClampEcualizacion = imagen;
     // ImagenHDR imagenGamma = imagen;
     // ImagenHDR imagenClampGamma = imagen;
-    ImagenHDR imagenReinhard = imagen;
+    // ImagenHDR imagenReinhard = imagen;
 
 
     cout << "Aplicando tone mapping..." << endl;
@@ -140,7 +141,7 @@ int main() {
     // ToneMapping toneMappingClampEcualizacion(imagenClampEcualizacion);
     // ToneMapping toneMappingGamma(imagenGamma);
     // ToneMapping toneMappingClampGamma(imagenClampGamma);
-    ToneMapping toneMappingReinhard(imagenReinhard);
+    // ToneMapping toneMappingReinhard(imagenReinhard);
 
     // toneMappingClamp.clamping();
     // toneMappingEcualizacion.ecualizacion();
@@ -149,7 +150,8 @@ int main() {
     // toneMappingClampEcualizacion.ecualizacion();
     // toneMappingGamma.curvaGamma(0.6);
     // toneMappingClampGamma.clampCurvaGamma(0.8, 0.6);
-    toneMappingReinhard.reinhard(0.8);
+    // toneMappingReinhard.reinhard(1000);
+
 
     // Probar a escribir las imagenes resultantes
     cout << "Escribiendo imagenes..." << endl;
@@ -159,7 +161,26 @@ int main() {
     // escritor.escribirImagenHDR("ppms/forest_path_clampEcualizacion.ppm", imagenClampEcualizacion);
     // escritor.escribirImagenHDR("ppms/forest_path_gamma.ppm", imagenGamma);
     // escritor.escribirImagenHDR("ppms/seymour_park_clampGamma.ppm", imagenClampGamma);
-    escritor.escribirImagenHDR("ppms/seymour_park_reinhard.ppm", imagenReinhard);
+    // escritor.escribirImagenHDR("ppms/seymour_park_reinhard_1000.ppm", imagenReinhard);
+
+    // Probar la interseccion de un rayo con un plano
+    Plano plano(10.0, Direccion(0.0, -1.0, 0.0));
+    rayo rayo1(Punto(0.0, 0.0, 0.0), Direccion(1.0, 0.0, 0.0));
+
+    Punto interseccion = rayo1.interseccion(plano);
+    assert(interseccion.x == -INFINITY && interseccion.y == -INFINITY && interseccion.z == -INFINITY);
+    // assert(interseccion.x == 10.0 && interseccion.y == 0.0 && interseccion.z == 0.0);
+
+    // Probar la interseccion de un rayo con una esfera
+    Esfera esfera(Punto(10.0, 0.0, 0.0), 5.0);
+    rayo rayo2(Punto(10.0, 0.0, 0.0), Direccion(1.0, 1.0, 0.0));
+
+    interseccion = rayo2.interseccion(esfera);
+    cout << "interseccion.x: " << interseccion.x << endl;
+    cout << "interseccion.y: " << interseccion.y << endl;
+    cout << "interseccion.z: " << interseccion.z << endl;
+    assert(interseccion.x == 0.0 && interseccion.y == -2.0 && interseccion.z == 0.0);
+
 
     std::cout << "Todas las pruebas de tone mapping pasaron con éxito." << std::endl;
 
