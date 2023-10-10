@@ -37,6 +37,11 @@ Direccion Direccion::operator/(const float& escalar) const {
     return Direccion(x / escalar, y / escalar, z / escalar);
 }
 
+// Sobrecarga del operador de igualdad
+bool Direccion::operator==(const Direccion& otroDireccion) const {
+    return (x == otroDireccion.x && y == otroDireccion.y && z == otroDireccion.z);
+}
+
 // Sobrecarga del operador de multiplicación vectorial (producto cruzado)
 Direccion Direccion::cross(const Direccion& otroDireccion) const {
     double nuevoX = (y * otroDireccion.z) - (z * otroDireccion.y);

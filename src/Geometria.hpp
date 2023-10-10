@@ -54,13 +54,29 @@ public:
     Direccion getNormal() const;
 };
 
-class rayo {
+class Triangulo {
+private:
+    Punto vertice1;
+    Punto vertice2;
+    Punto vertice3;
+public:
+    // Constructor del triangulo
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3);
+
+    // Getters del triangulo
+    Punto getVertice1() const;
+    Punto getVertice2() const;
+    Punto getVertice3() const;
+
+};
+
+class Rayo {
 private:
     Punto origen;
     Direccion direccion;
 public:
     // Constructor del rayo
-    rayo(Punto _origen, Direccion _direccion);
+    Rayo(Punto _origen, Direccion _direccion);
 
     // Getters del rayo
     Punto getOrigen() const;
@@ -71,6 +87,9 @@ public:
 
     // Calcular intersección con una esfera
     Punto interseccion(const Esfera& esfera) const;
+
+    // Calcular intersección con un triangulo
+    Punto interseccion(const Triangulo& triangulo) const;
 };
 
 #endif

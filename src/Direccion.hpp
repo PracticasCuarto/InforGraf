@@ -29,6 +29,9 @@ public:
     // Sobrecarga del operador de division de una direccion por un escalar
     Direccion operator/(const float& escalar) const;
 
+    // Sobrecarga del operador de igualdad
+    bool operator==(const Direccion& otroDireccion) const;
+
     // Sobrecarga del operador de multiplicación vectorial
     Direccion cross(const Direccion& otroDireccion) const;
 
