@@ -8,6 +8,16 @@ using namespace std;
 // Constructor de Geometria
 Geometria::Geometria() {}
 
+// Getters del color
+pixel Geometria::getColor() const {
+    return color;
+}
+
+// Setters del color
+void Geometria::setColor(pixel _color) {
+    color = _color;
+}
+
 // Constructor esfera
 Esfera::Esfera(Punto _centro, double _radio) : Geometria(), centro(_centro), radio(_radio) {}
 
@@ -201,4 +211,28 @@ Punto Rayo::interseccion(const Triangulo& triangulo) const {
     }
 
     return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
+}
+
+// Calcular intersección de un Rayo con un objeto
+Punto Rayo::interseccion(const Geometria& objeto) const {
+    // Obtener el tipo de objeto
+    string tipoObjeto = typeid(objeto).name();
+
+    // Calcular la intersección de acuerdo al tipo de objeto
+    if (tipoObjeto == "class Esfera") {
+        return interseccion(dynamic_cast<const Esfera&>(objeto));
+    }
+    else if (tipoObjeto == "class Plano") {
+        return interseccion(dynamic_cast<const Plano&>(objeto));
+    }
+    else if (tipoObjeto == "class Triangulo") {
+        return interseccion(dynamic_cast<const Triangulo&>(objeto));
+    }
+    else {
+        // El objeto no es de un tipo conocido
+        // Puedes manejar este caso de acuerdo a tus necesidades.
+        // Por ejemplo, lanzando una excepción o devolviendo un valor especial.
+        // Aquí, se devuelve un punto fuera del mundo (-infinito) como indicador de no intersección.
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
 }

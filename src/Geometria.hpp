@@ -14,6 +14,9 @@ struct pixel {
     float b;
 };
 
+
+class Rayo;
+
 // Clase que permite aplicar operadores de Tone Mapping a una imagen HDR
 class Geometria {
 protected:
@@ -21,6 +24,14 @@ protected:
 public:
     // Constructor completo
     Geometria();
+
+    // Getters del color
+    pixel getColor() const;
+
+    // Setters del color
+    void setColor(pixel _color);
+
+    virtual ~Geometria() {}
 };
 
 // Clase Esfera que hereda de Geometria
@@ -54,7 +65,7 @@ public:
     Direccion getNormal() const;
 };
 
-class Triangulo {
+class Triangulo : public Geometria {
 private:
     Punto vertice1;
     Punto vertice2;
@@ -90,6 +101,9 @@ public:
 
     // Calcular intersección con un triangulo
     Punto interseccion(const Triangulo& triangulo) const;
+
+    // Calcular intersección con un objeto
+    Punto interseccion(const Geometria& objeto) const;
 };
 
 #endif

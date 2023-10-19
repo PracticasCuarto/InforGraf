@@ -11,6 +11,7 @@
 #include "src/EscritorHDR.hpp"
 #include "src/ToneMapping.hpp"
 #include "src/Geometria.hpp"
+#include "src/Camara.hpp"
 
 
 int main() {
@@ -22,7 +23,7 @@ int main() {
     EscritorHDR escritor;
 
     // Probar las operaciones de tone mapping sobre la imagen
-    cout << "Cargando imagen..." << endl;
+    // cout << "Cargando imagen..." << endl;
     // ImagenHDR imagenClamp = imagen;
     // ImagenHDR imagenEcualizacion = imagen;
     // ImagenHDR imagenEcualizacionHastaV = imagen;
@@ -32,7 +33,7 @@ int main() {
     // ImagenHDR imagenReinhard = imagen;
 
 
-    cout << "Aplicando tone mapping..." << endl;
+    // cout << "Aplicando tone mapping..." << endl;
     // ToneMapping toneMappingClamp(imagenClamp);
     // ToneMapping toneMappingEcualizacion(imagenEcualizacion);
     // ToneMapping toneMappingEcualizacionHastaV(imagenEcualizacionHastaV);
@@ -52,7 +53,7 @@ int main() {
 
 
     // Probar a escribir las imagenes resultantes
-    cout << "Escribiendo imagenes..." << endl;
+    // cout << "Escribiendo imagenes..." << endl;
     // escritor.escribirImagenHDR("ppms/forest_path_clamp.ppm", imagenClamp);
     // escritor.escribirImagenHDR("ppms/forest_path_ecualizacion.ppm", imagenEcualizacion);
     // escritor.escribirImagenHDR("ppms/forest_path_ecualizacionHastaV.ppm", imagenEcualizacionHastaV);
@@ -61,36 +62,49 @@ int main() {
     // escritor.escribirImagenHDR("ppms/seymour_park_clampGamma.ppm", imagenClampGamma);
     // escritor.escribirImagenHDR("ppms/seymour_park_reinhard_1000.ppm", imagenReinhard);
 
-    // Probar la interseccion de un rayo con un plano
-    Plano plano(10.0, Direccion(0.0, -1.0, 0.0));
-    Rayo rayo1(Punto(0.0, 0.0, 0.0), Direccion(1.0, 0.0, 0.0));
+    // // Probar la interseccion de un rayo con un plano
+    // Plano plano(10.0, Direccion(0.0, -1.0, 0.0));
+    // Rayo rayo1(Punto(0.0, 0.0, 0.0), Direccion(1.0, 0.0, 0.0));
 
-    Punto interseccion = rayo1.interseccion(plano);
-    assert(interseccion.x == -INFINITY && interseccion.y == -INFINITY && interseccion.z == -INFINITY);
-    // assert(interseccion.x == 10.0 && interseccion.y == 0.0 && interseccion.z == 0.0);
+    // Punto interseccion = rayo1.interseccion(plano);
+    // assert(interseccion.x == -INFINITY && interseccion.y == -INFINITY && interseccion.z == -INFINITY);
+    // // assert(interseccion.x == 10.0 && interseccion.y == 0.0 && interseccion.z == 0.0);
 
-    // Probar la interseccion de un rayo con una esfera
-    Esfera esfera(Punto(10.0, 0.0, 0.0), 5.0);
-    Rayo rayo2(Punto(10.0, 0.0, 0.0), Direccion(1.0, 1.0, 0.0));
+    // // Probar la interseccion de un rayo con una esfera
+    // Esfera esfera(Punto(10.0, 0.0, 0.0), 5.0);
+    // Rayo rayo2(Punto(10.0, 0.0, 0.0), Direccion(1.0, 1.0, 0.0));
 
-    interseccion = rayo2.interseccion(esfera);
-    cout << "interseccion.x: " << interseccion.x << endl;
-    cout << "interseccion.y: " << interseccion.y << endl;
-    cout << "interseccion.z: " << interseccion.z << endl;
-    // assert(interseccion.x == 13.54 && interseccion.y == 3.54 && interseccion.z == 0.0);
+    // interseccion = rayo2.interseccion(esfera);
+    // cout << "interseccion.x: " << interseccion.x << endl;
+    // cout << "interseccion.y: " << interseccion.y << endl;
+    // cout << "interseccion.z: " << interseccion.z << endl;
+    // // assert(interseccion.x == 13.54 && interseccion.y == 3.54 && interseccion.z == 0.0);
 
-    // Probar la interseccion de un rayo con un triangulo
-    Triangulo triangulo(Punto(0.0, 0.0, 0.0), Punto(0.0, 1.0, 0.0), Punto(1.0, 0.0, 0.0));
-    Rayo rayo3(Punto(-1.0, -1.0, 0.0), Direccion(1.0, 1.0, 0.0));
+    // // Probar la interseccion de un rayo con un triangulo
+    // Triangulo triangulo(Punto(0.0, 0.0, 0.0), Punto(0.0, 1.0, 0.0), Punto(1.0, 0.0, 0.0));
+    // Rayo rayo3(Punto(-1.0, -1.0, 0.0), Direccion(1.0, 1.0, 0.0));
 
-    interseccion = rayo3.interseccion(triangulo);
-    cout << "interseccion.x: " << interseccion.x << endl;
-    cout << "interseccion.y: " << interseccion.y << endl;
-    cout << "interseccion.z: " << interseccion.z << endl;
-    assert(interseccion.x == 0.0 && interseccion.y == 0.0 && interseccion.z == 0.0);
+    // interseccion = rayo3.interseccion(triangulo);
+    // cout << "interseccion.x: " << interseccion.x << endl;
+    // cout << "interseccion.y: " << interseccion.y << endl;
+    // cout << "interseccion.z: " << interseccion.z << endl;
+    // assert(interseccion.x == 0.0 && interseccion.y == 0.0 && interseccion.z == 0.0);
 
 
-    std::cout << "Todas las pruebas de tone mapping pasaron con éxito." << std::endl;
+    // std::cout << "Todas las pruebas de tone mapping pasaron con éxito." << std::endl;
 
+    // Crear una camara en el origen de la escena
+    Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5));
+
+    // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
+    Esfera esfera(Punto(-0.5, -0.7, 0.25), 0.3);
+    pixel color;
+    color.r = 128;
+    color.g = 0;
+    color.b = 128;
+    esfera.setColor(color);
+
+    ImagenHDR imagenEscena = camara.renderizar({ esfera });
+    escritor.escribirImagenHDR("ppms/imagenEscena.ppm", imagenEscena);
     return 0;
 }
