@@ -68,7 +68,7 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
             for (int k = 0; k < objetos.size(); k++) {
                 // cout << "Calculando interseccion con un objeto" << endl;
                 Punto puntoInterseccion = objetos[k]->interseccion(rayo);
-                if (puntoInterseccion.x != -INFINITY && !(puntoInterseccion.z < origin.z)) {
+                if (puntoInterseccion.x != -INFINITY) {
                     // Calcular la distancia entre el origen de la camara y el punto de interseccion
                     float distanciaInterseccion = origin.distancia(puntoInterseccion);
                     if (distanciaInterseccion <= distancia) {

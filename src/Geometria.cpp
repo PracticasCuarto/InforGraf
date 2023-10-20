@@ -92,20 +92,20 @@ Punto Plano::interseccion(const Rayo& rayo) const {
 
     if (denominador == 0) {
         // El rayo es paralelo al plano, no hay intersección.
-        // Puedes manejar este caso de acuerdo a tus necesidades.
-        // Por ejemplo, lanzando una excepción o devolviendo un valor especial.
-        // Aquí, se devuelve un punto fuera del mundo (-infinito) como indicador de no intersección.
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
-
-
-
     double t = -(A * xo + B * yo + C * zo + D) / denominador;
-    Punto puntoInterseccion(xo + t * dx, yo + t * dy, zo + t * dz);
 
+    // Si t es negativo, la intersección ocurre detrás del origen del rayo.
+    if (t < 0) {
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
+
+    Punto puntoInterseccion(xo + t * dx, yo + t * dy, zo + t * dz);
     return puntoInterseccion;
 }
+
 
 // Calcular intersección de un Rayo con una esfera
 // Punto Esfera::interseccion(const Rayo& rayo) const {
@@ -173,8 +173,20 @@ bool solveQuadratic(const float& a, const float& b, const float& c, float& x0, f
 // Calcular intersección de un Rayo con una esfera
 Punto Esfera::interseccion(const Rayo& rayo) const {
     float t0, t1; // soluciones para t si el rayo intersecta
-    Direccion L = rayo.getOrigen() - centro;
+    Direccion L = rayo.getOrigen() - centro; // L será el vector que apunta del centro de la esfera al origen de la camara
     Direccion direccionRayo = rayo.getDireccion();
+
+    // Calcula el coseno del ángulo entre L y direccionRayo
+    float coseno_angulo = (L * direccionRayo) / (L.modulo() * direccionRayo.modulo());
+
+    // Convierte el coseno del ángulo a grados
+    float angulo = acos(coseno_angulo) * (180.0 / M_PI);
+
+    if (angulo < 90) {
+        cout << "Ángulo: " << angulo << " grados" << endl;
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
+
     float a = direccionRayo * direccionRayo;
     float b = 2 * (direccionRayo * L);
     float c = (L * L) - (radio * radio);

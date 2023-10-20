@@ -109,6 +109,8 @@ int main() {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0));
+
     pixel color;
     color.r = 128;
     color.g = 0;
@@ -142,12 +144,19 @@ int main() {
     blanco.b = 255;
     plano->setColor(blanco);
 
+    pixel negro;
+    negro.r = 0;
+    negro.g = 70;
+    negro.b = 128;
+    techo->setColor(negro);
+
     vector<Geometria*> objetos = vector<Geometria*>();
     objetos.push_back(esfera);
     objetos.push_back(esfera2);
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
     objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
     ImagenHDR imagenEscena = camara.renderizar(objetos);
     escritor.escribirImagenHDR("ppms/imagenEscena.ppm", imagenEscena);
     return 0;
