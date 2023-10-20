@@ -73,20 +73,8 @@ Direccion Rayo::getDireccion() const {
 // Calcular intersección con un plano
 Punto Plano::interseccion(const Rayo& rayo) const {
     Direccion normalPlano = getNormal();
-    double A = normalPlano.x;
-    double B = normalPlano.y;
-    double C = normalPlano.z;
-    double D = getDistanciaOrigen();
-
     Direccion direccionRayo = rayo.getDireccion();
-    double dx = direccionRayo.x;
-    double dy = direccionRayo.y;
-    double dz = direccionRayo.z;
-
     Punto origenRayo = rayo.getOrigen();
-    double xo = origenRayo.x;
-    double yo = origenRayo.y;
-    double zo = origenRayo.z;
 
     double denominador = normalPlano * direccionRayo;
 
@@ -95,71 +83,19 @@ Punto Plano::interseccion(const Rayo& rayo) const {
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
-    double t = -(A * xo + B * yo + C * zo + D) / denominador;
+    double t = -(normalPlano.x * origenRayo.x + normalPlano.y * origenRayo.y + normalPlano.z * origenRayo.z + getDistanciaOrigen()) / denominador;
 
     // Si t es negativo, la intersección ocurre detrás del origen del rayo.
     if (t < 0) {
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
-    Punto puntoInterseccion(xo + t * dx, yo + t * dy, zo + t * dz);
+    Punto puntoInterseccion(origenRayo.x + t * direccionRayo.x, origenRayo.y + t * direccionRayo.y, origenRayo.z + t * direccionRayo.z);
     return puntoInterseccion;
 }
 
-
-// Calcular intersección de un Rayo con una esfera
-// Punto Esfera::interseccion(const Rayo& rayo) const {
-//     Punto centroEsfera = getCentro();
-//     double radioEsfera = getRadio();
-
-//     Direccion direccionRayo = rayo.getDireccion();
-//     double dx = direccionRayo.x;
-//     double dy = direccionRayo.y;
-//     double dz = direccionRayo.z;
-
-//     Punto origenRayo = rayo.getOrigen();
-//     double xo = origenRayo.x;
-//     double yo = origenRayo.y;
-//     double zo = origenRayo.z;
-
-//     double a = dx * dx + dy * dy + dz * dz;
-//     double b = 2 * (dx * (xo - centroEsfera.x) + dy * (yo - centroEsfera.y) + dz * (zo - centroEsfera.z));
-//     double c = (xo - centroEsfera.x) * (xo - centroEsfera.x) + (yo - centroEsfera.y) * (yo - centroEsfera.y) + (zo - centroEsfera.z) * (zo - centroEsfera.z) - radioEsfera * radioEsfera;
-
-//     double discriminante = b * b - 4 * a * c;
-
-//     if (discriminante < 0) {
-//         // El Rayo no intersecta la esfera.
-//         // Puedes manejar este caso de acuerdo a tus necesidades.
-//         // Por ejemplo, lanzando una excepción o devolviendo un valor especial.
-//         // Aquí, se devuelve un punto fuera del mundo (-infinito) como indicador de no intersección.
-//         return Punto(-INFINITY, -INFINITY, -INFINITY);
-//     }
-
-//     double t1 = (-b + sqrt(discriminante)) / (2 * a);
-//     double t2 = (-b - sqrt(discriminante)) / (2 * a);
-
-//     if (abs(t1) == abs(t2)) {
-//         Punto puntoInterseccion = origenRayo + direccionRayo * t1;
-//         return puntoInterseccion;
-//     }
-//     else {
-//         double t;
-//         if (abs(t1) > abs(t2)) {
-//             t = t2;
-//         }
-//         else {
-//             t = t1;
-//         }
-//         cout << "t: " << t << endl;
-
-//         // Calcular el punto de intersección
-//         Punto puntoInterseccion = origenRayo + direccionRayo * t;
-//         return puntoInterseccion;
-//     }
-// }
-
-bool solveQuadratic(const float& a, const float& b, const float& c, float& x0, float& x1) {
+// Función para resolver una ecuación cuadrática
+bool resolverCuadratica(const float& a, const float& b, const float& c, float& x0, float& x1) {
     float discr = (b * b) - (4 * a * c);
     if (discr < 0) {
         return false;
@@ -182,29 +118,29 @@ Punto Esfera::interseccion(const Rayo& rayo) const {
     // Convierte el coseno del ángulo a grados
     float angulo = acos(coseno_angulo) * (180.0 / M_PI);
 
+    // Si el ángulo es menor a 90 grados, el rayo va hacia atrás
     if (angulo < 90) {
-        cout << "Ángulo: " << angulo << " grados" << endl;
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
+    // Calcula el discriminante de la ecuación cuadrática
     float a = direccionRayo * direccionRayo;
     float b = 2 * (direccionRayo * L);
     float c = (L * L) - (radio * radio);
 
-    // Usa la función solveQuadratic para calcular las soluciones
-    if (!solveQuadratic(a, b, c, t0, t1)) {
+    // Usa la función resolverCuadratica para calcular las soluciones
+    if (!resolverCuadratica(a, b, c, t0, t1)) {
         // No hay intersección
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
+    // Devolver la solución más cercana al origen del rayo
     float t = (t0 < t1) ? t0 : t1;
 
     Punto puntoInterseccion = rayo.getOrigen() + direccionRayo * t;
 
     return puntoInterseccion;
 }
-
-
 
 // Calcular intersección de un Rayo con un Triangulo
 Punto Triangulo::interseccion(const Rayo& rayo) const {

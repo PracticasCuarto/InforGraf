@@ -15,7 +15,7 @@ make
 # Comprobamos si la compilación fue exitosa
 if [ $? -eq 0 ]; then
   # Ejecutamos el programa "tests"
-  ./exec/tests
+  ./exec/main
 else
   echo "La compilación ha fallado. Por favor, corrige los errores antes de ejecutar el programa."
 fi

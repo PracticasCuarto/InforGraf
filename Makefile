@@ -11,10 +11,10 @@ SRCDIR = src
 
 # Archivos fuente y ejecutable
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
-SRCS := $(filter-out $(SRCDIR)/tests.cpp, $(SRCS))
-SRCS += tests.cpp
+SRCS := $(filter-out $(SRCDIR)/main.cpp, $(SRCS))
+SRCS += main.cpp
 OBJS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-EXEC = $(BINDIR)/tests
+EXEC = $(BINDIR)/main
 
 all: $(BINDIR) $(OBJDIR) $(EXEC)
 
