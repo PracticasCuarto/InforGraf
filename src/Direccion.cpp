@@ -66,10 +66,25 @@ Direccion Direccion::normalizar() const {
 
 // Multiplicación de una direccion por una matriz
 Direccion Direccion::multiplicarMatriz(const Matriz matriz) const {
-    return Direccion((x * matriz(0, 0) + y * matriz(0, 1) + z * matriz(0, 2) + matriz(0, 3)),
-        (x * matriz(1, 0) + y * matriz(1, 1) + z * matriz(1, 2) + matriz(1, 3)),
-        (x * matriz(2, 0) + y * matriz(2, 1) + z * matriz(2, 2) + matriz(2, 3)));
+    return Direccion((x * matriz(0, 0) + y * matriz(0, 1) + z * matriz(0, 2)),
+        (x * matriz(1, 0) + y * matriz(1, 1) + z * matriz(1, 2)),
+        (x * matriz(2, 0) + y * matriz(2, 1) + z * matriz(2, 2)));
 }
+
+// // Multiplicación de una direccion por una matriz
+// Direccion Direccion::multiplicarMatriz(const Matriz matriz) const {
+//     return Direccion((x * matriz(0, 0) + x * matriz(0, 1) + x * matriz(0, 2) + matriz(0, 3)),
+//         (y * matriz(1, 0) + y * matriz(1, 1) + y * matriz(1, 2) + matriz(1, 3)),
+//         (z * matriz(2, 0) + z * matriz(2, 1) + z * matriz(2, 2) + matriz(2, 3)));
+// }
+
+// Multiplicación de una direccion por una matriz
+// Direccion Direccion::multiplicarMatriz(const Matriz matriz) const {
+//     return Direccion((x * matriz(0, 0) + x * matriz(1, 0) + x * matriz(2, 0) + x * matriz(3, 0)),
+//         (y * matriz(0, 1) + y * matriz(1, 1) + y * matriz(2, 1) + y * matriz(3, 1)),
+//         (z * matriz(0, 2) + z * matriz(1, 2) + z * matriz(2, 2) + z * matriz(3, 2)));
+// }
+
 
 // Operaciones con matrices
 // Operación de tranlación de un punto con una matriz

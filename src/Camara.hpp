@@ -20,8 +20,6 @@ public:
 
     int width, height;
 
-    int fov;
-
     // Constructor
     Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin);
 
@@ -42,7 +40,7 @@ public:
     int getHeight() const;
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
-    ImagenHDR renderizar(vector<Geometria> objetos);
+    ImagenHDR renderizar(vector<Geometria*> objetos);
 
 
 };

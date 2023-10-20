@@ -25,6 +25,8 @@ public:
     // Constructor completo
     Geometria();
 
+    virtual Punto interseccion(const Rayo& rayo) const = 0;
+
     // Getters del color
     pixel getColor() const;
 
@@ -49,6 +51,7 @@ public:
     Punto getCentro() const;
     double getRadio() const;
 
+    Punto interseccion(const Rayo& rayo) const;
 };
 
 // Clase Plano que hereda de Geometria
@@ -63,6 +66,8 @@ public:
     // Getters del plano
     double getDistanciaOrigen() const;
     Direccion getNormal() const;
+
+    Punto interseccion(const Rayo& rayo) const;
 };
 
 class Triangulo : public Geometria {
@@ -79,6 +84,8 @@ public:
     Punto getVertice2() const;
     Punto getVertice3() const;
 
+    Punto interseccion(const Rayo& rayo) const;
+
 };
 
 class Rayo {
@@ -92,18 +99,6 @@ public:
     // Getters del rayo
     Punto getOrigen() const;
     Direccion getDireccion() const;
-
-    // Calcular intersección con un plano
-    Punto interseccion(const Plano& plano) const;
-
-    // Calcular intersección con una esfera
-    Punto interseccion(const Esfera& esfera) const;
-
-    // Calcular intersección con un triangulo
-    Punto interseccion(const Triangulo& triangulo) const;
-
-    // Calcular intersección con un objeto
-    Punto interseccion(const Geometria& objeto) const;
 };
 
 #endif
