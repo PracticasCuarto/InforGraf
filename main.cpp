@@ -57,9 +57,10 @@ int main() {
     planoDerecha->setColor(verde);
 
     pixel blanco = Pixel(255, 255, 255);
+    pixel negro = Pixel(0, 0, 0);
     plano->setColor(blanco);
 
-    pixel naranja = Pixel(255, 165, 0);
+    pixel naranja = Pixel(255, 128, 0);
     techo->setColor(naranja);
     suelo->setColor(naranja);
 

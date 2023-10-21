@@ -3,12 +3,21 @@
 #include <string> 
 #include <thread>
 #include <mutex>
+#include <random>
 #include "Matriz.hpp"
 
 using namespace std;
 
 // Mutex para proteger la matriz de imagen compartida
 std::mutex mtx;
+
+// Función para generar un número aleatorio en el rango [0, 1)
+double random_double() {
+    static std::random_device rd;
+    static std::mt19937 generator(rd()); // Inicializa el generador con una semilla aleatoria
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generator);
+}
 
 Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin)
     : up(_up), left(_left), forward(_forward), origin(_origin), base(
@@ -18,14 +27,13 @@ Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin
         0, 0, 0, 1
     ) {
     // Resto del código del constructor
-    width = 256;
-    height = 256;
+    width = 512;
+    height = 512;
 
     // Normalizar vectores left y up
     left = left.normalizar();
     up = up.normalizar();
 }
-
 
 // Función para calcular el color de un píxel
 pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const {
@@ -44,25 +52,52 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& 
     }
     return color;
 }
-// Función para calcular una región de píxeles utilizando múltiples hilos
+
+
+// Función para calcular el color de un píxel con anti-aliasing
+pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int j) const {
+    pixel colorSum = Pixel(0, 0, 0);
+
+    for (int n = 0; n < numRayos; n++) {
+        // Lanzar rayos a lugares aleatorios dentro del píxel
+        // double y = 1.0 - (2.0 * (i + random_double()) / height);
+        // double x = 1.0 - (2.0 * (j + random_double()) / width);
+        double y = 1.0 - (2.0 * i / height - (random_double() / height));
+        double x = 1.0 - (2.0 * j / width - (random_double() / width));
+        Direccion direccionRayo = Direccion(x, y, 1);
+
+        // Cambiar a la base del mundo la dirección del rayo
+        Direccion direccionRayoBase = direccionRayo.cambioBase(base);
+
+        Rayo rayo = Rayo(origin, direccionRayoBase);
+        pixel color = calcularColorPixel(objetos, rayo);
+
+        // Sumar el color al resultado
+        colorSum.r += color.r;
+        colorSum.g += color.g;
+        colorSum.b += color.b;
+    }
+
+    // Calcular el promedio de los colores
+    colorSum.r /= numRayos;
+    colorSum.g /= numRayos;
+    colorSum.b /= numRayos;
+
+    return colorSum;
+}
+
+
+// Función para calcular una región de píxeles utilizando múltiples hilos con anti-aliasing
 void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
     for (int i = inicioFila; i < finFila; i++) {
         for (int j = 0; j < width; j++) {
-            double y = 1.0 - (2.0 * i / height);
-            double x = 1.0 - (2.0 * j / width);
-            Direccion direccionRayo = Direccion(x, y, 1);
-
-            // Cambiar a la base del mundo la dirección del rayo
-            Direccion direccionRayoBase = direccionRayo.cambioBase(base);
-
-            Rayo rayo = Rayo(origin, direccionRayoBase);
-            pixel color = calcularColorPixel(objetos, rayo);
+            pixel color = calcularColorPixelAA(objetos, i, j);
 
             // Agregar el color del objeto a la matriz
             int index = 3 * j;
-            matrizImagen[i][index] = color.r;
-            matrizImagen[i][index + 1] = color.g;
-            matrizImagen[i][index + 2] = color.b;
+            matrizImagen[i][index] = color.r / 255;
+            matrizImagen[i][index + 1] = color.g / 255;
+            matrizImagen[i][index + 2] = color.b / 255;
         }
     }
 }

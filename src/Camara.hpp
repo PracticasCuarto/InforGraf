@@ -12,6 +12,8 @@
 #include "Matriz.hpp"
 using namespace std;
 
+const int numRayos = 64;
+
 class Camara {
 private:
     Direccion left, up, forward;
@@ -43,7 +45,11 @@ public:
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
     ImagenHDR renderizar(vector<Geometria*> objetos);
 
+    // Función para calcular el color de un píxel
     pixel calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const;
+
+    // Función para calcular el color de un píxel con anti-aliasing
+    pixel calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int j) const;
 
     // Función para calcular una región de píxeles utilizando múltiples hilos
     void calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
