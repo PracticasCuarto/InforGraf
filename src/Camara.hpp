@@ -42,11 +42,11 @@ public:
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
     ImagenHDR renderizar(vector<Geometria*> objetos);
 
+    pixel calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const;
 
-    void CalcularPixel(const vector<Geometria *> &objetos, const Matriz &base, vector<double> &colorPixelFila, double y,
-                       double x) const;
+    // Función para calcular una fila de píxeles
+    void calcularFilaDePixeles(const vector<Geometria*>& objetos, const Matriz& base, vector<double>& colorPixelFila, double y) const;
 
-    pixel calcularColorPixel(const vector<Geometria *> &objetos, const Rayo &rayo) const;
 };
 
 #endif

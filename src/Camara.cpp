@@ -18,6 +18,45 @@ Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin
     up = up.normalizar();
 }
 
+// Función para calcular el color de un píxel
+pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const {
+    pixel color = Pixel(0, 0, 0);
+    float distancia = INFINITY;
+
+    for (int k = 0; k < objetos.size(); k++) {
+        Punto puntoInterseccion = objetos[k]->interseccion(rayo);
+        if (puntoInterseccion.x != -INFINITY) {
+            float distanciaInterseccion = origin.distancia(puntoInterseccion);
+            if (distanciaInterseccion <= distancia) {
+                distancia = distanciaInterseccion;
+                color = objetos[k]->getColor();
+            }
+        }
+    }
+    return color;
+}
+
+// Función para calcular una fila de píxeles
+void Camara::calcularFilaDePixeles(const vector<Geometria*>& objetos, const Matriz& base, vector<double>& colorPixelFila, double y) const {
+    int inicio = 0;
+    int fin = width;
+
+    for (int j = inicio; j < fin; j++) {
+        double x = 1.0 - (2.0 * j / width);
+        Direccion direccionRayo = Direccion(x, y, 1);
+
+        // Cambiar a la base del mundo la direccion del rayo
+        Direccion direccionRayoBase = direccionRayo.cambioBase(base);
+
+        Rayo rayo = Rayo(origin, direccionRayoBase);
+        pixel color = calcularColorPixel(objetos, rayo);
+
+        // Agregar el punto a la matriz el color del objeto (si no tiene valor ponerlo a negro)
+        colorPixelFila.push_back(color.r);
+        colorPixelFila.push_back(color.g);
+        colorPixelFila.push_back(color.b);
+    }
+}
 
 // Función para renderizar una escena
 ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
@@ -34,19 +73,10 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
         left.z, up.z, forward.z, origin.z,
         0, 0, 0, 1);
 
-    // Recorrer el alto del plano de la camara
     for (int i = 0; i < height; i++) {
-        // Recorrer el alto del plano de la cámara
         vector<double> colorPixelFila;
         double y = 1.0 - (2.0 * i / height);
-        int inicio = 0;
-        int fin = width;
-        for (int j = inicio; j < fin; j++) {
-            // Calcular i y j normalizados en el rango [-1, 1]
-            double x = 1.0 - (2.0 * j / width);
-            CalcularPixel(objetos, base, colorPixelFila, y, x);
-
-        }
+        calcularFilaDePixeles(objetos, base, colorPixelFila, y);
         matrizImagen.push_back(colorPixelFila);
     }
 
@@ -55,42 +85,3 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
     return imagen;
 }
 
-void Camara::CalcularPixel(const vector<Geometria*>& objetos, const Matriz& base, vector<double>& colorPixelFila, double y,
-    double x) const {// Calcular la direccion del rayo
-    Direccion direccionRayo = Direccion(x, y, 1);
-
-    // Cambiar a la base del mundo la direccion del rayo
-    Direccion direccionRayoBase = direccionRayo.cambioBase(base);
-
-    Rayo rayo = Rayo(origin, direccionRayoBase);
-    pixel color = calcularColorPixel(objetos, rayo);
-
-    // Agregar el punto a la matriz el color del objeto (si no tiene valor ponerlo a negro)
-    colorPixelFila.push_back(color.r);
-    colorPixelFila.push_back(color.g);
-    colorPixelFila.push_back(color.b);
-}
-
-pixel Camara::calcularColorPixel(const vector<Geometria *> &objetos,
-                                 const Rayo &rayo) const {// color del objeto con el que colisiona el rayo
-    pixel color = Pixel(0,0,0);
-    float distancia = INFINITY;
-
-    // Para todos los objetos de la escena calcular la interseccion y devolver la que mas cerca este
-// de la camara
-    for (int k = 0; k < objetos.size(); k++) {
-        // cout << "Calculando interseccion con un objeto" << endl;
-        Punto puntoInterseccion = objetos[k]->interseccion(rayo);
-        if (puntoInterseccion.x != -INFINITY) {
-            // Calcular la distancia entre el origen de la camara y el punto de interseccion
-            float distanciaInterseccion = origin.distancia(puntoInterseccion);
-            if (distanciaInterseccion <= distancia) {
-                // cout << "colision" << endl;
-                distancia = distanciaInterseccion;
-                color = objetos[k]->getColor();
-
-            }
-        }
-    }
-    return color;
-}
