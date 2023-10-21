@@ -43,6 +43,10 @@ public:
     ImagenHDR renderizar(vector<Geometria*> objetos);
 
 
+    void CalcularPixel(const vector<Geometria *> &objetos, const Matriz &base, vector<double> &colorPixelFila, double y,
+                       double x) const;
+
+    pixel calcularColorPixel(const vector<Geometria *> &objetos, const Rayo &rayo) const;
 };
 
 #endif

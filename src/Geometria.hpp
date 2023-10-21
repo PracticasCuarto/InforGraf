@@ -14,6 +14,8 @@ struct pixel {
     float b;
 };
 
+// Constructor para pixel
+pixel Pixel(float r, float g, float b);
 
 class Rayo;
 

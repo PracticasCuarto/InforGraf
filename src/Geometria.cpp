@@ -5,6 +5,15 @@
 
 using namespace std;
 
+// Constructor para pixel
+pixel Pixel(float r, float g, float b) {
+    pixel p;
+    p.r = r;
+    p.g = g;
+    p.b = b;
+    return p;
+}
+
 // Constructor de Geometria
 Geometria::Geometria() {}
 
