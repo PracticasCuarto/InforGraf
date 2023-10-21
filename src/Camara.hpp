@@ -16,9 +16,10 @@ class Camara {
 private:
     Direccion left, up, forward;
     Punto origin;
+    Matriz base;
 public:
-
     int width, height;
+
 
     // Constructor
     Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin);
@@ -44,8 +45,8 @@ public:
 
     pixel calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const;
 
-    // Función para calcular una fila de píxeles
-    void calcularFilaDePixeles(const vector<Geometria*>& objetos, const Matriz& base, vector<double>& colorPixelFila, double y) const;
+    // Función para calcular una fila de píxeles utilizando múltiples hilos
+    void calcularFilaDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, double y, int fila) const;
 
 };
 

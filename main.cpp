@@ -41,45 +41,27 @@ int main() {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0));
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    pixel color;
-    color.r = 128;
-    color.g = 0;
-    color.b = 128;
-    esfera->setColor(color);
+    pixel rosa = Pixel(255, 0, 255);
+    esfera->setColor(rosa);
 
     // Color azul
-    pixel color2;
-    color2.r = 0;
-    color2.g = 0;
-    color2.b = 255;
-    esfera2->setColor(color2);
+    pixel azul = Pixel(0, 0, 255);
+    esfera2->setColor(azul);
 
     // Color rojo
-    pixel color3;
-    color3.r = 255;
-    color3.g = 0;
-    color3.b = 0;
-    planoIzquierda->setColor(color3);
+    pixel rojo = Pixel(255, 0, 0);
+    planoIzquierda->setColor(rojo);
 
     // Color verde
-    pixel color4;
-    color4.r = 0;
-    color4.g = 255;
-    color4.b = 0;
-    planoDerecha->setColor(color4);
+    pixel verde = Pixel(0, 255, 0);
+    planoDerecha->setColor(verde);
 
-    pixel blanco;
-    blanco.r = 255;
-    blanco.g = 255;
-    blanco.b = 255;
+    pixel blanco = Pixel(255, 255, 255);
     plano->setColor(blanco);
 
-    pixel negro;
-    negro.r = 0;
-    negro.g = 70;
-    negro.b = 128;
-    techo->setColor(negro);
-    suelo->setColor(negro);
+    pixel naranja = Pixel(255, 165, 0);
+    techo->setColor(naranja);
+    suelo->setColor(naranja);
 
     vector<Geometria*> objetos = vector<Geometria*>();
     objetos.push_back(esfera);
