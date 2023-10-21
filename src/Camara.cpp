@@ -44,34 +44,30 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& 
     }
     return color;
 }
-// Función para calcular una fila de píxeles utilizando múltiples hilos
-void Camara::calcularFilaDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, double y, int fila) const {
-    int inicio = 0;
-    int fin = width;
-    vector<double> colorPixelFila;
+// Función para calcular una región de píxeles utilizando múltiples hilos
+void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
+    for (int i = inicioFila; i < finFila; i++) {
+        for (int j = 0; j < width; j++) {
+            double y = 1.0 - (2.0 * i / height);
+            double x = 1.0 - (2.0 * j / width);
+            Direccion direccionRayo = Direccion(x, y, 1);
 
-    for (int j = inicio; j < fin; j++) {
-        double x = 1.0 - (2.0 * j / width);
-        Direccion direccionRayo = Direccion(x, y, 1);
+            // Cambiar a la base del mundo la dirección del rayo
+            Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
-        // Cambiar a la base del mundo la dirección del rayo
-        Direccion direccionRayoBase = direccionRayo.cambioBase(base);
+            Rayo rayo = Rayo(origin, direccionRayoBase);
+            pixel color = calcularColorPixel(objetos, rayo);
 
-        Rayo rayo = Rayo(origin, direccionRayoBase);
-        pixel color = calcularColorPixel(objetos, rayo);
-
-        // Agregar el color del objeto a la fila
-        colorPixelFila.push_back(color.r);
-        colorPixelFila.push_back(color.g);
-        colorPixelFila.push_back(color.b);
+            // Agregar el color del objeto a la matriz
+            int index = 3 * j;
+            matrizImagen[i][index] = color.r;
+            matrizImagen[i][index + 1] = color.g;
+            matrizImagen[i][index + 2] = color.b;
+        }
     }
-
-    // Bloquear el mutex antes de añadir la fila a la matriz de imagen
-    std::lock_guard<std::mutex> lock(mtx);
-    matrizImagen[fila] = colorPixelFila;
 }
 
-// Función para renderizar una escena utilizando hilos
+
 ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
     unsigned int numCores = std::thread::hardware_concurrency();
     if (numCores == 0) {
@@ -80,13 +76,13 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
     }
 
     vector<vector<double>> matrizImagen(height, vector<double>(3 * width)); // Inicializar matriz de imagen
-
     vector<thread> threads;
 
-    for (int i = 0; i < height; i++) {
-        double y = 1.0 - (2.0 * i / height);
-        // Iniciar un hilo para calcular una fila de píxeles
-        threads.emplace_back(&Camara::calcularFilaDePixeles, this, std::ref(objetos), std::ref(matrizImagen), y, i);
+    int filasPorHilo = height / numCores;
+    for (int i = 0; i < numCores; i++) {
+        int inicioFila = i * filasPorHilo;
+        int finFila = (i == numCores - 1) ? height : (i + 1) * filasPorHilo;
+        threads.emplace_back(&Camara::calcularRegionDePixeles, this, std::ref(objetos), std::ref(matrizImagen), inicioFila, finFila);
     }
 
     // Esperar a que todos los hilos terminen

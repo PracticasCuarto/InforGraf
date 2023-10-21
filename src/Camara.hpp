@@ -45,8 +45,8 @@ public:
 
     pixel calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const;
 
-    // Función para calcular una fila de píxeles utilizando múltiples hilos
-    void calcularFilaDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, double y, int fila) const;
+    // Función para calcular una región de píxeles utilizando múltiples hilos
+    void calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
 };
 
