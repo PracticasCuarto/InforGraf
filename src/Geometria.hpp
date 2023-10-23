@@ -49,6 +49,9 @@ public:
     // Constructor de la esfera
     Esfera(Punto _centro, double _radio);
 
+    // Constructor de la esfera con color
+    Esfera(Punto _centro, double _radio, pixel _color);
+
     // Getters de la esfera
     Punto getCentro() const;
     double getRadio() const;
@@ -64,6 +67,8 @@ private:
 public:
     // Constructor del plano
     Plano(double _distanciaOrigen, Direccion _normal);
+    // Constructor plano con color
+    Plano(double _distanciaOrigen, Direccion _normal, pixel _color);
 
     // Getters del plano
     double getDistanciaOrigen() const;
@@ -80,6 +85,9 @@ private:
 public:
     // Constructor del triangulo
     Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3);
+
+    // Constructor del triangulo con color
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, pixel _color);
 
     // Getters del triangulo
     Punto getVertice1() const;

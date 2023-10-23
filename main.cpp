@@ -41,37 +41,60 @@ int main() {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0));
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
+    pixel amarillo = Pixel(255, 255, 0);
     pixel rosa = Pixel(255, 0, 255);
-    esfera->setColor(rosa);
-
-    // Color azul
     pixel azul = Pixel(0, 0, 255);
-    esfera2->setColor(azul);
-
-    // Color rojo
     pixel rojo = Pixel(255, 0, 0);
-    planoIzquierda->setColor(rojo);
-
-    // Color verde
     pixel verde = Pixel(0, 255, 0);
-    planoDerecha->setColor(verde);
-
     pixel blanco = Pixel(255, 255, 255);
     pixel negro = Pixel(0, 0, 0);
-    plano->setColor(blanco);
-
     pixel naranja = Pixel(255, 128, 0);
-    techo->setColor(naranja);
-    suelo->setColor(naranja);
+
+
+    esfera->setColor(rosa);
+    esfera2->setColor(azul);
+    plano->setColor(blanco);
+    techo->setColor(rojo);
+    suelo->setColor(rojo);
+    plano->setColor(amarillo);
+    planoIzquierda->setColor(amarillo);
+    planoDerecha->setColor(amarillo);
 
     vector<Geometria*> objetos = vector<Geometria*>();
-    objetos.push_back(esfera);
-    objetos.push_back(esfera2);
-    objetos.push_back(plano);
-    objetos.push_back(planoDerecha);
-    objetos.push_back(planoIzquierda);
-    objetos.push_back(techo);
-    objetos.push_back(suelo);
+    // objetos.push_back(esfera);
+    // objetos.push_back(esfera2);
+    // objetos.push_back(plano);
+    // objetos.push_back(planoDerecha);
+    // objetos.push_back(planoIzquierda);
+    // objetos.push_back(techo);
+    // objetos.push_back(suelo);
+
+    // Triangulo* triangulo = new Triangulo(Punto(0.0, 0.0, 0.0), Punto(1.0, 0.0, 0.0), Punto(0.0, 1.0, 0.0), rosa);
+
+    // objetos.push_back(triangulo);
+
+    // Definir los vértices de los triángulos
+    Punto vertice1(-1.5, 1.0, 0.0);
+    Punto vertice2(-1.5, -1.0, 0.0);
+    Punto vertice3(0.0, 1.0, 0.0);
+
+    Punto vertice4(0.0, 1.0, 0.0);
+    Punto vertice5(-1.5, -1.0, 0.0);
+    Punto vertice6(0.0, -1.0, 0.0);
+
+    Punto vertice7(0.0, 1.0, 0.0);
+    Punto vertice8(0.0, -1.0, 0.0);
+    Punto vertice9(1.5, 1.0, 0.0);
+
+    // Crear triángulos con los vértices y colores
+    Triangulo* triangulo1 = new Triangulo(vertice1, vertice2, vertice3, rojo);
+    Triangulo* triangulo2 = new Triangulo(vertice4, vertice5, vertice6, amarillo);
+    Triangulo* triangulo3 = new Triangulo(vertice7, vertice8, vertice9, rojo);
+
+    objetos.push_back(triangulo1);
+    objetos.push_back(triangulo2);
+    objetos.push_back(triangulo3);
+
     ImagenHDR imagenEscena = camara.renderizar(objetos);
     escritor.escribirImagenHDR("ppms/imagenEscena.ppm", imagenEscena);
     return 0;
