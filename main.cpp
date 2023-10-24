@@ -54,11 +54,11 @@ int main() {
     esfera->setColor(rosa);
     esfera2->setColor(azul);
     plano->setColor(blanco);
-    techo->setColor(rojo);
+    techo->setColor(naranja);
     suelo->setColor(rojo);
-    plano->setColor(amarillo);
-    planoIzquierda->setColor(amarillo);
-    planoDerecha->setColor(amarillo);
+    plano->setColor(blanco);
+    planoIzquierda->setColor(verde);
+    planoDerecha->setColor(rojo);
 
     vector<Geometria*> objetos = vector<Geometria*>();
     // objetos.push_back(esfera);
@@ -73,27 +73,36 @@ int main() {
 
     // objetos.push_back(triangulo);
 
-    // Definir los vértices de los triángulos
-    Punto vertice1(-1.5, 1.0, 0.0);
-    Punto vertice2(-1.5, -1.0, 0.0);
-    Punto vertice3(0.0, 1.0, 0.0);
+    // Banda de arriba
+    Punto vertice1(-1.5, 3.0, 0.0);
+    Punto vertice2(-1.5, 0.5, 0.0);
+    Punto vertice3(3.0, 1.5, 0.0);
+    Punto vertice4(3.0, 0.5, 0.0);
 
-    Punto vertice4(0.0, 1.0, 0.0);
-    Punto vertice5(-1.5, -1.0, 0.0);
-    Punto vertice6(0.0, -1.0, 0.0);
+    // Banda de abajo
+    Punto vertice5(-1.5, -0.5, 0.0);
+    Punto vertice6(-1.5, -10.0, 0.0);
+    Punto vertice7(3.0, -0.5, 0.0);
 
-    Punto vertice7(0.0, 1.0, 0.0);
+    Plano* FondoAmarillo = new Plano(1.0, Direccion(0.0, 0.0, -1.0), amarillo);
+
     Punto vertice8(0.0, -1.0, 0.0);
     Punto vertice9(1.5, 1.0, 0.0);
 
     // Crear triángulos con los vértices y colores
     Triangulo* triangulo1 = new Triangulo(vertice1, vertice2, vertice3, rojo);
-    Triangulo* triangulo2 = new Triangulo(vertice4, vertice5, vertice6, amarillo);
-    Triangulo* triangulo3 = new Triangulo(vertice7, vertice8, vertice9, rojo);
+    Triangulo* triangulo2 = new Triangulo(vertice2, vertice3, vertice4, rojo);
+    Triangulo* triangulo3 = new Triangulo(vertice5, vertice6, vertice7, rojo);
 
     objetos.push_back(triangulo1);
     objetos.push_back(triangulo2);
     objetos.push_back(triangulo3);
+    objetos.push_back(FondoAmarillo);
+
+
+    // ----PRUEBA------
+    // Esquina izquierda = (-1.167, 1.167, 0.0)
+
 
     ImagenHDR imagenEscena = camara.renderizar(objetos);
     escritor.escribirImagenHDR("ppms/imagenEscena.ppm", imagenEscena);

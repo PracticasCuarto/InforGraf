@@ -240,15 +240,11 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
     Punto v2 = getVertice2();
     Punto v3 = getVertice3();
 
-    // Calcular el vector normal del triángulo
-    Direccion normal = (v2 - v1).cross(v3 - v1).normalizar();
-
     // Calcular el vector de dirección del rayo y su origen
     Direccion rayDirection = rayo.getDireccion();
     Punto rayOrigin = rayo.getOrigen();
 
     const float EPSILON = 0.0000001;
-    Direccion vertex0 = v1 - rayOrigin;
     Direccion edge1 = v2 - v1;
     Direccion edge2 = v3 - v1;
 
