@@ -13,6 +13,7 @@
 #include "src/ToneMapping.hpp"
 #include "src/Geometria.hpp"
 #include "src/Camara.hpp"
+#include "src/FuenteLuz.hpp"
 
 
 int main() {
@@ -49,62 +50,68 @@ int main() {
     pixel blanco = Pixel(255, 255, 255);
     pixel negro = Pixel(0, 0, 0);
     pixel naranja = Pixel(255, 128, 0);
-
+    pixel gris = Pixel(155, 155, 155);
+    pixel turquesa = Pixel(115, 230, 250);
 
     esfera->setColor(rosa);
-    esfera2->setColor(azul);
-    plano->setColor(blanco);
-    techo->setColor(naranja);
-    suelo->setColor(rojo);
-    plano->setColor(blanco);
-    planoIzquierda->setColor(verde);
-    planoDerecha->setColor(rojo);
+    esfera2->setColor(turquesa);
+    plano->setColor(gris);
+    techo->setColor(gris);
+    suelo->setColor(gris);
+    planoIzquierda->setColor(rojo);
+    planoDerecha->setColor(verde);
 
     vector<Geometria*> objetos = vector<Geometria*>();
-    // objetos.push_back(esfera);
-    // objetos.push_back(esfera2);
-    // objetos.push_back(plano);
-    // objetos.push_back(planoDerecha);
-    // objetos.push_back(planoIzquierda);
-    // objetos.push_back(techo);
-    // objetos.push_back(suelo);
+    objetos.push_back(esfera);
+    objetos.push_back(esfera2);
+    objetos.push_back(plano);
+    objetos.push_back(planoDerecha);
+    objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
+    objetos.push_back(suelo);
 
     // Triangulo* triangulo = new Triangulo(Punto(0.0, 0.0, 0.0), Punto(1.0, 0.0, 0.0), Punto(0.0, 1.0, 0.0), rosa);
 
     // objetos.push_back(triangulo);
 
     // Banda de arriba
-    Punto vertice1(-1.5, 3.0, 0.0);
-    Punto vertice2(-1.5, 0.5, 0.0);
-    Punto vertice3(3.0, 1.5, 0.0);
-    Punto vertice4(3.0, 0.5, 0.0);
+    // Punto vertice1(-1.5, 3.0, 0.0);
+    // Punto vertice2(-1.5, 0.5, 0.0);
+    // Punto vertice3(3.0, 1.5, 0.0);
+    // Punto vertice4(3.0, 0.5, 0.0);
 
-    // Banda de abajo
-    Punto vertice5(-1.5, -0.5, 0.0);
-    Punto vertice6(-1.5, -10.0, 0.0);
-    Punto vertice7(3.0, -0.5, 0.0);
+    // // Banda de abajo
+    // Punto vertice5(-1.5, -0.5, 0.0);
+    // Punto vertice6(-1.5, -10.0, 0.0);
+    // Punto vertice7(3.0, -0.5, 0.0);
 
-    Plano* FondoAmarillo = new Plano(1.0, Direccion(0.0, 0.0, -1.0), amarillo);
+    // Plano* FondoAmarillo = new Plano(1.0, Direccion(0.0, 0.0, -1.0), amarillo);
 
-    Punto vertice8(0.0, -1.0, 0.0);
-    Punto vertice9(1.5, 1.0, 0.0);
+    // Punto vertice8(0.0, -1.0, 0.0);
+    // Punto vertice9(1.5, 1.0, 0.0);
 
-    // Crear triángulos con los vértices y colores
-    Triangulo* triangulo1 = new Triangulo(vertice1, vertice2, vertice3, rojo);
-    Triangulo* triangulo2 = new Triangulo(vertice2, vertice3, vertice4, rojo);
-    Triangulo* triangulo3 = new Triangulo(vertice5, vertice6, vertice7, rojo);
+    // // Crear triángulos con los vértices y colores
+    // Triangulo* triangulo1 = new Triangulo(vertice1, vertice2, vertice3, rojo);
+    // Triangulo* triangulo2 = new Triangulo(vertice2, vertice3, vertice4, rojo);
+    // Triangulo* triangulo3 = new Triangulo(vertice5, vertice6, vertice7, rojo);
 
-    objetos.push_back(triangulo1);
-    objetos.push_back(triangulo2);
-    objetos.push_back(triangulo3);
-    objetos.push_back(FondoAmarillo);
-
+    // objetos.push_back(triangulo1);
+    // objetos.push_back(triangulo2);
+    // objetos.push_back(triangulo3);
+    // objetos.push_back(FondoAmarillo);
 
     // ----PRUEBA------
     // Esquina izquierda = (-1.167, 1.167, 0.0)
 
+    FuenteLuz* blanca = new FuenteLuz(Punto(-0.3, 0.5, 0), Pixel(255, 255, 255));
+    FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Pixel(0, 0, 255));
+    vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
+    fuentes.push_back(blanca);
+    fuentes.push_back(otra);
 
-    ImagenHDR imagenEscena = camara.renderizar(objetos);
-    escritor.escribirImagenHDR("ppms/imagenEscena.ppm", imagenEscena);
+    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes);
+    ToneMapping toneMapping = ToneMapping(imagenEscena);
+    toneMapping.ecualizacion();
+    escritor.escribirImagenHDR("ppms/imagenEscena.ppm", toneMapping.imagen);
     return 0;
 }

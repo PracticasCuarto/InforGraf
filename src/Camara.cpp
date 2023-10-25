@@ -35,27 +35,116 @@ Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin
     up = up.normalizar();
 }
 
+pixel multiplicarColores(const pixel& color1, const pixel& color2) {
+    return Pixel(color1.r * color2.r, color1.g * color2.g, color1.b * color2.b);
+}
+
+pixel calcularMaterial(const pixel& color, const Direccion& wi, const Direccion& wo, const Punto& puntoInterseccion) {
+    // Dividir cada componente del color entre pi
+    double r = color.r / M_PI;
+    double g = color.g / M_PI;
+    double b = color.b / M_PI;
+
+    return Pixel(r, g, b);
+}
+
 // Función para calcular el color de un píxel
-pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const {
+pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo) const {
     pixel color = Pixel(0, 0, 0);
     float distancia = INFINITY;
-
+    Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
+    Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+    int indice = -1;
     for (int k = 0; k < objetos.size(); k++) {
-        Punto puntoInterseccion = objetos[k]->interseccion(rayo);
-        if (puntoInterseccion.x != -INFINITY) {
-            float distanciaInterseccion = origin.distancia(puntoInterseccion);
+        Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
+        if (puntoInterseccionObjeto.x != -INFINITY) {
+            float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
             if (distanciaInterseccion <= distancia) {
                 distancia = distanciaInterseccion;
                 color = objetos[k]->getColor();
+                puntoInterseccion = puntoInterseccionObjeto;
+                normal = objetos[k]->getNormal(puntoInterseccion);
+                indice = k;
             }
         }
     }
-    return color;
+
+    pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice);
+
+    return resultado;
+}
+
+// Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
+bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInterseccion, const Direccion& direccion, int indice, const Punto& origenFuente) {
+    // Calcular la distancia entre el punto y el origen de la fuente de luz
+    double distancia = puntoInterseccion.distancia(origenFuente);
+    Rayo rayo = Rayo(puntoInterseccion, direccion);
+
+    for (int k = 0; k < objetos.size(); k++) {
+        // Si es la clase plano o triangulo saltar la iteracion
+        bool biDimensional = dynamic_cast<Plano*>(objetos[k]) || dynamic_cast<Triangulo*>(objetos[k]);
+        if (k == indice && biDimensional) {
+            continue;
+        }
+
+        // Comprobar el punto de interseccion con el objeto
+        Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
+        bool interseccion = puntoInterseccionObjeto.x != -INFINITY;
+        bool interseccionValida = puntoInterseccionObjeto.distancia(puntoInterseccion) < distancia;
+        if (interseccion && interseccionValida) {
+            return true;
+        }
+    }
+    return false;
+}
+
+pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const Direccion& normal, int indice) const {
+    pixel resultado = Pixel(0, 0, 0);
+
+    // Calcular en base al punto de interseccion y las fuentes de luz el color del pixel
+    for (int k = 0; k < fuentes.size(); k++) {
+        Direccion wi = fuentes[k]->getOrigen() - (puntoInterseccion);
+        Direccion wiNormalizada = wi.normalizar();
+
+        if (interseccionObjeto(objetos, puntoInterseccion, wiNormalizada, indice, fuentes[k]->getOrigen())) {
+            continue;
+        }
+
+        Direccion wo = (origin - puntoInterseccion).normalizar();
+
+        // Luz incidente
+        pixel Energia = fuentes[k]->getEnergia();
+        double wiModuloCuadrado = wi.modulo() * wi.modulo();
+        double r = Energia.r / wiModuloCuadrado;
+        double g = Energia.g / wiModuloCuadrado;
+        double b = Energia.b / wiModuloCuadrado;
+        pixel luzIncidente = Pixel(r, g, b);
+
+        // cout << "Luz incidente: " << luzIncidente.r << " " << luzIncidente.g << " " << luzIncidente.b << endl;
+
+        // Calcular material del objeto
+        pixel material = calcularMaterial(colorObjeto, wi, wo, puntoInterseccion);
+
+        material = multiplicarColores(material, luzIncidente);
+        // cout << "Material: " << material.r << " " << material.g << " " << material.b << endl;
+
+        //  Calcular el termino del coseno
+        double coseno = normal * wiNormalizada;
+        coseno = abs(coseno);
+
+        // cout << "Coseno: " << coseno << endl;
+
+        // Calcular el color del pixel
+        resultado.r += material.r * coseno;
+        resultado.g += material.g * coseno;
+        resultado.b += material.b * coseno;
+    }
+    return resultado;
 }
 
 
 // Función para calcular el color de un píxel con anti-aliasing
-pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int j) const {
+pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, int i, int j) const {
     pixel colorSum = Pixel(0, 0, 0);
 
     for (int n = 0; n < numRayos; n++) {
@@ -70,7 +159,7 @@ pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        pixel color = calcularColorPixel(objetos, rayo);
+        pixel color = calcularColorPixel(objetos, fuentes, rayo);
 
         // Sumar el color al resultado
         colorSum.r += color.r;
@@ -88,10 +177,10 @@ pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int
 
 
 // Función para calcular una región de píxeles utilizando múltiples hilos con anti-aliasing
-void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
+void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
     for (int i = inicioFila; i < finFila; i++) {
         for (int j = 0; j < width; j++) {
-            pixel color = calcularColorPixelAA(objetos, i, j);
+            pixel color = calcularColorPixelAA(objetos, fuentes, i, j);
 
             // Agregar el color del objeto a la matriz
             int index = 3 * j;
@@ -103,7 +192,7 @@ void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<v
 }
 
 
-ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
+ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes) {
     unsigned int numCores = std::thread::hardware_concurrency();
     if (numCores == 0) {
         // No se puede determinar el número de cores
@@ -117,7 +206,7 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos) {
     for (int i = 0; i < numCores; i++) {
         int inicioFila = i * filasPorHilo;
         int finFila = (i == numCores - 1) ? height : (i + 1) * filasPorHilo;
-        threads.emplace_back(&Camara::calcularRegionDePixeles, this, std::ref(objetos), std::ref(matrizImagen), inicioFila, finFila);
+        threads.emplace_back(&Camara::calcularRegionDePixeles, this, std::ref(objetos), std::ref(fuentes), std::ref(matrizImagen), inicioFila, finFila);
     }
 
     // Esperar a que todos los hilos terminen

@@ -29,6 +29,8 @@ public:
 
     virtual Punto interseccion(const Rayo& rayo) const = 0;
 
+    virtual Direccion getNormal(const Punto& punto) const = 0;
+
     // Getters del color
     pixel getColor() const;
 
@@ -57,6 +59,7 @@ public:
     double getRadio() const;
 
     Punto interseccion(const Rayo& rayo) const;
+    Direccion getNormal(const Punto& punto) const;
 };
 
 // Clase Plano que hereda de Geometria
@@ -73,6 +76,8 @@ public:
     // Getters del plano
     double getDistanciaOrigen() const;
     Direccion getNormal() const;
+
+    Direccion getNormal(const Punto& punto) const;
 
     Punto interseccion(const Rayo& rayo) const;
 };
@@ -95,6 +100,9 @@ public:
     Punto getVertice3() const;
 
     Punto interseccion(const Rayo& rayo) const;
+
+    // Dado un punto del triangulo devuelva la direccion normal (con respecto al origen)
+    Direccion getNormal(const Punto& punto) const;
 
 };
 

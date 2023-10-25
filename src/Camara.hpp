@@ -10,6 +10,7 @@
 #include "ImagenHDR.hpp"
 #include "Geometria.hpp"
 #include "Matriz.hpp"
+#include "FuenteLuz.hpp"
 using namespace std;
 
 const int numRayos = 64;
@@ -43,17 +44,18 @@ public:
     int getHeight() const;
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
-    ImagenHDR renderizar(vector<Geometria*> objetos);
+    ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes);
 
     // Función para calcular el color de un píxel
-    pixel calcularColorPixel(const vector<Geometria*>& objetos, const Rayo& rayo) const;
+    pixel calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo) const;
 
     // Función para calcular el color de un píxel con anti-aliasing
-    pixel calcularColorPixelAA(const vector<Geometria*>& objetos, int i, int j) const;
+    pixel calcularColorPixelAA(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, int i, int j) const;
 
     // Función para calcular una región de píxeles utilizando múltiples hilos
-    void calcularRegionDePixeles(const vector<Geometria*>& objetos, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
+    void calcularRegionDePixeles(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
+    pixel luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const Direccion& normal, int indice) const;
 };
 
 #endif

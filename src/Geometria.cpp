@@ -48,6 +48,12 @@ double Esfera::getRadio() const {
     return radio;
 }
 
+// Dado un punto de la esfera devuelva la direccion normal (con respecto al origen)
+Direccion Esfera::getNormal(const Punto& punto) const {
+    Direccion normal = punto - centro;
+    return normal.normalizar();
+}
+
 // // --------------------- PLANO ---------------------
 
 // Constructor plano
@@ -66,6 +72,11 @@ double Plano::getDistanciaOrigen() const {
 Direccion Plano::getNormal() const {
     return normal;
 }
+
+Direccion Plano::getNormal(const Punto& punto) const {
+    return normal;
+}
+
 
 // --------------------- TRIANGULO ---------------------
 
@@ -88,6 +99,12 @@ Punto Triangulo::getVertice2() const {
 
 Punto Triangulo::getVertice3() const {
     return vertice3;
+}
+
+// Dado un punto del triangulo devuelva la direccion normal (con respecto al origen)
+Direccion Triangulo::getNormal(const Punto& punto) const {
+    Direccion normal = (vertice2 - vertice1).cross(vertice3 - vertice1);
+    return normal.normalizar();
 }
 
 // --------------------- RAYO ---------------------
@@ -177,63 +194,6 @@ Punto Esfera::interseccion(const Rayo& rayo) const {
 
     return puntoInterseccion;
 }
-
-// // Calcular intersección de un Rayo con un Triangulo
-// Punto Triangulo::interseccion(const Rayo& rayo) const {
-//     // Obtener los vértices del triángulo
-//     Punto v1 = getVertice1();
-//     Punto v2 = getVertice2();
-//     Punto v3 = getVertice3();
-
-//     // Calcular el vector normal del triángulo
-//     Direccion normal = (v2 - v1).cross(v3 - v1).normalizar();
-
-//     cout << "normal.x: " << normal.x << endl;
-//     cout << "normal.y: " << normal.y << endl;
-//     cout << "normal.z: " << normal.z << endl;
-
-//     // Calcular la distancia del plano del triángulo al origen del rayo
-//     double denominador = normal * rayo.getDireccion();
-
-//     if (denominador == 0) {
-//         // El rayo es paralelo al plano, no hay intersección.
-//         // Puedes manejar este caso de acuerdo a tus necesidades.
-//         // Por ejemplo, lanzando una excepción o devolviendo un valor especial.
-//         // Aquí, se devuelve un punto fuera del mundo (-infinito) como indicador de no intersección.
-//         return Punto(-INFINITY, -INFINITY, -INFINITY);
-//     }
-
-//     double distanciaPlano = (normal * (v1 - rayo.getOrigen())) / denominador;
-
-
-//     cout << "distanciaPlano: " << distanciaPlano << endl;
-
-//     // Si la distancia es negativa, el rayo está apuntando en la dirección opuesta al plano del triángulo
-//     if (distanciaPlano < 0) {
-//         return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
-//     }
-
-//     // Calcular el punto de intersección con el plano del triángulo
-//     Punto puntoInterseccion = rayo.getOrigen() + rayo.getDireccion() * distanciaPlano;
-
-//     // Calcular los vectores desde el punto de intersección hacia cada vértice del triángulo
-//     Direccion v1Interseccion = puntoInterseccion - v1;
-//     Direccion v2Interseccion = puntoInterseccion - v2;
-//     Direccion v3Interseccion = puntoInterseccion - v3;
-
-//     // Calcular los vectores normales de cada uno de los tres planos formados por el punto de intersección y dos vértices del triángulo
-//     Direccion normal1 = v1Interseccion.cross(v2Interseccion).normalizar();
-//     Direccion normal2 = v2Interseccion.cross(v3Interseccion).normalizar();
-//     Direccion normal3 = v3Interseccion.cross(v1Interseccion).normalizar();
-
-//     // Si los vectores normales tienen la misma dirección que la normal del triángulo, entonces el punto de intersección está dentro del triángulo
-//     if (normal1 * normal >= 0 && normal2 * normal >= 0 && normal3 * normal >= 0) {
-//         return puntoInterseccion; // Devolver el punto de intersección
-//     }
-
-//     return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
-// }
-
 
 Punto Triangulo::interseccion(const Rayo& rayo) const {
     Punto v1 = getVertice1();

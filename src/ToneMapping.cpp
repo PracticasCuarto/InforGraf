@@ -18,7 +18,6 @@ void ToneMapping::clamping() {
     for (int i = 0; i < alto; i++) {
         for (int j = 0; j < ancho * 3; j++) {
             if (matriz[i][j] >= 1) {
-                cout << "Clamping" << endl;
                 matriz[i][j] = 1;
             }
         }
@@ -45,7 +44,7 @@ void ToneMapping::ecualizacion() {
     }
 
     for (int i = 0; i < imagen.getAlto(); i++) {
-        for (int j = 0; j < imagen.getAncho(); j++) {
+        for (int j = 0; j < imagen.getAncho() * 3; j++) {
             matriz[i][j] = (matriz[i][j] - min) / (max - min);
         }
     }
@@ -93,7 +92,11 @@ void ToneMapping::curvaGamma(float gamma) {
     double ancho = this->imagen.getAncho();
     for (int i = 0; i < alto; i++) {
         for (int j = 0; j < ancho * 3; j++) {
-            matriz[i][j] = pow(matriz[i][j], gamma);
+            double valor = pow(matriz[i][j], gamma);
+            if (valor > 1) {
+                valor = 1;
+            }
+            matriz[i][j] = valor;
         }
     }
 
