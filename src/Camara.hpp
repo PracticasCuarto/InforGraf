@@ -20,12 +20,15 @@ private:
     Direccion left, up, forward;
     Punto origin;
     Matriz base;
+    int numMuestras, resolucion;
 public:
     int width, height;
 
-
     // Constructor
     Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin);
+
+    // Constructor completo incluyendo anchura, altura y muestras por pixel
+    Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin, int _width, int _height, int _numMuestras, int resolucion);
 
     // setters
     void setLeft(Direccion _left);
@@ -42,6 +45,7 @@ public:
     Punto getOrigin() const;
     int getWidth() const;
     int getHeight() const;
+    int getNumMuestras() const;
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
     ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes);

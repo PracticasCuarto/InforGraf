@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
+#include <getopt.h>
 
 #include "src/Direccion.hpp"
 #include "src/ImagenHDR.hpp"
@@ -16,7 +17,40 @@
 #include "src/FuenteLuz.hpp"
 
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    // Leer los parametros de entrada
+
+    int ancho = 512;         // Valor predeterminado para el ancho
+    int alto = 512;          // Valor predeterminado para el alto
+    string nombre = "imagenEscena";      // Nombre del archivo de salida
+    int resolucion = 24;     // Valor predeterminado para la resolución de color
+    int muestras = 100;      // Valor predeterminado para el número de muestras por píxel
+
+    // Parsear los argumentos de línea de comandos
+    int opt;
+    while ((opt = getopt(argc, argv, "a:l:n:r:m:")) != -1) {
+        switch (opt) {
+        case 'a':
+            ancho = atoi(optarg);
+            break;
+        case 'l':
+            alto = atoi(optarg);
+            break;
+        case 'n':
+            nombre = optarg;
+            break;
+        case 'r':
+            resolucion = atoi(optarg);
+            break;
+        case 'm':
+            muestras = atoi(optarg);
+            break;
+        default:
+            std::cerr << "Uso: " << argv[0] << " -a ancho -l alto -n nombre -r resolucion -m muestras" << std::endl;
+            return 1;
+        }
+    }
 
     // Probar a leer la imagen "ppms/forest_path.ppm"
     LectorHDR lector;
@@ -25,7 +59,7 @@ int main() {
     EscritorHDR escritor;
 
     // Crear una camara en el origen de la escena
-    Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5));
+    Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5), alto, ancho, muestras, resolucion);
 
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
     Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
@@ -70,39 +104,6 @@ int main() {
     objetos.push_back(techo);
     objetos.push_back(suelo);
 
-    // Triangulo* triangulo = new Triangulo(Punto(0.0, 0.0, 0.0), Punto(1.0, 0.0, 0.0), Punto(0.0, 1.0, 0.0), rosa);
-
-    // objetos.push_back(triangulo);
-
-    // Banda de arriba
-    // Punto vertice1(-1.5, 3.0, 0.0);
-    // Punto vertice2(-1.5, 0.5, 0.0);
-    // Punto vertice3(3.0, 1.5, 0.0);
-    // Punto vertice4(3.0, 0.5, 0.0);
-
-    // // Banda de abajo
-    // Punto vertice5(-1.5, -0.5, 0.0);
-    // Punto vertice6(-1.5, -10.0, 0.0);
-    // Punto vertice7(3.0, -0.5, 0.0);
-
-    // Plano* FondoAmarillo = new Plano(1.0, Direccion(0.0, 0.0, -1.0), amarillo);
-
-    // Punto vertice8(0.0, -1.0, 0.0);
-    // Punto vertice9(1.5, 1.0, 0.0);
-
-    // // Crear triángulos con los vértices y colores
-    // Triangulo* triangulo1 = new Triangulo(vertice1, vertice2, vertice3, rojo);
-    // Triangulo* triangulo2 = new Triangulo(vertice2, vertice3, vertice4, rojo);
-    // Triangulo* triangulo3 = new Triangulo(vertice5, vertice6, vertice7, rojo);
-
-    // objetos.push_back(triangulo1);
-    // objetos.push_back(triangulo2);
-    // objetos.push_back(triangulo3);
-    // objetos.push_back(FondoAmarillo);
-
-    // ----PRUEBA------
-    // Esquina izquierda = (-1.167, 1.167, 0.0)
-
     FuenteLuz* blanca = new FuenteLuz(Punto(-0.3, 0.5, 0), Pixel(255, 255, 255));
     FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Pixel(0, 0, 255));
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
@@ -112,6 +113,6 @@ int main() {
     ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.ecualizacion();
-    escritor.escribirImagenHDR("ppms/imagenEscena.ppm", toneMapping.imagen);
+    escritor.escribirImagenHDR("ppms/" + nombre + ".ppm", toneMapping.imagen);
     return 0;
 }

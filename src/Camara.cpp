@@ -35,6 +35,25 @@ Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin
     up = up.normalizar();
 }
 
+// Constructor completo incluyendo anchura, altura y muestras por pixel
+Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin, int _width, int _height, int _numMuestras, int _resolucion)
+    : up(_up), left(_left), forward(_forward), origin(_origin), base(
+        left.x, up.x, forward.x, origin.x,
+        left.y, up.y, forward.y, origin.y,
+        left.z, up.z, forward.z, origin.z,
+        0, 0, 0, 1
+    ) {
+    // Resto del código del constructor
+    width = _width;
+    height = _height;
+    numMuestras = _numMuestras;
+    resolucion = _resolucion;
+
+    // Normalizar vectores left y up
+    left = left.normalizar();
+    up = up.normalizar();
+}
+
 pixel multiplicarColores(const pixel& color1, const pixel& color2) {
     return Pixel(color1.r * color2.r, color1.g * color2.g, color1.b * color2.b);
 }
