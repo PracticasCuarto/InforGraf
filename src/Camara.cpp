@@ -105,7 +105,7 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
 }
 
 // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
-bool Camara::interseccionObjeto(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const {
+bool Camara::interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const {
     // Calcular la distancia entre el punto y el origen de la fuente de luz
     double distancia = puntoInterseccion.distancia(origenFuente);
     Rayo rayo = Rayo(puntoInterseccion, direccion);
@@ -125,14 +125,8 @@ bool Camara::interseccionObjeto(const Punto& puntoInterseccion, const Direccion&
 
 // Función para calcular la luz incidente de una fuente en un punto de intersección
 Color calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoInterseccion) {
-    Direccion wi = fuente.getOrigen() - puntoInterseccion;
-    Direccion wiNormalizada = wi.normalizar();
-    Color Energia = fuente.getEnergia();
-    double wiModuloCuadrado = wi.modulo() * wi.modulo();
-    double r = Energia.r / wiModuloCuadrado;
-    double g = Energia.g / wiModuloCuadrado;
-    double b = Energia.b / wiModuloCuadrado;
-    return Color(r, g, b);
+    Direccion wi = (fuente.getOrigen() - puntoInterseccion).normalizar();
+    return (fuente.getEnergia() / (wi * wi));
 }
 
 Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const {
@@ -141,10 +135,11 @@ Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObj
         return Color(0, 0, 0);
     }
 
-    // Calcular material del objeto
+    // Calcular luz directa
     Color BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
     resultado += luzDirecta(puntoInterseccion, BRDF, normal);
 
+    // Calcular luz indirecta
     Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
     Color color = calcularColorPixel(rayo, iteracion + 1);
 
@@ -161,7 +156,7 @@ Color Camara::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, cons
         Punto origenFuente = fuente->getOrigen();
         Direccion wi = (origenFuente - (puntoInterseccion)).normalizar();
 
-        if (interseccionObjeto(puntoInterseccion, wi, origenFuente)) {
+        if (interseccionaObjetoAntesLuz(puntoInterseccion, wi, origenFuente)) {
             continue;
         }
         // Direccion wo = (origin - puntoInterseccion).normalizar();
@@ -194,15 +189,11 @@ Color Camara::calcularColorPixelAA(int i, int j) const {
         Color color = calcularColorPixel(rayo, 0);
 
         // Sumar el color al resultado
-        colorSum.r += color.r;
-        colorSum.g += color.g;
-        colorSum.b += color.b;
+        colorSum += color;
     }
 
     // Calcular el promedio de los colores
-    colorSum.r /= numRayos;
-    colorSum.g /= numRayos;
-    colorSum.b /= numRayos;
+    colorSum /= numRayos;
 
     return colorSum;
 }
@@ -222,7 +213,6 @@ void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int i
         }
     }
 }
-
 
 ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes) {
     unsigned int numCores = std::thread::hardware_concurrency();

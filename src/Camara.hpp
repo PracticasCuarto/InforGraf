@@ -56,7 +56,7 @@ public:
     Color luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const;
 
     // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
-    bool interseccionObjeto(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;
+    bool interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;
 
     // Función para calcular la luz directa de una fuente en un punto de intersección
     Color luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const;

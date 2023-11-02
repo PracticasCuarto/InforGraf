@@ -29,6 +29,7 @@ public:
     Color operator+=(double escalar);
     Color operator-=(double escalar);
     Color operator*=(double escalar);
+    Color operator/=(double escalar);
 };
 
 #endif

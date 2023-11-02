@@ -78,3 +78,10 @@ Color Color::operator*=(double escalar) {
     return *this;
 }
 
+Color Color::operator/=(double escalar) {
+    r /= escalar;
+    g /= escalar;
+    b /= escalar;
+    return *this;
+}
+
