@@ -76,22 +76,25 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
 
     // Calcular la interseccion del rayo con todos los objetos de la escena
     // y guardar la interseccion más cercana
-    for (int k = 0; k < objetos.size(); k++) {
-        Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
-        if (puntoInterseccionObjeto.x != -INFINITY) {
-            float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
-            if (distanciaInterseccion <= distancia) {
-                distancia = distanciaInterseccion;
-                color = objetos[k]->getColor();
-                puntoInterseccion = puntoInterseccionObjeto;
-                normal = objetos[k]->getNormal(puntoInterseccion);
-                puntoInterseccion = puntoInterseccion + normal * 0.0001;
-                indice = k;
-            }
+    for (Geometria* objeto : objetos) {
+        indice++;
+        Punto puntoInterseccionObjeto = objeto->interseccion(rayo);
+        if (puntoInterseccionObjeto.x == -INFINITY) {
+            continue;
+        }
+
+        // Calcular la distancia entre el origen del rayo y el punto de interseccion
+        float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
+        if (distanciaInterseccion <= distancia) {
+            distancia = distanciaInterseccion;
+            color = objeto->getColor();
+            puntoInterseccion = puntoInterseccionObjeto;
+            normal = objeto->getNormal(puntoInterseccion);
+            puntoInterseccion = puntoInterseccion + normal * 0.0001;
         }
     }
 
-    if (indice == -1) {
+    if (distancia == INFINITY) {
         // No hay interseccion
         return Color(0, 0, 0);
     }
@@ -99,8 +102,11 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
         // Es una fuente de luz directa
         return objetos[indice]->getColor();
     }
+    else if (iteracion >= numMuestras) {
+        return Color(0, 0, 0);
+    }
     else {
-        return luzIndirecta(puntoInterseccion, color, normal, iteracion);
+        return nextEventEstimation(puntoInterseccion, color, normal, iteracion);
     }
 }
 
@@ -113,8 +119,9 @@ bool Camara::interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const D
     for (int k = 0; k < objetos.size(); k++) {
         // Comprobar el punto de interseccion con el objeto
         Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
+
+        // Comprobar si la interseccion es válida
         bool interseccion = puntoInterseccionObjeto.x != -INFINITY;
-        // Comprobar que intersecciona 
         bool interseccionValida = puntoInterseccionObjeto.distancia(puntoInterseccion) < distancia;
         if (interseccion && interseccionValida) {
             return true;
@@ -125,15 +132,13 @@ bool Camara::interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const D
 
 // Función para calcular la luz incidente de una fuente en un punto de intersección
 Color calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoInterseccion) {
-    Direccion wi = (fuente.getOrigen() - puntoInterseccion).normalizar();
+    double wi = (fuente.getOrigen() - puntoInterseccion).modulo();
     return (fuente.getEnergia() / (wi * wi));
 }
 
-Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const {
+// // Función para calcular la luz de un objeto en un punto de intersección
+Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const {
     Color resultado = Color(0, 0, 0);
-    if (iteracion >= maxIter) {
-        return Color(0, 0, 0);
-    }
 
     // Calcular luz directa
     Color BRDF = calcularMaterial(colorObjeto, puntoInterseccion);

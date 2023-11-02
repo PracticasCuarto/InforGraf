@@ -22,6 +22,9 @@ public:
     // Sobrecarga del operador de suma de una direccion con un punto
     Punto operator+(const Direccion& otraDireccion) const;
 
+    // Sobrecarga del operador de suma igual de una direccion con un punto
+    Punto operator+=(const Direccion& otraDireccion) const;
+
     // Obtener la distancia entre dos puntos
     double distancia(const Punto& otroPunto) const;
 

@@ -31,6 +31,11 @@ Punto Punto::operator+(const Direccion& otraDireccion) const {
     return Punto(x + otraDireccion.x, y + otraDireccion.y, z + otraDireccion.z);
 }
 
+// Sobrecarga del operador de suma igual de una direccion con un punto
+Punto Punto::operator+=(const Direccion& otraDireccion) const {
+    return Punto(x + otraDireccion.x, y + otraDireccion.y, z + otraDireccion.z);
+}
+
 // Obtener la distancia entre dos puntos
 double Punto::distancia(const Punto& otroPunto) const {
     return sqrt((x - otroPunto.x) * (x - otroPunto.x) + (y - otroPunto.y) * (y - otroPunto.y) + (z - otroPunto.z) * (z - otroPunto.z));

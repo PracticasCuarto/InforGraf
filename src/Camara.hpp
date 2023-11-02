@@ -14,7 +14,6 @@
 using namespace std;
 
 const int numRayos = 64;
-const int maxIter = 8;
 
 class Camara {
 private:
@@ -52,8 +51,8 @@ public:
     // Función para calcular una región de píxeles utilizando múltiples hilos
     void calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
-    // Función para calcular el color de un píxel con anti-aliasing y múltiples hilos
-    Color luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const;
+    // Función para calcular la luz de un objeto en un punto de intersección
+    Color nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const;
 
     // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
     bool interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;

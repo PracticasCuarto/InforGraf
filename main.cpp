@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     int alto = 512;          // Valor predeterminado para el alto
     string nombre = "imagenEscena";      // Nombre del archivo de salida
     int resolucion = 24;     // Valor predeterminado para la resolución de color
-    int muestras = 100;      // Valor predeterminado para el número de muestras por píxel
+    int muestras = 8;      // Valor predeterminado para el número de muestras por píxel
 
     // Parsear los argumentos de línea de comandos
     int opt;
