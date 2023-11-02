@@ -236,4 +236,3 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
         return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
     }
 }
-

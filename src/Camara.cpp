@@ -67,11 +67,15 @@ Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
 
 // Función para calcular el color de un píxel
 Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
+    // Definir valores iniciales
     Color color = Color(0, 0, 0);
     float distancia = INFINITY;
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
     int indice = -1;
+
+    // Calcular la interseccion del rayo con todos los objetos de la escena
+    // y guardar la interseccion más cercana
     for (int k = 0; k < objetos.size(); k++) {
         Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
         if (puntoInterseccionObjeto.x != -INFINITY) {
@@ -87,38 +91,26 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
         }
     }
 
-    // Para cada fuente de luz comprobar si intersecta con ella antes que con un objeto de la escena.
-    // Si es asi devolver el valor directamente en vez de llamar recursivamente
-    // for (int k = 0; k < fuentes.size(); k++) {
-
-    //     Direccion wi = fuentes[k]->getOrigen() - (puntoInterseccion);
-
-    // }
-
     if (indice == -1) {
+        // No hay interseccion
         return Color(0, 0, 0);
     }
-    if (objetos[indice]->esFuenteLuz()) {
+    else if (objetos[indice]->esFuenteLuz()) {
+        // Es una fuente de luz directa
         return objetos[indice]->getColor();
     }
-    Color resultado = luzIndirecta(puntoInterseccion, color, normal, indice, iteracion);
-
-    return resultado;
+    else {
+        return luzIndirecta(puntoInterseccion, color, normal, iteracion);
+    }
 }
 
 // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
-bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInterseccion, const Direccion& direccion, int indice, const Punto& origenFuente) {
+bool Camara::interseccionObjeto(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const {
     // Calcular la distancia entre el punto y el origen de la fuente de luz
     double distancia = puntoInterseccion.distancia(origenFuente);
     Rayo rayo = Rayo(puntoInterseccion, direccion);
 
     for (int k = 0; k < objetos.size(); k++) {
-        // Si es la clase plano o triangulo saltar la iteracion
-        // bool biDimensional = dynamic_cast<Plano*>(objetos[k]) || dynamic_cast<Triangulo*>(objetos[k]);
-        // if (k == indice && biDimensional) {
-        //     continue;
-        // }
-
         // Comprobar el punto de interseccion con el objeto
         Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
         bool interseccion = puntoInterseccionObjeto.x != -INFINITY;
@@ -143,39 +135,7 @@ Color calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoIntersecci
     return Color(r, g, b);
 }
 
-// Función para generar un rayo aleatorio en base a coordenadas esféricas
-Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal) {
-    double r1 = random_double();
-    double r2 = random_double();
-    double theta = 2.0 * M_PI * r1; // Ángulo azimut
-    double phi = acos(sqrt(1.0 - r2)); // Ángulo polar
-
-    // Convertir a coordenadas esféricas
-    double x = cos(theta) * sin(phi);
-    double y = sin(theta) * sin(phi);
-    double z = cos(phi);
-
-    Direccion direccionAleatoria = Direccion(x, y, z);
-
-    // Cambiar de base utilizando una matriz generada 
-    Direccion aux = normal.rotacionX(10.0);
-    aux = aux.rotacionY(10.0);
-    aux = aux.rotacionZ(10.0);
-    Direccion eje1 = normal.cross(aux);
-    Direccion eje2 = normal.cross(eje1);
-    Matriz matrizBase = Matriz(
-        eje1.x, eje2.x, normal.x, 0,
-        eje1.y, eje2.y, normal.y, 0,
-        eje1.z, eje2.z, normal.z, 0,
-        0, 0, 0, 1
-    );
-
-    // Cambiar a la base del mundo la dirección del rayo
-    Direccion direccionRayo = direccionAleatoria.multiplicarMatriz(matrizBase);
-    return Rayo(puntoInterseccion, direccionRayo);
-}
-
-Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const {
+Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const {
     Color resultado = Color(0, 0, 0);
     if (iteracion >= maxIter) {
         return Color(0, 0, 0);
@@ -183,43 +143,36 @@ Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObj
 
     // Calcular material del objeto
     Color BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
-
-    // Calcular en base al punto de interseccion y las fuentes de luz el color del pixel
-    for (int k = 0; k < fuentes.size(); k++) {
-        Direccion wi = fuentes[k]->getOrigen() - (puntoInterseccion);
-        Direccion wiNormalizada = wi.normalizar();
-
-        if (interseccionObjeto(objetos, puntoInterseccion, wiNormalizada, indice, fuentes[k]->getOrigen())) {
-            continue;
-        }
-
-        Direccion wo = (origin - puntoInterseccion).normalizar();
-
-        Color luzIncidente = calcularLuzIncidente(*fuentes[k], puntoInterseccion);
-
-        //  Calcular el termino del coseno
-        // double coseno = normal * wiNormalizada;
-        // Calcular el arcocoseno de "coseno"
-        // coseno = acos(coseno) / M_PI * 180;
-        double coseno = normal * wiNormalizada;
-        coseno = abs(coseno);
-        Color material = BRDF * luzIncidente;
-        material *= coseno;
-
-        // Calcular el color del pixel
-        resultado += material;
-    }
+    resultado += luzDirecta(puntoInterseccion, BRDF, normal);
 
     Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
     Color color = calcularColorPixel(rayo, iteracion + 1);
 
-    BRDF.r = BRDF.r * M_PI;
-    BRDF.g = BRDF.g * M_PI;
-    BRDF.b = BRDF.b * M_PI;
-    color *= BRDF;
+    resultado += color * BRDF * M_PI;
 
-    resultado += color;
+    return resultado;
+}
 
+// Función para calcular la luz directa de una fuente en un punto de intersección
+Color Camara::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const {
+    Color resultado = Color(0, 0, 0);
+    // Calcular la luz directa a partir de las fuentes de luz
+    for (FuenteLuz* fuente : fuentes) {
+        Punto origenFuente = fuente->getOrigen();
+        Direccion wi = (origenFuente - (puntoInterseccion)).normalizar();
+
+        if (interseccionObjeto(puntoInterseccion, wi, origenFuente)) {
+            continue;
+        }
+        // Direccion wo = (origin - puntoInterseccion).normalizar();
+
+        Color luzIncidente = calcularLuzIncidente(*fuente, puntoInterseccion);
+        double coseno = abs(normal * wi);
+        Color material = luzIncidente * BRDF * coseno;
+
+        // Calcular el color del pixel
+        resultado += material;
+    }
     return resultado;
 }
 

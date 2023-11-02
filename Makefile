@@ -10,25 +10,23 @@ BINDIR = exec
 SRCDIR = src
 
 # Archivos fuente y ejecutable
-SRCS := $(wildcard $(SRCDIR)/*.cpp)
+SRCS := $(shell find $(SRCDIR) -name "*.cpp")
 SRCS := $(filter-out $(SRCDIR)/main.cpp, $(SRCS))
 SRCS += main.cpp
-OBJS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 EXEC = $(BINDIR)/main
 
-all: $(BINDIR) $(OBJDIR) $(EXEC)
+all: $(BINDIR) $(EXEC)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
 
 $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(EXEC)
 
 # Regla genérica para compilar archivos fuente a objetos
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	@mkdir -p $(dir $@)  # Crea directorios si no existen
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

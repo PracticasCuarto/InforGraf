@@ -4,12 +4,12 @@
 #include <getopt.h>
 
 #include "src/Direccion.hpp"
-#include "src/ImagenHDR.hpp"
+#include "src/ImagenHDR/ImagenHDR.hpp"
 #include "src/Punto.hpp"
 #include "src/Matriz.hpp"
-#include "src/LectorHDR.hpp"
-#include "src/EscritorHDR.hpp"
-#include "src/ToneMapping.hpp"
+#include "src/ImagenHDR/LectorHDR.hpp"
+#include "src/ImagenHDR/EscritorHDR.hpp"
+#include "src/ImagenHDR/ToneMapping.hpp"
 #include "src/Geometria.hpp"
 #include "src/Camara.hpp"
 #include "src/FuenteLuz.hpp"

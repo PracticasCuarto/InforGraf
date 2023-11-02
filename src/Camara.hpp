@@ -7,7 +7,7 @@
 #include <math.h>
 #include <vector>
 #include "Punto.hpp"
-#include "ImagenHDR.hpp"
+#include "ImagenHDR/ImagenHDR.hpp"
 #include "Geometria.hpp"
 #include "Matriz.hpp"
 #include "FuenteLuz.hpp"
@@ -53,7 +53,13 @@ public:
     void calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
     // Función para calcular el color de un píxel con anti-aliasing y múltiples hilos
-    Color luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const;
+    Color luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const;
+
+    // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
+    bool interseccionObjeto(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;
+
+    // Función para calcular la luz directa de una fuente en un punto de intersección
+    Color luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const;
 };
 
 #endif
