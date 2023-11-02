@@ -91,6 +91,7 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector
                 color = objetos[k]->getColor();
                 puntoInterseccion = puntoInterseccionObjeto;
                 normal = objetos[k]->getNormal(puntoInterseccion);
+                puntoInterseccion = puntoInterseccion + normal * 0.0001;
                 indice = k;
             }
         }
@@ -123,10 +124,10 @@ bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInt
 
     for (int k = 0; k < objetos.size(); k++) {
         // Si es la clase plano o triangulo saltar la iteracion
-        bool biDimensional = dynamic_cast<Plano*>(objetos[k]) || dynamic_cast<Triangulo*>(objetos[k]);
-        if (k == indice && biDimensional) {
-            continue;
-        }
+        // bool biDimensional = dynamic_cast<Plano*>(objetos[k]) || dynamic_cast<Triangulo*>(objetos[k]);
+        // if (k == indice && biDimensional) {
+        //     continue;
+        // }
 
         // Comprobar el punto de interseccion con el objeto
         Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
@@ -166,16 +167,12 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
 
     Direccion direccionAleatoria = Direccion(x, y, z);
 
-    // cout << "Direccion aleatoria: " << direccionAleatoria.x << " " << direccionAleatoria.y << " " << direccionAleatoria.z << endl;
-    // cout << "Normal: " << normal.x << " " << normal.y << " " << normal.z << endl;
     // Cambiar de base utilizando una matriz generada 
     Direccion aux = normal.rotacionX(10.0);
     aux = aux.rotacionY(10.0);
     aux = aux.rotacionZ(10.0);
     Direccion eje1 = normal.cross(aux);
     Direccion eje2 = normal.cross(eje1);
-    // cout << "Eje 1: " << eje1.x << " " << eje1.y << " " << eje1.z << endl;
-    // cout << "Eje 2: " << eje2.x << " " << eje2.y << " " << eje2.z << endl;
     Matriz matrizBase = Matriz(
         eje1.x, eje2.x, normal.x, 0,
         eje1.y, eje2.y, normal.y, 0,
@@ -185,8 +182,6 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
 
     // Cambiar a la base del mundo la dirección del rayo
     Direccion direccionRayo = direccionAleatoria.multiplicarMatriz(matrizBase);
-    // cout << "Direccion rayo (cambiada): " << direccionRayo.x << " " << direccionRayo.y << " " << direccionRayo.z << endl;
-    // cout << endl;
     return Rayo(puntoInterseccion, direccionRayo);
 }
 
@@ -198,7 +193,6 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
 
     // Calcular material del objeto
     pixel BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
-    // cout << "BRDF: " << BRDF.r << " " << BRDF.g << " " << BRDF.b << endl;
 
     // Calcular en base al punto de interseccion y las fuentes de luz el color del pixel
     for (int k = 0; k < fuentes.size(); k++) {
@@ -226,18 +220,14 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
         resultado = sumarColores(resultado, material);
     }
 
-    // cout << "Resultado: " << resultado.r << " " << resultado.g << " " << resultado.b << endl;
-
     Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
     pixel color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1);
 
     BRDF.r = BRDF.r * M_PI;
     BRDF.g = BRDF.g * M_PI;
     BRDF.b = BRDF.b * M_PI;
-    // cout << "BRDF: " << BRDF.r << " " << BRDF.g << " " << BRDF.b << endl;
     color = multiplicarColores(color, BRDF);
-    // cout << "Color: " << color.r << " " << color.g << " " << color.b << endl;
-    // cout << "Resultado: " << resultado.r << " " << resultado.g << " " << resultado.b << endl;
+
     resultado = sumarColores(resultado, color);
 
     return resultado;
