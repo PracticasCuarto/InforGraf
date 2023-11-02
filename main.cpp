@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     pixel blanco = Pixel(255, 255, 255);
     pixel negro = Pixel(0, 0, 0);
     pixel naranja = Pixel(255, 128, 0);
-    pixel gris = Pixel(155, 155, 155);
+    pixel gris = Pixel(205, 205, 205);
     pixel turquesa = Pixel(115, 230, 250);
 
     esfera->setColor(rosa);
@@ -104,15 +104,16 @@ int main(int argc, char* argv[]) {
     objetos.push_back(techo);
     objetos.push_back(suelo);
 
-    FuenteLuz* blanca = new FuenteLuz(Punto(-0.3, 0.5, 0), Pixel(255, 255, 255));
-    FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Pixel(0, 0, 255));
+    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), Pixel(255, 255, 255));
+    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Pixel(0, 0, 255));
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
     fuentes.push_back(blanca);
-    fuentes.push_back(otra);
+    // fuentes.push_back(otra);
 
     ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
-    toneMapping.ecualizacion();
+    toneMapping.curvaGamma(1 / 2.2);
+    //toneMapping.ecualizacion();
     escritor.escribirImagenHDR("ppms/" + nombre + ".ppm", toneMapping.imagen);
     return 0;
 }

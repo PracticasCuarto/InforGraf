@@ -58,6 +58,14 @@ pixel multiplicarColores(const pixel& color1, const pixel& color2) {
     return Pixel(color1.r * color2.r, color1.g * color2.g, color1.b * color2.b);
 }
 
+pixel multiplicarColores(const pixel& color1, const double& valor) {
+    return Pixel(color1.r * valor, color1.g * valor, color1.b * valor);
+}
+
+pixel sumarColores(const pixel& color1, const pixel& color2) {
+    return Pixel(color1.r + color2.r, color1.g + color2.g, color1.b + color2.b);
+}
+
 pixel calcularMaterial(const pixel& color, const Direccion& wi, const Direccion& wo, const Punto& puntoInterseccion) {
     // Dividir cada componente del color entre pi
     double r = color.r / M_PI;
@@ -68,7 +76,7 @@ pixel calcularMaterial(const pixel& color, const Direccion& wi, const Direccion&
 }
 
 // Función para calcular el color de un píxel
-pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo) const {
+pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion, const pixel& cosenoAnterior) const {
     pixel color = Pixel(0, 0, 0);
     float distancia = INFINITY;
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
@@ -87,8 +95,8 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector
             }
         }
     }
-
-    pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice);
+    pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, cosenoAnterior, normal, indice, iteracion);
+    // pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice);
 
     return resultado;
 }
@@ -109,6 +117,7 @@ bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInt
         // Comprobar el punto de interseccion con el objeto
         Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
         bool interseccion = puntoInterseccionObjeto.x != -INFINITY;
+        // Comprobar que intersecciona 
         bool interseccionValida = puntoInterseccionObjeto.distancia(puntoInterseccion) < distancia;
         if (interseccion && interseccionValida) {
             return true;
@@ -117,8 +126,9 @@ bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInt
     return false;
 }
 
-pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const Direccion& normal, int indice) const {
+pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const pixel& cosenoAnterior, const Direccion& normal, int indice, int iteracion) const {
     pixel resultado = Pixel(0, 0, 0);
+    pixel cosenoTotal = Pixel(0, 0, 0);
 
     // Calcular en base al punto de interseccion y las fuentes de luz el color del pixel
     for (int k = 0; k < fuentes.size(); k++) {
@@ -139,25 +149,48 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
         double b = Energia.b / wiModuloCuadrado;
         pixel luzIncidente = Pixel(r, g, b);
 
-        // cout << "Luz incidente: " << luzIncidente.r << " " << luzIncidente.g << " " << luzIncidente.b << endl;
-
         // Calcular material del objeto
         pixel material = calcularMaterial(colorObjeto, wi, wo, puntoInterseccion);
-
+        pixel BRDF = material;
         material = multiplicarColores(material, luzIncidente);
-        // cout << "Material: " << material.r << " " << material.g << " " << material.b << endl;
 
         //  Calcular el termino del coseno
         double coseno = normal * wiNormalizada;
         coseno = abs(coseno);
 
         // cout << "Coseno: " << coseno << endl;
+        pixel cosenoActual = multiplicarColores(material, coseno);
+        BRDF = multiplicarColores(BRDF, coseno);
+        cosenoTotal = sumarColores(cosenoTotal, BRDF);
 
         // Calcular el color del pixel
-        resultado.r += material.r * coseno;
-        resultado.g += material.g * coseno;
-        resultado.b += material.b * coseno;
+        resultado = sumarColores(resultado, cosenoActual);
+
     }
+    resultado = multiplicarColores(resultado, cosenoAnterior);
+
+    if (iteracion < maxIter) {
+        // Muestreo uniforme del coseno
+        double r1 = random_double();
+        double r2 = random_double();
+        double theta = 2.0 * M_PI * r1; // Ángulo azimutal
+        double phi = acos(sqrt(1.0 - r2)); // Ángulo polar
+
+        // Convertir a coordenadas esféricas
+        double x = cos(theta) * sin(phi);
+        double y = sin(theta) * sin(phi);
+        double z = cos(phi);
+
+        Direccion direccionAleatoria = Direccion(x, y, z);
+        Rayo rayo = Rayo(puntoInterseccion, direccionAleatoria);
+
+        pixel color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1, cosenoTotal);
+
+        // Calcular la llamada recursiva a esta funcion 
+
+        resultado = sumarColores(resultado, color);
+    }
+
     return resultado;
 }
 
@@ -178,7 +211,7 @@ pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vect
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        pixel color = calcularColorPixel(objetos, fuentes, rayo);
+        pixel color = calcularColorPixel(objetos, fuentes, rayo, 0, Pixel(1, 1, 1));
 
         // Sumar el color al resultado
         colorSum.r += color.r;
