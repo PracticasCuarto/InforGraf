@@ -5,25 +5,13 @@
 
 using namespace std;
 
-// --------------------- Pixel ---------------------
-
-// Constructor para pixel
-pixel Pixel(float r, float g, float b) {
-    pixel p;
-    p.r = r;
-    p.g = g;
-    p.b = b;
-    return p;
-}
-
 // Constructor de Geometria
-Geometria::Geometria() {
-    color = Pixel(0, 0, 0);
+Geometria::Geometria() : color(0, 0, 0) {
     fuenteLuz = false;
 }
 
 // Getters del color
-pixel Geometria::getColor() const {
+Color Geometria::getColor() const {
     return color;
 }
 
@@ -32,7 +20,7 @@ bool Geometria::esFuenteLuz() const {
 }
 
 // Setters del color
-void Geometria::setColor(pixel _color) {
+void Geometria::setColor(Color _color) {
     color = _color;
 }
 
@@ -42,7 +30,7 @@ void Geometria::setColor(pixel _color) {
 Esfera::Esfera(Punto _centro, double _radio) : Geometria(), centro(_centro), radio(_radio) {}
 
 // Constructor esfera con color 
-Esfera::Esfera(Punto _centro, double _radio, pixel _color) : Geometria(), centro(_centro), radio(_radio) {
+Esfera::Esfera(Punto _centro, double _radio, Color _color) : Geometria(), centro(_centro), radio(_radio) {
     setColor(_color);
 }
 
@@ -67,7 +55,7 @@ Direccion Esfera::getNormal(const Punto& punto) const {
 Plano::Plano(double _distanciaOrigen, Direccion _normal) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {}
 
 // Constructor plano con color
-Plano::Plano(double _distanciaOrigen, Direccion _normal, pixel _color) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
+Plano::Plano(double _distanciaOrigen, Direccion _normal, Color _color) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
     setColor(_color);
 }
 
@@ -91,7 +79,7 @@ Direccion Plano::getNormal(const Punto& punto) const {
 Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {}
 
 // Constructor Triangulo con color
-Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, pixel _color) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
+Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, Color _color) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
     setColor(_color);
 }
 

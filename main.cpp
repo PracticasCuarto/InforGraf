@@ -7,14 +7,13 @@
 #include "src/ImagenHDR.hpp"
 #include "src/Punto.hpp"
 #include "src/Matriz.hpp"
-// #include "src/Estacion.hpp"
-// #include "src/Esfera.hpp"
 #include "src/LectorHDR.hpp"
 #include "src/EscritorHDR.hpp"
 #include "src/ToneMapping.hpp"
 #include "src/Geometria.hpp"
 #include "src/Camara.hpp"
 #include "src/FuenteLuz.hpp"
+#include "src/Color.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -76,16 +75,16 @@ int main(int argc, char* argv[]) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0));
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    pixel amarillo = Pixel(255, 255, 0);
-    pixel rosa = Pixel(254, 137, 232);
-    pixel azul = Pixel(150, 214, 255);
-    pixel rojo = Pixel(255 * 0.9, 0, 0);
-    pixel verde = Pixel(0, 255 * 0.9, 0);
-    pixel blanco = Pixel(255, 255, 255);
-    pixel negro = Pixel(0, 0, 0);
-    pixel naranja = Pixel(255, 128, 0);
-    pixel gris = Pixel(205, 205, 205);
-    pixel turquesa = Pixel(115, 230, 250);
+    Color amarillo = Color(255, 255, 0);
+    Color rosa = Color(254, 137, 232);
+    Color azul = Color(150, 214, 255);
+    Color rojo = Color(255 * 0.9, 0, 0);
+    Color verde = Color(0, 255 * 0.9, 0);
+    Color blanco = Color(255, 255, 255);
+    Color negro = Color(0, 0, 0);
+    Color naranja = Color(255, 128, 0);
+    Color gris = Color(205, 205, 205);
+    Color turquesa = Color(115, 230, 250);
 
     esfera->setColor(rosa);
     esfera2->setColor(turquesa);
@@ -104,8 +103,8 @@ int main(int argc, char* argv[]) {
     objetos.push_back(techo);
     objetos.push_back(suelo);
 
-    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), Pixel(255, 255, 255));
-    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Pixel(0, 0, 255));
+    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), Color(255, 255, 255));
+    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
     fuentes.push_back(blanca);
     // fuentes.push_back(otra);
@@ -116,6 +115,6 @@ int main(int argc, char* argv[]) {
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     // toneMapping.ecualizacion();
-    escritor.escribirImagenHDR("ppms/" + nombre + "8Rebotes.ppm", toneMapping.imagen);
+    escritor.escribirImagenHDR("ppms/" + nombre + ".ppm", toneMapping.imagen);
     return 0;
 }

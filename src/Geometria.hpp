@@ -5,24 +5,16 @@
 #include <iostream>
 #include "Punto.hpp"
 #include "Direccion.hpp"
+#include "Color.hpp"
 
 using namespace std;
-
-struct pixel {
-    float r;
-    float g;
-    float b;
-};
-
-// Constructor para pixel
-pixel Pixel(float r, float g, float b);
 
 class Rayo;
 
 // Clase que permite aplicar operadores de Tone Mapping a una imagen HDR
 class Geometria {
 protected:
-    pixel color;
+    Color color;
     bool fuenteLuz = false;
 public:
     // Constructor completo
@@ -33,11 +25,11 @@ public:
     virtual Direccion getNormal(const Punto& punto) const = 0;
 
     // Getters del color
-    pixel getColor() const;
+    Color getColor() const;
     bool esFuenteLuz() const;
 
     // Setters del color
-    void setColor(pixel _color);
+    void setColor(Color _color);
 
     virtual ~Geometria() {}
 };
@@ -54,7 +46,10 @@ public:
     Esfera(Punto _centro, double _radio);
 
     // Constructor de la esfera con color
-    Esfera(Punto _centro, double _radio, pixel _color);
+    Esfera(Punto _centro, double _radio, Color _color);
+
+    // Constructor de la esfera con color y fuente de luz
+    Esfera(Punto _centro, double _radio, Color _color, bool _fuenteLuz);
 
     // Getters de la esfera
     Punto getCentro() const;
@@ -73,7 +68,9 @@ public:
     // Constructor del plano
     Plano(double _distanciaOrigen, Direccion _normal);
     // Constructor plano con color
-    Plano(double _distanciaOrigen, Direccion _normal, pixel _color);
+    Plano(double _distanciaOrigen, Direccion _normal, Color _color);
+    // Constructor plano con color y fuente de luz
+    Plano(double _distanciaOrigen, Direccion _normal, Color _color, bool _fuenteLuz);
 
     // Getters del plano
     double getDistanciaOrigen() const;
@@ -94,7 +91,9 @@ public:
     Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3);
 
     // Constructor del triangulo con color
-    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, pixel _color);
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, Color _color);
+    // Constructor del triangulo con color y fuente de luz
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, Color _color, bool _fuenteLuz);
 
     // Getters del triangulo
     Punto getVertice1() const;

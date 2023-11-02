@@ -32,5 +32,4 @@
 *.app
 
 # Ppms
-*.ppm
 ./ppms/*.ppm

@@ -6,21 +6,21 @@
 #include <ostream>
 #include "Direccion.hpp"
 #include "Punto.hpp"
-#include "Geometria.hpp"
+#include "Color.hpp"
 
 using namespace std;
 
 class FuenteLuz {
 protected:
     Punto origen;
-    pixel energia;
+    Color energia;
 public:
     // Constructor completo
-    FuenteLuz(Punto _origen, pixel _energia);
+    FuenteLuz(Punto _origen, Color _energia);
 
     // Getters de la fuente de luz
     Punto getOrigen() const;
-    pixel getEnergia() const;
+    Color getEnergia() const;
 
 };
 
