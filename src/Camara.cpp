@@ -95,8 +95,10 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector
             }
         }
     }
+    if (indice == -1) {
+        return Pixel(0, 0, 0);
+    }
     pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, cosenoAnterior, normal, indice, iteracion);
-    // pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice);
 
     return resultado;
 }
@@ -126,6 +128,34 @@ bool interseccionObjeto(const vector<Geometria*>& objetos, const Punto& puntoInt
     return false;
 }
 
+// Función para calcular la luz incidente de una fuente en un punto de intersección
+pixel calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoInterseccion) {
+    Direccion wi = fuente.getOrigen() - puntoInterseccion;
+    Direccion wiNormalizada = wi.normalizar();
+    pixel Energia = fuente.getEnergia();
+    double wiModuloCuadrado = wi.modulo() * wi.modulo();
+    double r = Energia.r / wiModuloCuadrado;
+    double g = Energia.g / wiModuloCuadrado;
+    double b = Energia.b / wiModuloCuadrado;
+    return Pixel(r, g, b);
+}
+
+// Función para generar un rayo aleatorio en base a coordenadas esféricas
+Rayo generarRayoAleatorio(const Punto& puntoInterseccion) {
+    double r1 = random_double();
+    double r2 = random_double();
+    double theta = 2.0 * M_PI * r1; // Ángulo azimut
+    double phi = acos(sqrt(1.0 - r2)); // Ángulo polar
+
+    // Convertir a coordenadas esféricas
+    double x = cos(theta) * sin(phi);
+    double y = sin(theta) * sin(phi);
+    double z = cos(phi);
+
+    Direccion direccionAleatoria = Direccion(x, y, z);
+    return Rayo(puntoInterseccion, direccionAleatoria);
+}
+
 pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const pixel& cosenoAnterior, const Direccion& normal, int indice, int iteracion) const {
     pixel resultado = Pixel(0, 0, 0);
     pixel cosenoTotal = Pixel(0, 0, 0);
@@ -141,27 +171,20 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
 
         Direccion wo = (origin - puntoInterseccion).normalizar();
 
-        // Luz incidente
-        pixel Energia = fuentes[k]->getEnergia();
-        double wiModuloCuadrado = wi.modulo() * wi.modulo();
-        double r = Energia.r / wiModuloCuadrado;
-        double g = Energia.g / wiModuloCuadrado;
-        double b = Energia.b / wiModuloCuadrado;
-        pixel luzIncidente = Pixel(r, g, b);
+        pixel luzIncidente = calcularLuzIncidente(*fuentes[k], puntoInterseccion);
 
         // Calcular material del objeto
         pixel material = calcularMaterial(colorObjeto, wi, wo, puntoInterseccion);
-        pixel BRDF = material;
-        material = multiplicarColores(material, luzIncidente);
 
         //  Calcular el termino del coseno
         double coseno = normal * wiNormalizada;
+        pixel BRDF = multiplicarColores(material, coseno);
+        cosenoTotal = sumarColores(cosenoTotal, BRDF);
         coseno = abs(coseno);
+        material = multiplicarColores(material, luzIncidente);
 
         // cout << "Coseno: " << coseno << endl;
         pixel cosenoActual = multiplicarColores(material, coseno);
-        BRDF = multiplicarColores(BRDF, coseno);
-        cosenoTotal = sumarColores(cosenoTotal, BRDF);
 
         // Calcular el color del pixel
         resultado = sumarColores(resultado, cosenoActual);
@@ -170,24 +193,8 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
     resultado = multiplicarColores(resultado, cosenoAnterior);
 
     if (iteracion < maxIter) {
-        // Muestreo uniforme del coseno
-        double r1 = random_double();
-        double r2 = random_double();
-        double theta = 2.0 * M_PI * r1; // Ángulo azimutal
-        double phi = acos(sqrt(1.0 - r2)); // Ángulo polar
-
-        // Convertir a coordenadas esféricas
-        double x = cos(theta) * sin(phi);
-        double y = sin(theta) * sin(phi);
-        double z = cos(phi);
-
-        Direccion direccionAleatoria = Direccion(x, y, z);
-        Rayo rayo = Rayo(puntoInterseccion, direccionAleatoria);
-
+        Rayo rayo = generarRayoAleatorio(puntoInterseccion);
         pixel color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1, cosenoTotal);
-
-        // Calcular la llamada recursiva a esta funcion 
-
         resultado = sumarColores(resultado, color);
     }
 
