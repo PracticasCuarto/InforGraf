@@ -3,21 +3,14 @@
 #include <string> 
 #include <thread>
 #include <mutex>
-#include <random>
+
 #include "Matriz.hpp"
+#include "RandomNumber.hpp"
 
 using namespace std;
 
 // Mutex para proteger la matriz de imagen compartida
 std::mutex mtx;
-
-// Función para generar un número aleatorio en el rango [0, 1)
-double random_double() {
-    static std::random_device rd;
-    static std::mt19937 generator(rd()); // Inicializa el generador con una semilla aleatoria
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    return distribution(generator);
-}
 
 Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin)
     : up(_up), left(_left), forward(_forward), origin(_origin), base(
@@ -54,6 +47,15 @@ Camara::Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin
     up = up.normalizar();
 }
 
+// Setters
+void Camara::setObjetos(const vector<Geometria*>& _objetos) {
+    objetos = _objetos;
+}
+
+void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
+    fuentes = _fuentes;
+}
+
 Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
     // Dividir cada componente del color entre pi
     double r = (color.r / M_PI) / 255;
@@ -64,7 +66,7 @@ Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
 }
 
 // Función para calcular el color de un píxel
-Color Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion) const {
+Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
     Color color = Color(0, 0, 0);
     float distancia = INFINITY;
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
@@ -99,7 +101,7 @@ Color Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector
     if (objetos[indice]->esFuenteLuz()) {
         return objetos[indice]->getColor();
     }
-    Color resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice, iteracion);
+    Color resultado = luzIndirecta(puntoInterseccion, color, normal, indice, iteracion);
 
     return resultado;
 }
@@ -173,7 +175,7 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
     return Rayo(puntoInterseccion, direccionRayo);
 }
 
-Color Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const {
+Color Camara::luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const {
     Color resultado = Color(0, 0, 0);
     if (iteracion >= maxIter) {
         return Color(0, 0, 0);
@@ -209,7 +211,7 @@ Color Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
     }
 
     Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
-    Color color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1);
+    Color color = calcularColorPixel(rayo, iteracion + 1);
 
     BRDF.r = BRDF.r * M_PI;
     BRDF.g = BRDF.g * M_PI;
@@ -223,7 +225,7 @@ Color Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
 
 
 // Función para calcular el color de un píxel con anti-aliasing
-Color Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, int i, int j) const {
+Color Camara::calcularColorPixelAA(int i, int j) const {
     Color colorSum = Color(0, 0, 0);
 
     for (int n = 0; n < numRayos; n++) {
@@ -236,7 +238,7 @@ Color Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vect
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        Color color = calcularColorPixel(objetos, fuentes, rayo, 0);
+        Color color = calcularColorPixel(rayo, 0);
 
         // Sumar el color al resultado
         colorSum.r += color.r;
@@ -254,10 +256,10 @@ Color Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vect
 
 
 // Función para calcular una región de píxeles utilizando múltiples hilos con anti-aliasing
-void Camara::calcularRegionDePixeles(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
+void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const {
     for (int i = inicioFila; i < finFila; i++) {
         for (int j = 0; j < width; j++) {
-            Color color = calcularColorPixelAA(objetos, fuentes, i, j);
+            Color color = calcularColorPixelAA(i, j);
 
             // Agregar el color del objeto a la matriz
             int index = 3 * j;
@@ -277,6 +279,10 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
     }
     // numCores = 1;
 
+    // Asignar los objetos y las fuentes de luz
+    setObjetos(objetos);
+    setFuentes(fuentes);
+
     vector<vector<double>> matrizImagen(height, vector<double>(3 * width)); // Inicializar matriz de imagen
     vector<thread> threads;
 
@@ -284,7 +290,7 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
     for (int i = 0; i < numCores; i++) {
         int inicioFila = i * filasPorHilo;
         int finFila = (i == numCores - 1) ? height : (i + 1) * filasPorHilo;
-        threads.emplace_back(&Camara::calcularRegionDePixeles, this, std::ref(objetos), std::ref(fuentes), std::ref(matrizImagen), inicioFila, finFila);
+        threads.emplace_back(&Camara::calcularRegionDePixeles, this, std::ref(matrizImagen), inicioFila, finFila);
     }
 
     // Esperar a que todos los hilos terminen

@@ -19,9 +19,13 @@ const int maxIter = 8;
 class Camara {
 private:
     Direccion left, up, forward;
+    int numMuestras, resolucion;
     Punto origin;
     Matriz base;
-    int numMuestras, resolucion;
+
+    // Vectores de la escena
+    vector<Geometria*> objetos;
+    vector<FuenteLuz*> fuentes;
 public:
     int width, height;
 
@@ -32,36 +36,24 @@ public:
     Camara(Direccion _left, Direccion _up, Direccion _forward, Punto _origin, int _width, int _height, int _numMuestras, int resolucion);
 
     // setters
-    void setLeft(Direccion _left);
-    void setUp(Direccion _up);
-    void setForward(Direccion _forward);
-    void setOrigin(Punto _origin);
-    void setWidth(int _width);
-    void setHeight(int _height);
+    void setObjetos(const vector<Geometria*>& _objetos);
+    void setFuentes(const vector<FuenteLuz*>& _fuentes);
 
-    // getters
-    Direccion getLeft() const;
-    Direccion getUp() const;
-    Direccion getForward() const;
-    Punto getOrigin() const;
-    int getWidth() const;
-    int getHeight() const;
-    int getNumMuestras() const;
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
     ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes);
 
     // Función para calcular el color de un píxel
-    Color calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion) const;
+    Color calcularColorPixel(const Rayo& rayo, const int& iteracion) const;
 
     // Función para calcular el color de un píxel con anti-aliasing
-    Color calcularColorPixelAA(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, int i, int j) const;
+    Color calcularColorPixelAA(int i, int j) const;
 
     // Función para calcular una región de píxeles utilizando múltiples hilos
-    void calcularRegionDePixeles(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
+    void calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
     // Función para calcular el color de un píxel con anti-aliasing y múltiples hilos
-    Color luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const;
+    Color luzIndirecta(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int indice, int iteracion) const;
 };
 
 #endif
