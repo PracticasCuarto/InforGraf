@@ -45,7 +45,7 @@ void ToneMapping::ecualizacion() {
 
     for (int i = 0; i < imagen.getAlto(); i++) {
         for (int j = 0; j < imagen.getAncho() * 3; j++) {
-            matriz[i][j] = (matriz[i][j] - min) / (max - min);
+            matriz[i][j] = (matriz[i][j]) / (max);
         }
     }
 

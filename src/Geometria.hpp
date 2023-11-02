@@ -23,6 +23,7 @@ class Rayo;
 class Geometria {
 protected:
     pixel color;
+    bool fuenteLuz = false;
 public:
     // Constructor completo
     Geometria();
@@ -33,6 +34,7 @@ public:
 
     // Getters del color
     pixel getColor() const;
+    bool esFuenteLuz() const;
 
     // Setters del color
     void setColor(pixel _color);

@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
     pixel amarillo = Pixel(255, 255, 0);
-    pixel rosa = Pixel(255, 0, 255);
-    pixel azul = Pixel(0, 0, 255);
+    pixel rosa = Pixel(254, 137, 232);
+    pixel azul = Pixel(150, 214, 255);
     pixel rojo = Pixel(255, 0, 0);
     pixel verde = Pixel(0, 255, 0);
     pixel blanco = Pixel(255, 255, 255);
@@ -110,10 +110,12 @@ int main(int argc, char* argv[]) {
     fuentes.push_back(blanca);
     // fuentes.push_back(otra);
 
+    /*-------- MEDIR TIEMPOS ------- */
+    // Comparar cuanto tiempo tarda sin y con area de luz
     ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
-    toneMapping.curvaGamma(1 / 2.2);
-    //toneMapping.ecualizacion();
-    escritor.escribirImagenHDR("ppms/" + nombre + ".ppm", toneMapping.imagen);
+    // toneMapping.curvaGamma(1 / 2.2);
+    // toneMapping.ecualizacion();
+    escritor.escribirImagenHDR("ppms/" + nombre + "8Rebotes.ppm", toneMapping.imagen);
     return 0;
 }

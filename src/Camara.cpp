@@ -66,17 +66,17 @@ pixel sumarColores(const pixel& color1, const pixel& color2) {
     return Pixel(color1.r + color2.r, color1.g + color2.g, color1.b + color2.b);
 }
 
-pixel calcularMaterial(const pixel& color, const Direccion& wi, const Direccion& wo, const Punto& puntoInterseccion) {
+pixel calcularMaterial(const pixel& color, const Punto& puntoInterseccion) {
     // Dividir cada componente del color entre pi
-    double r = color.r / M_PI;
-    double g = color.g / M_PI;
-    double b = color.b / M_PI;
+    double r = (color.r / M_PI) / 255;
+    double g = (color.g / M_PI) / 255;
+    double b = (color.b / M_PI) / 255;
 
     return Pixel(r, g, b);
 }
 
 // Función para calcular el color de un píxel
-pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion, const pixel& cosenoAnterior) const {
+pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion) const {
     pixel color = Pixel(0, 0, 0);
     float distancia = INFINITY;
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
@@ -95,10 +95,22 @@ pixel Camara::calcularColorPixel(const vector<Geometria*>& objetos, const vector
             }
         }
     }
+
+    // Para cada fuente de luz comprobar si intersecta con ella antes que con un objeto de la escena.
+    // Si es asi devolver el valor directamente en vez de llamar recursivamente
+    // for (int k = 0; k < fuentes.size(); k++) {
+
+    //     Direccion wi = fuentes[k]->getOrigen() - (puntoInterseccion);
+
+    // }
+
     if (indice == -1) {
         return Pixel(0, 0, 0);
     }
-    pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, cosenoAnterior, normal, indice, iteracion);
+    if (objetos[indice]->esFuenteLuz()) {
+        return objetos[indice]->getColor();
+    }
+    pixel resultado = luzIndirecta(objetos, fuentes, puntoInterseccion, color, normal, indice, iteracion);
 
     return resultado;
 }
@@ -141,7 +153,7 @@ pixel calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoIntersecci
 }
 
 // Función para generar un rayo aleatorio en base a coordenadas esféricas
-Rayo generarRayoAleatorio(const Punto& puntoInterseccion) {
+Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal) {
     double r1 = random_double();
     double r2 = random_double();
     double theta = 2.0 * M_PI * r1; // Ángulo azimut
@@ -153,12 +165,40 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion) {
     double z = cos(phi);
 
     Direccion direccionAleatoria = Direccion(x, y, z);
-    return Rayo(puntoInterseccion, direccionAleatoria);
+
+    // cout << "Direccion aleatoria: " << direccionAleatoria.x << " " << direccionAleatoria.y << " " << direccionAleatoria.z << endl;
+    // cout << "Normal: " << normal.x << " " << normal.y << " " << normal.z << endl;
+    // Cambiar de base utilizando una matriz generada 
+    Direccion aux = normal.rotacionX(10.0);
+    aux = aux.rotacionY(10.0);
+    aux = aux.rotacionZ(10.0);
+    Direccion eje1 = normal.cross(aux);
+    Direccion eje2 = normal.cross(eje1);
+    // cout << "Eje 1: " << eje1.x << " " << eje1.y << " " << eje1.z << endl;
+    // cout << "Eje 2: " << eje2.x << " " << eje2.y << " " << eje2.z << endl;
+    Matriz matrizBase = Matriz(
+        eje1.x, eje2.x, normal.x, 0,
+        eje1.y, eje2.y, normal.y, 0,
+        eje1.z, eje2.z, normal.z, 0,
+        0, 0, 0, 1
+    );
+
+    // Cambiar a la base del mundo la dirección del rayo
+    Direccion direccionRayo = direccionAleatoria.multiplicarMatriz(matrizBase);
+    // cout << "Direccion rayo (cambiada): " << direccionRayo.x << " " << direccionRayo.y << " " << direccionRayo.z << endl;
+    // cout << endl;
+    return Rayo(puntoInterseccion, direccionRayo);
 }
 
-pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const pixel& cosenoAnterior, const Direccion& normal, int indice, int iteracion) const {
+pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const Direccion& normal, int indice, int iteracion) const {
     pixel resultado = Pixel(0, 0, 0);
-    pixel cosenoTotal = Pixel(0, 0, 0);
+    if (iteracion >= maxIter) {
+        return Pixel(0, 0, 0);
+    }
+
+    // Calcular material del objeto
+    pixel BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
+    // cout << "BRDF: " << BRDF.r << " " << BRDF.g << " " << BRDF.b << endl;
 
     // Calcular en base al punto de interseccion y las fuentes de luz el color del pixel
     for (int k = 0; k < fuentes.size(); k++) {
@@ -173,30 +213,32 @@ pixel Camara::luzIndirecta(const vector<Geometria*>& objetos, const vector<Fuent
 
         pixel luzIncidente = calcularLuzIncidente(*fuentes[k], puntoInterseccion);
 
-        // Calcular material del objeto
-        pixel material = calcularMaterial(colorObjeto, wi, wo, puntoInterseccion);
-
         //  Calcular el termino del coseno
+        // double coseno = normal * wiNormalizada;
+        // Calcular el arcocoseno de "coseno"
+        // coseno = acos(coseno) / M_PI * 180;
         double coseno = normal * wiNormalizada;
-        pixel BRDF = multiplicarColores(material, coseno);
-        cosenoTotal = sumarColores(cosenoTotal, BRDF);
         coseno = abs(coseno);
-        material = multiplicarColores(material, luzIncidente);
-
-        // cout << "Coseno: " << coseno << endl;
-        pixel cosenoActual = multiplicarColores(material, coseno);
+        pixel material = multiplicarColores(BRDF, luzIncidente);
+        material = multiplicarColores(material, coseno);
 
         // Calcular el color del pixel
-        resultado = sumarColores(resultado, cosenoActual);
-
+        resultado = sumarColores(resultado, material);
     }
-    resultado = multiplicarColores(resultado, cosenoAnterior);
 
-    if (iteracion < maxIter) {
-        Rayo rayo = generarRayoAleatorio(puntoInterseccion);
-        pixel color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1, cosenoTotal);
-        resultado = sumarColores(resultado, color);
-    }
+    // cout << "Resultado: " << resultado.r << " " << resultado.g << " " << resultado.b << endl;
+
+    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
+    pixel color = calcularColorPixel(objetos, fuentes, rayo, iteracion + 1);
+
+    BRDF.r = BRDF.r * M_PI;
+    BRDF.g = BRDF.g * M_PI;
+    BRDF.b = BRDF.b * M_PI;
+    // cout << "BRDF: " << BRDF.r << " " << BRDF.g << " " << BRDF.b << endl;
+    color = multiplicarColores(color, BRDF);
+    // cout << "Color: " << color.r << " " << color.g << " " << color.b << endl;
+    // cout << "Resultado: " << resultado.r << " " << resultado.g << " " << resultado.b << endl;
+    resultado = sumarColores(resultado, color);
 
     return resultado;
 }
@@ -208,8 +250,6 @@ pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vect
 
     for (int n = 0; n < numRayos; n++) {
         // Lanzar rayos a lugares aleatorios dentro del píxel
-        // double y = 1.0 - (2.0 * (i + random_double()) / height);
-        // double x = 1.0 - (2.0 * (j + random_double()) / width);
         double y = 1.0 - (2.0 * i / height - (random_double() / height));
         double x = 1.0 - (2.0 * j / width - (random_double() / width));
         Direccion direccionRayo = Direccion(x, y, 1);
@@ -218,7 +258,7 @@ pixel Camara::calcularColorPixelAA(const vector<Geometria*>& objetos, const vect
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        pixel color = calcularColorPixel(objetos, fuentes, rayo, 0, Pixel(1, 1, 1));
+        pixel color = calcularColorPixel(objetos, fuentes, rayo, 0);
 
         // Sumar el color al resultado
         colorSum.r += color.r;
@@ -257,6 +297,7 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
         // No se puede determinar el número de cores
         numCores = 1;
     }
+    // numCores = 1;
 
     vector<vector<double>> matrizImagen(height, vector<double>(3 * width)); // Inicializar matriz de imagen
     vector<thread> threads;

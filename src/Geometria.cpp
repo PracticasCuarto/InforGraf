@@ -17,11 +17,18 @@ pixel Pixel(float r, float g, float b) {
 }
 
 // Constructor de Geometria
-Geometria::Geometria() {}
+Geometria::Geometria() {
+    color = Pixel(0, 0, 0);
+    fuenteLuz = false;
+}
 
 // Getters del color
 pixel Geometria::getColor() const {
     return color;
+}
+
+bool Geometria::esFuenteLuz() const {
+    return fuenteLuz;
 }
 
 // Setters del color
@@ -241,3 +248,4 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
         return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
     }
 }
+

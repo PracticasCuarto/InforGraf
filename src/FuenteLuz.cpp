@@ -7,7 +7,7 @@ using namespace std;
 FuenteLuz::FuenteLuz(Punto _origen, pixel _energia) : origen(_origen), energia(_energia) {}
 
 // Getters de la fuente de luz
-Punto  FuenteLuz::getOrigen() const {
+Punto FuenteLuz::getOrigen() const {
     return origen;
 }
 

@@ -21,6 +21,7 @@ public:
     // Getters de la fuente de luz
     Punto getOrigen() const;
     pixel getEnergia() const;
+
 };
 
 #endif

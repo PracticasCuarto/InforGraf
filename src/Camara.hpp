@@ -14,7 +14,7 @@
 using namespace std;
 
 const int numRayos = 64;
-const int maxIter = 3;
+const int maxIter = 8;
 
 class Camara {
 private:
@@ -52,7 +52,7 @@ public:
     ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes);
 
     // Función para calcular el color de un píxel
-    pixel calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion, const pixel& cosenoAnterior) const;
+    pixel calcularColorPixel(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Rayo& rayo, const int& iteracion) const;
 
     // Función para calcular el color de un píxel con anti-aliasing
     pixel calcularColorPixelAA(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, int i, int j) const;
@@ -61,7 +61,7 @@ public:
     void calcularRegionDePixeles(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
     // Función para calcular el color de un píxel con anti-aliasing y múltiples hilos
-    pixel luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const pixel& cosenoAnterior, const Direccion& normal, int indice, int iteracion) const;
+    pixel luzIndirecta(const vector<Geometria*>& objetos, const vector<FuenteLuz*>& fuentes, const Punto& puntoInterseccion, const pixel& colorObjeto, const Direccion& normal, int indice, int iteracion) const;
 };
 
 #endif
