@@ -55,7 +55,7 @@ void Camara::setObjetos(const vector<Geometria*>& _objetos) {
 void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
     fuentes = _fuentes;
 }
-
+// Color calcularMaterial(const Color& color, const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo) {
 Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
     // Dividir cada componente del color entre pi
     double r = (color.r / M_PI) / 255;
@@ -149,7 +149,6 @@ Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& c
     Color color = calcularColorPixel(rayo, iteracion + 1);
 
     resultado += color * BRDF * M_PI;
-
     return resultado;
 }
 

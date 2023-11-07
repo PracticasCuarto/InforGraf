@@ -78,8 +78,8 @@ int main(int argc, char* argv[]) {
     Color amarillo = Color(255, 255, 0);
     Color rosa = Color(254, 137, 232);
     Color azul = Color(150, 214, 255);
-    Color rojo = Color(255 * 0.9, 0, 0);
-    Color verde = Color(0, 255 * 0.9, 0);
+    Color rojo = Color(255 * 0.6, 0, 0);
+    Color verde = Color(0, 255 * 0.6, 0);
     Color blanco = Color(255, 255, 255);
     Color negro = Color(0, 0, 0);
     Color naranja = Color(255, 128, 0);
