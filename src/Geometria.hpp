@@ -14,18 +14,26 @@ class Rayo;
 // Clase que permite aplicar operadores de Tone Mapping a una imagen HDR
 class Geometria {
 protected:
-    Color color;
-    bool fuenteLuz = false;
+    Color difuso;
+    Color especular;
+    Color refraccion;
+    bool fuenteLuz;
 public:
     // Constructor completo
     Geometria();
+
+    // Constructor con colores
+    Geometria(Color _difuso, Color _especular, Color _reflectante);
 
     virtual Punto interseccion(const Rayo& rayo) const = 0;
 
     virtual Direccion getNormal(const Punto& punto) const = 0;
 
     // Getters del color
-    Color getColor() const;
+    Color getDifuso() const;
+    Color getEspecular() const;
+    Color getRefraccion() const;
+
     bool esFuenteLuz() const;
 
     // Setters del color

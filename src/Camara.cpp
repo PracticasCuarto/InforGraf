@@ -58,9 +58,9 @@ void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
 // Color calcularMaterial(const Color& color, const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo) {
 Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
     // Dividir cada componente del color entre pi
-    double r = (color.r / M_PI) / 255;
-    double g = (color.g / M_PI) / 255;
-    double b = (color.b / M_PI) / 255;
+    double r = (color.r / M_PI);
+    double g = (color.g / M_PI);
+    double b = (color.b / M_PI);
 
     return Color(r, g, b);
 }
@@ -73,6 +73,7 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
     int indice = -1;
+    int indiceResultado = -1;
 
     // Calcular la interseccion del rayo con todos los objetos de la escena
     // y guardar la interseccion más cercana
@@ -87,10 +88,11 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
         float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
         if (distanciaInterseccion <= distancia) {
             distancia = distanciaInterseccion;
-            color = objeto->getColor();
+            color = objeto->getDifuso();
             puntoInterseccion = puntoInterseccionObjeto;
             normal = objeto->getNormal(puntoInterseccion);
             puntoInterseccion = puntoInterseccion + normal * 0.0001;
+            indiceResultado = indice;
         }
     }
 
@@ -98,15 +100,15 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
         // No hay interseccion
         return Color(0, 0, 0);
     }
-    else if (objetos[indice]->esFuenteLuz()) {
+    else if (objetos[indiceResultado]->esFuenteLuz()) {
         // Es una fuente de luz directa
-        return objetos[indice]->getColor();
+        return objetos[indiceResultado]->getDifuso();
     }
     else if (iteracion >= numMuestras) {
         return Color(0, 0, 0);
     }
     else {
-        return nextEventEstimation(puntoInterseccion, color, normal, iteracion);
+        return nextEventEstimation(puntoInterseccion, color, normal, iteracion, rayo.getDireccion());
     }
 }
 
@@ -136,16 +138,18 @@ Color calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoIntersecci
     return (fuente.getEnergia() / (wi * wi));
 }
 
-// // Función para calcular la luz de un objeto en un punto de intersección
-Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const {
+// Función para calcular la luz de un objeto en un punto de intersección
+Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion, const Direccion& wi) const {
     Color resultado = Color(0, 0, 0);
+
+    Direccion wo = (origin - puntoInterseccion).normalizar();
 
     // Calcular luz directa
     Color BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
     resultado += luzDirecta(puntoInterseccion, BRDF, normal);
 
     // Calcular luz indirecta
-    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
+    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal, wi);
     Color color = calcularColorPixel(rayo, iteracion + 1);
 
     resultado += color * BRDF * M_PI;
@@ -163,7 +167,6 @@ Color Camara::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, cons
         if (interseccionaObjetoAntesLuz(puntoInterseccion, wi, origenFuente)) {
             continue;
         }
-        // Direccion wo = (origin - puntoInterseccion).normalizar();
 
         Color luzIncidente = calcularLuzIncidente(*fuente, puntoInterseccion);
         double coseno = abs(normal * wi);
@@ -211,9 +214,9 @@ void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int i
 
             // Agregar el color del objeto a la matriz
             int index = 3 * j;
-            matrizImagen[i][index] = color.r / 255;
-            matrizImagen[i][index + 1] = color.g / 255;
-            matrizImagen[i][index + 2] = color.b / 255;
+            matrizImagen[i][index] = color.r;
+            matrizImagen[i][index + 1] = color.g;
+            matrizImagen[i][index + 2] = color.b;
         }
     }
 }

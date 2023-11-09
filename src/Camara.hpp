@@ -52,7 +52,7 @@ public:
     void calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
     // Función para calcular la luz de un objeto en un punto de intersección
-    Color nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion) const;
+    Color nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion, const Direccion& wi) const;
 
     // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
     bool interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;

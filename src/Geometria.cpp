@@ -6,13 +6,26 @@
 using namespace std;
 
 // Constructor de Geometria
-Geometria::Geometria() : color(0, 0, 0) {
+Geometria::Geometria() : difuso(0, 0, 0), especular(0, 0, 0), refraccion(0, 0, 0) {
+    fuenteLuz = false;
+}
+
+// Constructor de Geometria con colores
+Geometria::Geometria(Color _difuso, Color _especular, Color _refraccion) : difuso(_difuso), especular(_especular), refraccion(_refraccion) {
     fuenteLuz = false;
 }
 
 // Getters del color
-Color Geometria::getColor() const {
-    return color;
+Color Geometria::getDifuso() const {
+    return difuso;
+}
+
+Color Geometria::getEspecular() const {
+    return especular;
+}
+
+Color Geometria::getRefraccion() const {
+    return refraccion;
 }
 
 bool Geometria::esFuenteLuz() const {
@@ -21,7 +34,7 @@ bool Geometria::esFuenteLuz() const {
 
 // Setters del color
 void Geometria::setColor(Color _color) {
-    color = _color;
+    difuso = _color;
 }
 
 // --------------------- ESFERA ---------------------
@@ -57,6 +70,12 @@ Plano::Plano(double _distanciaOrigen, Direccion _normal) : Geometria(), distanci
 // Constructor plano con color
 Plano::Plano(double _distanciaOrigen, Direccion _normal, Color _color) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
     setColor(_color);
+}
+
+// Constructor plano con color y fuente de luz
+Plano::Plano(double _distanciaOrigen, Direccion _normal, Color _color, bool _fuenteLuz) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
+    setColor(_color);
+    fuenteLuz = _fuenteLuz;
 }
 
 // Getters del plano

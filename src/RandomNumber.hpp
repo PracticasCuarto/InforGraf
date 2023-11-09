@@ -14,8 +14,17 @@ double random_double() {
     return distribution(generator);
 }
 
+void createCoordinateSystem(const Direccion& N, Direccion& Nt, Direccion& Nb) {
+    if (std::fabs(N.x) > std::fabs(N.y))
+        Nt = Direccion(N.z, 0, -N.x) / sqrtf(N.x * N.x + N.z * N.z);
+    else
+        Nt = Direccion(0, -N.z, N.y) / sqrtf(N.y * N.y + N.z * N.z);
+    Nb = N.cross(Nt);
+}
+
+
 // Función para generar un rayo aleatorio en base a coordenadas esféricas
-Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal) {
+Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal, const Direccion& wi) {
     double r1 = random_double();
     double r2 = random_double();
     double theta = 2.0 * M_PI * r1; // Ángulo azimut
@@ -28,12 +37,17 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
 
     Direccion direccionAleatoria = Direccion(x, y, z);
 
+    // Generar la base local
+
+    Direccion eje1 = Direccion(-INFINITY, -INFINITY, -INFINITY);
+    Direccion eje2 = Direccion(-INFINITY, -INFINITY, -INFINITY);
+
+    createCoordinateSystem(normal, eje1, eje2);
+
+    eje1 = eje1.normalizar();
+    eje2 = eje2.normalizar();
+
     // Cambiar de base utilizando una matriz generada 
-    Direccion aux = normal.rotacionX(10.0);
-    aux = aux.rotacionY(10.0);
-    aux = aux.rotacionZ(10.0);
-    Direccion eje1 = normal.cross(aux);
-    Direccion eje2 = normal.cross(eje1);
     Matriz matrizBase = Matriz(
         eje1.x, eje2.x, normal.x, 0,
         eje1.y, eje2.y, normal.y, 0,
@@ -42,7 +56,7 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
     );
 
     // Cambiar a la base del mundo la dirección del rayo
-    Direccion direccionRayo = direccionAleatoria.multiplicarMatriz(matrizBase);
+    Direccion direccionRayo = direccionAleatoria.multiplicarMatriz(matrizBase).normalizar();
     return Rayo(puntoInterseccion, direccionRayo);
 }
 

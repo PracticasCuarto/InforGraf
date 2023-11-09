@@ -60,6 +60,18 @@ int main(int argc, char* argv[]) {
     // Crear una camara en el origen de la escena
     Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5), alto, ancho, muestras, resolucion);
 
+    // Colores
+    Color amarillo = Color(0.9, 0.9, 0);
+    Color rosa = Color(0.9961, 0.5373, 0.9098);
+    Color azul = Color(0.5882, 0.8392, 0.9);
+    Color rojo = Color(0.6, 0, 0);
+    Color verde = Color(0, 0.6, 0);
+    Color blanco = Color(0.9, 0.9, 0.9);
+    Color negro = Color(0, 0, 0);
+    Color naranja = Color(0.9, 0.502, 0);
+    Color gris = Color(0.8039, 0.8039, 0.8039);
+    Color turquesa = Color(0.451, 0.902, 0.9804);
+
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
     Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
 
@@ -72,24 +84,12 @@ int main(int argc, char* argv[]) {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0));
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blanco, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
-
-    Color amarillo = Color(255, 255, 0);
-    Color rosa = Color(254, 137, 232);
-    Color azul = Color(150, 214, 255);
-    Color rojo = Color(255 * 0.6, 0, 0);
-    Color verde = Color(0, 255 * 0.6, 0);
-    Color blanco = Color(255, 255, 255);
-    Color negro = Color(0, 0, 0);
-    Color naranja = Color(255, 128, 0);
-    Color gris = Color(205, 205, 205);
-    Color turquesa = Color(115, 230, 250);
 
     esfera->setColor(rosa);
     esfera2->setColor(turquesa);
     plano->setColor(gris);
-    techo->setColor(gris);
     suelo->setColor(gris);
     planoIzquierda->setColor(rojo);
     planoDerecha->setColor(verde);
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
     objetos.push_back(techo);
     objetos.push_back(suelo);
 
-    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), Color(255, 255, 255));
+    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
     fuentes.push_back(blanca);
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
     ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
-    // toneMapping.ecualizacion();
+    //toneMapping.ecualizacion();
     escritor.escribirImagenHDR("ppms/" + nombre + ".ppm", toneMapping.imagen);
     return 0;
 }
