@@ -67,6 +67,7 @@
         "concepts": "cpp",
         "algorithm": "cpp",
         "charconv": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "cassert": "cpp"
     }
 }

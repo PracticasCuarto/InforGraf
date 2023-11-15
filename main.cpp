@@ -72,6 +72,18 @@ int main(int argc, char* argv[]) {
     Color gris = Color(0.8039, 0.8039, 0.8039);
     Color turquesa = Color(0.451, 0.902, 0.9804);
 
+    Material amarilloMat = Material(amarillo, negro, negro, negro);
+    Material rosaMat = Material(rosa, negro, negro, negro);
+    Material azulMat = Material(azul, negro, negro, negro);
+    Material rojoMat = Material(rojo, negro, negro, negro);
+    Material verdeMat = Material(verde, negro, negro, negro);
+    Material blancoMat = Material(blanco, negro, negro, negro);
+    Material negroMat = Material(negro, negro, negro, negro);
+    Material naranjaMat = Material(naranja, negro, negro, negro);
+    Material turquesaMat = Material(turquesa, negro, negro, negro);
+    Material grisMat = Material(gris, negro, negro, negro);
+
+
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
     Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
 
@@ -84,15 +96,15 @@ int main(int argc, char* argv[]) {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blanco, false);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    esfera->setColor(rosa);
-    esfera2->setColor(turquesa);
-    plano->setColor(gris);
-    suelo->setColor(gris);
-    planoIzquierda->setColor(rojo);
-    planoDerecha->setColor(verde);
+    esfera->setMaterial(rosaMat);
+    esfera2->setMaterial(turquesaMat);
+    plano->setMaterial(grisMat);
+    suelo->setMaterial(grisMat);
+    planoIzquierda->setMaterial(rojoMat);
+    planoDerecha->setMaterial(verdeMat);
 
     vector<Geometria*> objetos = vector<Geometria*>();
     objetos.push_back(esfera);
