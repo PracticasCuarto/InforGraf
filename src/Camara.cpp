@@ -88,7 +88,7 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
         float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
         if (distanciaInterseccion <= distancia) {
             distancia = distanciaInterseccion;
-            color = objeto->getDifuso();
+            color = objeto->getMaterial().getDifuso();
             puntoInterseccion = puntoInterseccionObjeto;
             normal = objeto->getNormal(puntoInterseccion);
             puntoInterseccion = puntoInterseccion + normal * 0.0001;
@@ -102,7 +102,7 @@ Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
     }
     else if (objetos[indiceResultado]->esFuenteLuz()) {
         // Es una fuente de luz directa
-        return objetos[indiceResultado]->getDifuso();
+        return objetos[indiceResultado]->getMaterial().getDifuso();
     }
     else if (iteracion >= numMuestras) {
         return Color(0, 0, 0);
@@ -149,7 +149,7 @@ Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& c
     resultado += luzDirecta(puntoInterseccion, BRDF, normal);
 
     // Calcular luz indirecta
-    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal, wi);
+    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
     Color color = calcularColorPixel(rayo, iteracion + 1);
 
     resultado += color * BRDF * M_PI;

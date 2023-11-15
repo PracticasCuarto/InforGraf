@@ -14,7 +14,7 @@ double random_double() {
     return distribution(generator);
 }
 
-void createCoordinateSystem(const Direccion& N, Direccion& Nt, Direccion& Nb) {
+void crearSistemaCoordenadas(const Direccion& N, Direccion& Nt, Direccion& Nb) {
     if (std::fabs(N.x) > std::fabs(N.y))
         Nt = Direccion(N.z, 0, -N.x) / sqrtf(N.x * N.x + N.z * N.z);
     else
@@ -24,7 +24,7 @@ void createCoordinateSystem(const Direccion& N, Direccion& Nt, Direccion& Nb) {
 
 
 // Función para generar un rayo aleatorio en base a coordenadas esféricas
-Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal, const Direccion& wi) {
+Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& normal) {
     double r1 = random_double();
     double r2 = random_double();
     double theta = 2.0 * M_PI * r1; // Ángulo azimut
@@ -42,7 +42,7 @@ Rayo generarRayoAleatorio(const Punto& puntoInterseccion, const Direccion& norma
     Direccion eje1 = Direccion(-INFINITY, -INFINITY, -INFINITY);
     Direccion eje2 = Direccion(-INFINITY, -INFINITY, -INFINITY);
 
-    createCoordinateSystem(normal, eje1, eje2);
+    crearSistemaCoordenadas(normal, eje1, eje2);
 
     eje1 = eje1.normalizar();
     eje2 = eje2.normalizar();

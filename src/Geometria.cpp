@@ -6,35 +6,23 @@
 using namespace std;
 
 // Constructor de Geometria
-Geometria::Geometria() : difuso(0, 0, 0), especular(0, 0, 0), refraccion(0, 0, 0) {
-    fuenteLuz = false;
-}
+Geometria::Geometria() : material(Material()), fuenteLuz(false) {}
 
-// Constructor de Geometria con colores
-Geometria::Geometria(Color _difuso, Color _especular, Color _refraccion) : difuso(_difuso), especular(_especular), refraccion(_refraccion) {
-    fuenteLuz = false;
-}
+// Constructor de Geometria con material
+Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false) {}
 
-// Getters del color
-Color Geometria::getDifuso() const {
-    return difuso;
-}
-
-Color Geometria::getEspecular() const {
-    return especular;
-}
-
-Color Geometria::getRefraccion() const {
-    return refraccion;
+// Getters del material
+Material Geometria::getMaterial() const {
+    return material;
 }
 
 bool Geometria::esFuenteLuz() const {
     return fuenteLuz;
 }
 
-// Setters del color
-void Geometria::setColor(Color _color) {
-    difuso = _color;
+// Setters del material
+void Geometria::setMaterial(Material _material) {
+    material = _material;
 }
 
 // --------------------- ESFERA ---------------------
@@ -43,8 +31,8 @@ void Geometria::setColor(Color _color) {
 Esfera::Esfera(Punto _centro, double _radio) : Geometria(), centro(_centro), radio(_radio) {}
 
 // Constructor esfera con color 
-Esfera::Esfera(Punto _centro, double _radio, Color _color) : Geometria(), centro(_centro), radio(_radio) {
-    setColor(_color);
+Esfera::Esfera(Punto _centro, double _radio, Material _material) : Geometria(), centro(_centro), radio(_radio) {
+    setMaterial(_material);
 }
 
 // Getters de la esfera
@@ -68,13 +56,13 @@ Direccion Esfera::getNormal(const Punto& punto) const {
 Plano::Plano(double _distanciaOrigen, Direccion _normal) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {}
 
 // Constructor plano con color
-Plano::Plano(double _distanciaOrigen, Direccion _normal, Color _color) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
-    setColor(_color);
+Plano::Plano(double _distanciaOrigen, Direccion _normal, Material _material) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
+    setMaterial(_material);
 }
 
 // Constructor plano con color y fuente de luz
-Plano::Plano(double _distanciaOrigen, Direccion _normal, Color _color, bool _fuenteLuz) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
-    setColor(_color);
+Plano::Plano(double _distanciaOrigen, Direccion _normal, Material _material, bool _fuenteLuz) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {
+    setMaterial(_material);
     fuenteLuz = _fuenteLuz;
 }
 
@@ -98,8 +86,8 @@ Direccion Plano::getNormal(const Punto& punto) const {
 Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {}
 
 // Constructor Triangulo con color
-Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, Color _color) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
-    setColor(_color);
+Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, Material _material) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
+    setMaterial(_material);
 }
 
 // Getters del Triangulo
