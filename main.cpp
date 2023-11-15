@@ -14,6 +14,7 @@
 #include "src/Camara.hpp"
 #include "src/FuenteLuz.hpp"
 #include "src/Color.hpp"
+#include "src/Materiales/Material.hpp"
 
 
 int main(int argc, char* argv[]) {

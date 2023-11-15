@@ -6,7 +6,7 @@
 #include "Punto.hpp"
 #include "Direccion.hpp"
 #include "Color.hpp"
-#include "Material.hpp"
+#include "Materiales/Material.hpp"
 
 using namespace std;
 

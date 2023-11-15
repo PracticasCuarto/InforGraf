@@ -15,6 +15,8 @@ using namespace std;
 
 const int numRayos = 64;
 
+class Material;
+
 class Camara {
 private:
     Direccion left, up, forward;
