@@ -24,6 +24,8 @@ protected:
     Color coeficienteEmision;
 public:
 
+    TipoMaterial tipo;
+
     // Constructor completo
     Material();
 
@@ -40,12 +42,6 @@ public:
     void setEspecular(Color _especular);
     void setRefraccion(Color _refraccion);
 
-    // Funcion virtual calcularMaterial para calcular el color del material
-    virtual Color calcularMaterial(const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo, const Direccion& n) const {
-        return Color(0, 0, 0);
-    }
-
-    virtual ~Material() {}
 };
 
 

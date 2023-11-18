@@ -121,31 +121,25 @@ Color PathTracer::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, 
 }
 
 // Función para calcular la luz de un objeto en un punto de intersección
-Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wi, const Punto& origin, const int& iteracion) const {
+Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin, const int& iteracion) const {
     Color resultado = Color(0, 0, 0);
-    //Direccion wo = (origin - puntoInterseccion).normalizar();
 
     // Comprobar a que clase pertenece el material y en funcion de su clase calcular
     // la luz directa
-    // TipoMaterial tipo = materialObjeto.tipo;
-    // if (tipo == DIFUSO) {
-    //     resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin);
-    // }
-    // else if (tipo == PLASTICO) {
-    //     resultado += calcularComponenteEspecular(materialObjeto, puntoInterseccion, wi, normal, normal);
-    // }
-    // else if (tipo == DIELECTRICO) {
-    //     resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wi, normal, normal);
-    // }
-    // else {
-    //     resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin);
-    // }
-
-    resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin, iteracion);
-
-
+    TipoMaterial tipo = materialObjeto.tipo;
+    if (tipo == DIFUSO) {
+        resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin, iteracion);
+    }
+    else if (tipo == PLASTICO) {
+        resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wo, normal, iteracion);
+    }
+    else if (tipo == DIELECTRICO) {
+        // resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wi, normal, normal);
+    }
+    else {
+        cout << "Error: tipo de material no reconocido" << endl;
+    }
     return resultado;
-
 }
 
 // Función para calcular el color de un píxel
@@ -215,20 +209,38 @@ Color PathTracer::calcularComponenteDifusa(const Material& material, const Punto
     return resultado;
 }
 
-// // Calcular componente especular de un material
-// Color PathTracer::calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo, const Direccion& n) const {
-//     // wr = wo - 2 * (wo * n) * n
-//     // ks * wr / (n * wi)
-//     Direccion wr = wo - (n * (2 * (wo * n)));
+// Calcular componente especular de un material
+Color PathTracer::calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const {
+    // Calcular la direccion del rayo reflejado
+    Direccion wi = wo - (n * (2 * (wo * n)));
+    wi = wi.normalizar();
 
-//     Rayo rayo = Rayo(puntoInterseccion, wr.normalizar());
+    // Lanzar un rayo a la escena
+    Rayo rayo = Rayo(puntoInterseccion, wi);
+    Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
 
-//     // Lanzar un rayo a la escena
-//     Color color = calcularColorPixel(rayo, puntoInterseccion);
+    Color especular = material.getEspecular();
+    return especular * color;
 
-//     Color especular = material.getEspecular();
-//     //double r = (especular.r * wr) / (n * wi);
-//     //double g = (especular.g * wr) / (n * wi);
-//     //double b = (especular.b * wr) / (n * wi);
-//     return Color(0, 0, 0);
-// }
+}
+
+// Calcular componente refractante de un material
+Color PathTracer::calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const {
+
+    // int indiceRefraccion =
+        // Diferenciar si estamos entrando o saliendo del objeto
+
+
+        // Calcular la direccion del rayo reflejado
+
+    Direccion wi = wo - (n * (2 * (wo * n)));
+    wi = wi.normalizar();
+
+    // Lanzar un rayo a la escena
+    Rayo rayo = Rayo(puntoInterseccion, wi);
+    Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
+
+    Color especular = material.getEspecular();
+    return especular * color;
+
+}

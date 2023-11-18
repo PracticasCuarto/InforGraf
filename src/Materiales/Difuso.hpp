@@ -9,11 +9,8 @@ public:
     Difuso() {}
 
     // Constructor con colores
-    Difuso(Color _difuso, Color _coeficienteEmision) : Material(_difuso, Color(0, 0, 0), Color(0, 0, 0), _coeficienteEmision) {}
-
-    // Funcion calcularMaterial para calcular el color del material
-    Color calcularMaterial(const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo, const Direccion& n) const {
-        return calcularComponenteDifusa(*this);
+    Difuso(Color _difuso, Color _coeficienteEmision) : Material(_difuso, Color(0, 0, 0), Color(0, 0, 0), _coeficienteEmision) {
+        tipo = DIFUSO;
     }
 
 };

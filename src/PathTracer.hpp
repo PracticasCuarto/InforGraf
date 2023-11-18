@@ -42,7 +42,10 @@ public:
     Color calcularComponenteDifusa(const Material& material, const Punto& puntoInterseccion, const Direccion& normal, const Punto& origin, const int& iteracion) const;
 
     // Calcular componente especular de un material
-    Color calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo, const Direccion& n) const;
+    Color calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const;
+
+    // Calcular componente refractante de un material
+    Color calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const;
 
 };
 

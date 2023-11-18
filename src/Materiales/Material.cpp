@@ -2,7 +2,9 @@
 #include <cassert>
 
 // Constructor de Material
-Material::Material() : difuso(0, 0, 0), especular(0, 0, 0), refraccion(0, 0, 0), coeficienteEmision(0, 0, 0) {}
+Material::Material() : difuso(0, 0, 0), especular(0, 0, 0), refraccion(0, 0, 0), coeficienteEmision(0, 0, 0) {
+    tipo = NADA;
+}
 
 // Constructor de Material con colores
 Material::Material(Color _difuso, Color _especular, Color _refraccion, Color _coeficienteEmision) : difuso(_difuso), especular(_especular), refraccion(_refraccion), coeficienteEmision(_coeficienteEmision) {
@@ -10,6 +12,8 @@ Material::Material(Color _difuso, Color _especular, Color _refraccion, Color _co
     assert(difuso.r + especular.r + refraccion.r <= 1);
     assert(difuso.g + especular.g + refraccion.g <= 1);
     assert(difuso.b + especular.b + refraccion.b <= 1);
+
+    tipo = NADA;
 }
 
 // Getters del color

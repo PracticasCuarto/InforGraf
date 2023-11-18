@@ -15,6 +15,8 @@
 #include "src/FuenteLuz.hpp"
 #include "src/Color.hpp"
 #include "src/Materiales/Material.hpp"
+#include "src/Materiales/Difuso.hpp"
+#include "src/Materiales/Plastico.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -73,16 +75,18 @@ int main(int argc, char* argv[]) {
     Color gris = Color(0.8039, 0.8039, 0.8039);
     Color turquesa = Color(0.451, 0.902, 0.9804);
 
-    Material amarilloMat = Material(amarillo, negro, negro, negro);
-    Material rosaMat = Material(rosa, negro, negro, negro);
-    Material azulMat = Material(azul, negro, negro, negro);
-    Material rojoMat = Material(rojo, negro, negro, negro);
-    Material verdeMat = Material(verde, negro, negro, negro);
-    Material blancoMat = Material(blanco, negro, negro, negro);
-    Material negroMat = Material(negro, negro, negro, negro);
-    Material naranjaMat = Material(naranja, negro, negro, negro);
-    Material turquesaMat = Material(turquesa, negro, negro, negro);
-    Material grisMat = Material(gris, negro, negro, negro);
+    // Materiales difusos
+    Difuso amarilloMat = Difuso(amarillo, negro);
+    // Difuso rosaMat = Difuso(rosa, negro);
+    Plastico rosaMat = Plastico(negro, Color(1, 1, 1), negro);
+    Difuso azulMat = Difuso(azul, negro);
+    Difuso rojoMat = Difuso(rojo, negro);
+    Difuso verdeMat = Difuso(verde, negro);
+    Difuso blancoMat = Difuso(blanco, negro);
+    Difuso negroMat = Difuso(negro, negro);
+    Difuso naranjaMat = Difuso(naranja, negro);
+    Difuso turquesaMat = Difuso(turquesa, negro);
+    Difuso grisMat = Difuso(gris, negro);
 
 
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
@@ -101,7 +105,7 @@ int main(int argc, char* argv[]) {
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
     esfera->setMaterial(rosaMat);
-    esfera2->setMaterial(turquesaMat);
+    esfera2->setMaterial(rosaMat);
     plano->setMaterial(grisMat);
     suelo->setMaterial(grisMat);
     planoIzquierda->setMaterial(rojoMat);
