@@ -8,6 +8,13 @@
 
 using namespace std;
 
+enum TipoMaterial {
+    NADA,
+    DIFUSO,
+    DIELECTRICO,
+    PLASTICO
+};
+
 // Clase que almacena los colores de un material
 class Material {
 protected:

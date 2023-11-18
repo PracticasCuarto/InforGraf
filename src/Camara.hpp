@@ -11,6 +11,7 @@
 #include "Geometria.hpp"
 #include "Matriz.hpp"
 #include "FuenteLuz.hpp"
+#include "PathTracer.hpp"
 using namespace std;
 
 const int numRayos = 64;
@@ -27,6 +28,8 @@ private:
     // Vectores de la escena
     vector<Geometria*> objetos;
     vector<FuenteLuz*> fuentes;
+
+    PathTracer pathTracerLocal;
 public:
     int width, height;
 
@@ -40,12 +43,10 @@ public:
     void setObjetos(const vector<Geometria*>& _objetos);
     void setFuentes(const vector<FuenteLuz*>& _fuentes);
 
+    void setPathTracer();
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
     ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes);
-
-    // Función para calcular el color de un píxel
-    Color calcularColorPixel(const Rayo& rayo, const int& iteracion) const;
 
     // Función para calcular el color de un píxel con anti-aliasing
     Color calcularColorPixelAA(int i, int j) const;
@@ -53,14 +54,6 @@ public:
     // Función para calcular una región de píxeles utilizando múltiples hilos
     void calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int inicioFila, int finFila) const;
 
-    // Función para calcular la luz de un objeto en un punto de intersección
-    Color nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion, const Direccion& wi) const;
-
-    // Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
-    bool interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const;
-
-    // Función para calcular la luz directa de una fuente en un punto de intersección
-    Color luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const;
 };
 
 #endif

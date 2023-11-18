@@ -55,129 +55,10 @@ void Camara::setObjetos(const vector<Geometria*>& _objetos) {
 void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
     fuentes = _fuentes;
 }
-// Color calcularMaterial(const Color& color, const Punto& puntoInterseccion, const Direccion& wi, const Direccion& wo) {
-Color calcularMaterial(const Color& color, const Punto& puntoInterseccion) {
-    // Dividir cada componente del color entre pi
-    double r = (color.r / M_PI);
-    double g = (color.g / M_PI);
-    double b = (color.b / M_PI);
 
-    return Color(r, g, b);
+void Camara::setPathTracer() {
+    pathTracerLocal = PathTracer(objetos, fuentes);
 }
-
-// Función para calcular el color de un píxel
-Color Camara::calcularColorPixel(const Rayo& rayo, const int& iteracion) const {
-    // Definir valores iniciales
-    Color color = Color(0, 0, 0);
-    float distancia = INFINITY;
-    Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
-    Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
-    int indice = -1;
-    int indiceResultado = -1;
-
-    // Calcular la interseccion del rayo con todos los objetos de la escena
-    // y guardar la interseccion más cercana
-    for (Geometria* objeto : objetos) {
-        indice++;
-        Punto puntoInterseccionObjeto = objeto->interseccion(rayo);
-        if (puntoInterseccionObjeto.x == -INFINITY) {
-            continue;
-        }
-
-        // Calcular la distancia entre el origen del rayo y el punto de interseccion
-        float distanciaInterseccion = origin.distancia(puntoInterseccionObjeto);
-        if (distanciaInterseccion <= distancia) {
-            distancia = distanciaInterseccion;
-            color = objeto->getMaterial().getDifuso();
-            puntoInterseccion = puntoInterseccionObjeto;
-            normal = objeto->getNormal(puntoInterseccion);
-            puntoInterseccion = puntoInterseccion + normal * 0.0001;
-            indiceResultado = indice;
-        }
-    }
-
-    if (distancia == INFINITY) {
-        // No hay interseccion
-        return Color(0, 0, 0);
-    }
-    else if (objetos[indiceResultado]->esFuenteLuz()) {
-        // Es una fuente de luz directa
-        return objetos[indiceResultado]->getMaterial().getDifuso();
-    }
-    else if (iteracion >= numMuestras) {
-        return Color(0, 0, 0);
-    }
-    else {
-        return nextEventEstimation(puntoInterseccion, color, normal, iteracion, rayo.getDireccion());
-    }
-}
-
-// Calcular si el rayo que une un punto y la luz tiene alguna colision en su camino
-bool Camara::interseccionaObjetoAntesLuz(const Punto& puntoInterseccion, const Direccion& direccion, const Punto& origenFuente) const {
-    // Calcular la distancia entre el punto y el origen de la fuente de luz
-    double distancia = puntoInterseccion.distancia(origenFuente);
-    Rayo rayo = Rayo(puntoInterseccion, direccion);
-
-    for (int k = 0; k < objetos.size(); k++) {
-        // Comprobar el punto de interseccion con el objeto
-        Punto puntoInterseccionObjeto = objetos[k]->interseccion(rayo);
-
-        // Comprobar si la interseccion es válida
-        bool interseccion = puntoInterseccionObjeto.x != -INFINITY;
-        bool interseccionValida = puntoInterseccionObjeto.distancia(puntoInterseccion) < distancia;
-        if (interseccion && interseccionValida) {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Función para calcular la luz incidente de una fuente en un punto de intersección
-Color calcularLuzIncidente(const FuenteLuz& fuente, const Punto& puntoInterseccion) {
-    double wi = (fuente.getOrigen() - puntoInterseccion).modulo();
-    return (fuente.getEnergia() / (wi * wi));
-}
-
-// Función para calcular la luz de un objeto en un punto de intersección
-Color Camara::nextEventEstimation(const Punto& puntoInterseccion, const Color& colorObjeto, const Direccion& normal, int iteracion, const Direccion& wi) const {
-    Color resultado = Color(0, 0, 0);
-
-    Direccion wo = (origin - puntoInterseccion).normalizar();
-
-    // Calcular luz directa
-    Color BRDF = calcularMaterial(colorObjeto, puntoInterseccion);
-    resultado += luzDirecta(puntoInterseccion, BRDF, normal);
-
-    // Calcular luz indirecta
-    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
-    Color color = calcularColorPixel(rayo, iteracion + 1);
-
-    resultado += color * BRDF * M_PI;
-    return resultado;
-}
-
-// Función para calcular la luz directa de una fuente en un punto de intersección
-Color Camara::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const {
-    Color resultado = Color(0, 0, 0);
-    // Calcular la luz directa a partir de las fuentes de luz
-    for (FuenteLuz* fuente : fuentes) {
-        Punto origenFuente = fuente->getOrigen();
-        Direccion wi = (origenFuente - (puntoInterseccion)).normalizar();
-
-        if (interseccionaObjetoAntesLuz(puntoInterseccion, wi, origenFuente)) {
-            continue;
-        }
-
-        Color luzIncidente = calcularLuzIncidente(*fuente, puntoInterseccion);
-        double coseno = abs(normal * wi);
-        Color material = luzIncidente * BRDF * coseno;
-
-        // Calcular el color del pixel
-        resultado += material;
-    }
-    return resultado;
-}
-
 
 // Función para calcular el color de un píxel con anti-aliasing
 Color Camara::calcularColorPixelAA(int i, int j) const {
@@ -193,7 +74,7 @@ Color Camara::calcularColorPixelAA(int i, int j) const {
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        Color color = calcularColorPixel(rayo, 0);
+        Color color = pathTracerLocal.calcularColorPixel(rayo, origin, 0);
 
         // Sumar el color al resultado
         colorSum += color;
@@ -232,6 +113,9 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
     // Asignar los objetos y las fuentes de luz
     setObjetos(objetos);
     setFuentes(fuentes);
+
+    // Crear el path tracer
+    setPathTracer();
 
     vector<vector<double>> matrizImagen(height, vector<double>(3 * width)); // Inicializar matriz de imagen
     vector<thread> threads;
