@@ -126,15 +126,20 @@ Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Mater
 
     // Comprobar a que clase pertenece el material y en funcion de su clase calcular
     // la luz directa
-    TipoMaterial tipo = materialObjeto.tipo;
+    Componentes tipo = materialObjeto.ruletaRusa();
     if (tipo == DIFUSO) {
         resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin, iteracion);
+        resultado *= 1 / materialObjeto.pDifuso;
     }
-    else if (tipo == PLASTICO) {
+    else if (tipo == ESPECULAR) {
         resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wo, normal, iteracion);
+        resultado *= 1 / materialObjeto.pEspecular;
     }
-    else if (tipo == DIELECTRICO) {
+    else if (tipo == REFRACCION) {
         // resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wi, normal, normal);
+    }
+    else if (tipo == ABSORCION) {
+        // Se absorbe la luz luego no se hace nada
     }
     else {
         cout << "Error: tipo de material no reconocido" << endl;
@@ -220,7 +225,7 @@ Color PathTracer::calcularComponenteEspecular(const Material& material, const Pu
     Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
 
     Color especular = material.getEspecular();
-    return especular * color;
+    return (especular * color);// / (n * wi);
 
 }
 

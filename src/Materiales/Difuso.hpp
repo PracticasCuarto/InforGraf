@@ -10,7 +10,10 @@ public:
 
     // Constructor con colores
     Difuso(Color _difuso, Color _coeficienteEmision) : Material(_difuso, Color(0, 0, 0), Color(0, 0, 0), _coeficienteEmision) {
-        tipo = DIFUSO;
+        tipo = DIFUSO_PURO;
+        pDifuso = 0.7;
+        pEspecular = 0;
+        pRefraccion = 0;
     }
 
 };

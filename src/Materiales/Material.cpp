@@ -42,3 +42,21 @@ void Material::setRefraccion(Color _refraccion) {
     refraccion = _refraccion;
 }
 
+
+// Ruleta rusa para decidir que componente hay que calcular
+Componentes Material::ruletaRusa() const {
+    double aleatorio = random_double();
+
+    if (aleatorio <= pDifuso) {
+        return DIFUSO;
+    }
+    else if (aleatorio <= pDifuso + pEspecular) {
+        return ESPECULAR;
+    }
+    // else if (aleatorio <= pDifuso + pEspecular + pRefraccion) {
+    //     return REFRACCION;
+    // }
+    else {
+        return ABSORCION;
+    }
+}

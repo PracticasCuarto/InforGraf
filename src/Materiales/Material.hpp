@@ -5,14 +5,22 @@
 #include "../Color.hpp"
 #include "../Punto.hpp"
 #include "../Direccion.hpp"
+#include "../RandomNumber.hpp"
 
 using namespace std;
 
 enum TipoMaterial {
     NADA,
-    DIFUSO,
+    DIFUSO_PURO,
     DIELECTRICO,
     PLASTICO
+};
+
+enum Componentes {
+    DIFUSO,
+    ESPECULAR,
+    REFRACCION,
+    ABSORCION
 };
 
 // Clase que almacena los colores de un material
@@ -22,8 +30,10 @@ protected:
     Color especular;
     Color refraccion;
     Color coeficienteEmision;
+
 public:
 
+    double pDifuso, pEspecular, pRefraccion;
     TipoMaterial tipo;
 
     // Constructor completo
@@ -42,6 +52,8 @@ public:
     void setEspecular(Color _especular);
     void setRefraccion(Color _refraccion);
 
+    // Ruleta rusa para decidir que componente hay que calcular
+    Componentes ruletaRusa() const;
 };
 
 

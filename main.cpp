@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     // Materiales difusos
     Difuso amarilloMat = Difuso(amarillo, negro);
     // Difuso rosaMat = Difuso(rosa, negro);
-    Plastico rosaMat = Plastico(negro, Color(1, 1, 1), negro);
+    Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
     Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
     Difuso verdeMat = Difuso(verde, negro);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
     esfera->setMaterial(rosaMat);
-    esfera2->setMaterial(rosaMat);
+    esfera2->setMaterial(azulMat);
     plano->setMaterial(grisMat);
     suelo->setMaterial(grisMat);
     planoIzquierda->setMaterial(rojoMat);
