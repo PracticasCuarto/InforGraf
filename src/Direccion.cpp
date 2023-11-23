@@ -17,6 +17,11 @@ Direccion Direccion::operator-(const Direccion& otroDireccion) const {
     return Direccion(x - otroDireccion.x, y - otroDireccion.y, z - otroDireccion.z);
 }
 
+// Sobre carga del operador de resta para direccion y entero
+Direccion Direccion::operator-(const int& entero) const {
+    return Direccion(entero - x, entero - y, entero - z);
+}
+
 // Sobre carga del operador de suma para direcciones
 Direccion Direccion::operator+(const Direccion& otroDireccion) const {
     return Direccion(x + otroDireccion.x, y + otroDireccion.y, z + otroDireccion.z);

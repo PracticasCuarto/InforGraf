@@ -186,13 +186,36 @@ Punto Esfera::interseccion(const Rayo& rayo) const {
     // Usa la función resolverCuadratica para calcular las soluciones
     if (!resolverCuadratica(a, b, c, t0, t1)) {
         // No hay intersección
+        // cout << "No hay interseccion" << endl;
         return Punto(-INFINITY, -INFINITY, -INFINITY);
     }
 
-    // Devolver la solución más cercana al origen del rayo
-    float t = (t0 < t1) ? t0 : t1;
+    bool dentro = false;
 
-    Punto puntoInterseccion = rayo.getOrigen() + direccionRayo * t;
+    // Comprobar que son iguales
+    if (L.modulo() <= radio) {
+        dentro = true;
+    }
+
+    Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
+
+    // Devolver la solución más cercana al origen del rayo
+    if (t0 < t1) {
+        if (!dentro) {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t0;
+        }
+        else {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t1;
+        }
+    }
+    else {
+        if (!dentro) {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t1;
+        }
+        else {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t0;
+        }
+    }
 
     return puntoInterseccion;
 }

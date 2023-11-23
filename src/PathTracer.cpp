@@ -152,17 +152,15 @@ Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Mater
 Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin) const {
     // Definir valores iniciales
     Material material = Material();
-    float distancia = INFINITY;
     Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
-    int indice = -1;
     int indiceResultado = -1;
 
     // Calcular la interseccion del rayo con todos los objetos de la escena
     // y guardar la interseccion más cercana
-    interseccionRayoEscena(rayo, origin, material, distancia, puntoInterseccion, normal, indiceResultado, indice);
+    bool hayInterseccion = interseccionRayoEscena(rayo, origin, material, puntoInterseccion, normal, indiceResultado);
 
-    if (distancia == INFINITY) {
+    if (!hayInterseccion) {
         // No hay interseccion
         cout << "No hay interseccion" << endl;
         return Color(0, 0, 0);
@@ -213,7 +211,11 @@ Color PathTracer::calcularComponenteEspecular(const Material& material, const Pu
 
 // Calcular la interseccion del rayo con todos los objetos de la escena
 // y guardar la interseccion más cercana, junto con su informacion
-void PathTracer::interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, float& distancia, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado, int& indice) const {
+bool PathTracer::interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado) const {
+    float distancia = INFINITY;
+    int indice = -1;
+    bool resultado = false;
+
     for (Geometria* objeto : objetos) {
         indice++;
         Punto puntoInterseccionObjeto = objeto->interseccion(rayo);
@@ -230,77 +232,55 @@ void PathTracer::interseccionRayoEscena(const Rayo& rayo, const Punto& origin, M
             normal = objeto->getNormal(puntoInterseccion);
             puntoInterseccion = puntoInterseccion + normal * 0.0001;
             indiceResultado = indice;
+            resultado = true;
+
+
         }
     }
-
+    return resultado;
 }
 
 // Función para calcular la direccion del rayo entrante en una refraccion
-Direccion rayoEntranteRefraccion(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
-    // cout << "IOR: " << ior << endl;
-    double cosi = (wo * n);
-    if (cosi > 1) {
-        cosi = 1;
-    }
-    else if (cosi < -1) {
-        cosi = -1;
-    }
-
+Direccion rayoRefraccion(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
+    Direccion woNormal = wo.normalizar();
+    Direccion nNormal = n.normalizar();
+    double cosi = ((woNormal * -1) * nNormal);
+    Direccion normal = nNormal;
     double indiceRefraccionActual = 1.0f, indiceRefraccionSiguiente = indiceRefraccion;
-    cosi = -cosi;
-    double coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
-    double k = 1 - ((coeficienteRefraccion * coeficienteRefraccion) * (1 - (cosi * cosi)));
+    double coeficienteRefraccion;
 
-    Direccion resultado = Direccion(-INFINITY, -INFINITY, -INFINITY);
-
-    if (k < 0) {
-        cout << "Reflexion total MALA" << endl;
-        return Direccion(-INFINITY, -INFINITY, -INFINITY);
+    if (cosi < 0) {
+        // Saliendo
+        cosi = abs(cosi);
+        coeficienteRefraccion = indiceRefraccionSiguiente / indiceRefraccionActual;
+        normal = Direccion(-n.x, -n.y, -n.z).normalizar();
     }
     else {
-        resultado = (wo * coeficienteRefraccion) + (n * ((coeficienteRefraccion * cosi) - std::sqrt(k)));
-        return resultado;
+        // Entrando
+        coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
     }
-}
+    double sinI = sqrt(1 - (cosi * cosi));
+    double sinT = coeficienteRefraccion * sinI;
+    double cosT = sqrt(1 - (sinT * sinT));
 
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel.html
-
-// Función para calcular la direccion del rayo saliente en una refraccion
-Direccion rayoSalienteRefraccion(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
-    double cosi = (wo * n);
-    if (cosi > 1) {
-        cosi = 1;
-    }
-    else if (cosi < -1) {
-        cosi = -1;
-    }
-
-    double indiceRefraccionActual = indiceRefraccion, indiceRefraccionSiguiente = 1.0f;
-    Direccion normal = Direccion(-n.x, -n.y, -n.z);
-    double coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
-
-    double k = 1 - ((coeficienteRefraccion * coeficienteRefraccion) * (1 - (cosi * cosi)));
-
-    if (k < 0) {
-        cout << "Reflexion total" << endl;
-        return Direccion(-INFINITY, -INFINITY, -INFINITY);
-    }
-    else {
-        Direccion resultado = (wo * coeficienteRefraccion) + (normal * ((coeficienteRefraccion * cosi) - std::sqrt(k)));
-        return resultado;
-    }
+    return  ((woNormal * coeficienteRefraccion) + (normal * ((coeficienteRefraccion * cosi) - cosT))).normalizar();
 }
 
 // Calcular componente refractante de un material
 Color PathTracer::calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const {
 
-    Direccion direccionRayoEntrante = rayoEntranteRefraccion(wo, n, material.getIndiceRefraccion());
+    Direccion direccionRayoEntrante = rayoRefraccion(wo, n, material.getIndiceRefraccion());
     if (direccionRayoEntrante.x == -INFINITY) {
         return Color(0, 0, 0);
     }
 
+    // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
+    // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
+
+    Direccion normalNegada = Direccion(-n.x, -n.y, -n.z);
+    Punto puntoInterseccionActualizado = puntoInterseccion + normalNegada * 0.0002;
     // Lanzar un rayo a la escena
-    Rayo rayoEntrante = Rayo(puntoInterseccion, direccionRayoEntrante);
+    Rayo rayoEntrante = Rayo(puntoInterseccionActualizado, direccionRayoEntrante);
 
     // Definir valores iniciales
     float distancia = INFINITY;
@@ -308,17 +288,17 @@ Color PathTracer::calcularComponenteRefractante(const Material& material, const 
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
     int indice = -1;
     Material basura = Material();
-    interseccionRayoEscena(rayoEntrante, puntoInterseccion, basura, distancia, puntoInterseccionActual, normal, indice, indice);
+    interseccionRayoEscena(rayoEntrante, puntoInterseccionActualizado, basura, puntoInterseccionActual, normal, indice);
 
-    Direccion direccionRayoSaliente = rayoSalienteRefraccion(direccionRayoEntrante, normal, material.getIndiceRefraccion());
+    Direccion direccionRayoSaliente = rayoRefraccion(direccionRayoEntrante, normal, material.getIndiceRefraccion());
     if (direccionRayoSaliente.x == -INFINITY) {
         return Color(0, 0, 0);
     }
 
+    // cout << "Direccion del rayo saliente: " << direccionRayoSaliente.x << " " << direccionRayoSaliente.y << " " << direccionRayoSaliente.z << endl;
+
     // Lanzar un rayo a la escena
-    Rayo rayoSaliente = Rayo(puntoInterseccion, direccionRayoSaliente);
-    Color color = calcularColorPixel(rayoSaliente, puntoInterseccion);
+    Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
+    Color color = calcularColorPixel(rayoSaliente, puntoInterseccionActual);
     return color;
-    // Color refraccion = material.getRefraccion();
-    // return (refraccion * color);
 }

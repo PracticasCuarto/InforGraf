@@ -17,6 +17,9 @@ public:
     // Sobrecarga del operador de resta para direcciones
     Direccion operator-(const Direccion& otroDireccion) const;
 
+    // Sobre carga del operador de resta para direccion y entero
+    Direccion operator-(const int& entero) const;
+
     // Sobre carga del operador de suma para direcciones
     Direccion operator+(const Direccion& otroDireccion) const;
 

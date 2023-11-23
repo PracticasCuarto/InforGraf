@@ -31,6 +31,11 @@ Punto Punto::operator+(const Direccion& otraDireccion) const {
     return Punto(x + otraDireccion.x, y + otraDireccion.y, z + otraDireccion.z);
 }
 
+// Sobrecarga del operador de resta de una direccion con un punto
+Punto Punto::operator-(const Direccion& otraDireccion) const {
+    return Punto(x - otraDireccion.x, y - otraDireccion.y, z - otraDireccion.z);
+}
+
 // Sobrecarga del operador de suma igual de una direccion con un punto
 Punto Punto::operator+=(const Direccion& otraDireccion) const {
     return Punto(x + otraDireccion.x, y + otraDireccion.y, z + otraDireccion.z);

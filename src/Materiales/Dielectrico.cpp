@@ -6,7 +6,7 @@ Dielectrico::Dielectrico() {
 }
 
 // Constructor con colores
-Dielectrico::Dielectrico(Color _especular, Color _reflectante, Color _coeficienteEmision, double _medioRefraccion) : Material(Color(0, 0, 0), _especular, _reflectante, _coeficienteEmision), medioRefraccion(_medioRefraccion) {
+Dielectrico::Dielectrico(Color _especular, Color _reflectante, Color _coeficienteEmision, double _medioRefraccion) : Material(Color(0, 0, 0), _especular, _reflectante, _coeficienteEmision) {
     tipo = DIELECTRICO;
 
     double maximoRefraccion = max(_reflectante.r, max(_reflectante.g, _reflectante.b));

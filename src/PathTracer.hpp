@@ -49,8 +49,7 @@ public:
     Color calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const;
 
     // Calcular la interseccion del rayo con todos los objetos de la escena y guardar la interseccion más cercana, junto con su informacion
-    void interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, float& distancia, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado, int& indice) const;
-
+    bool interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado) const;
 };
 
 #endif
