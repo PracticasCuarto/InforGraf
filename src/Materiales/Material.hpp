@@ -31,6 +31,8 @@ protected:
     Color refraccion;
     Color coeficienteEmision;
 
+    double indiceRefraccion;
+
 public:
 
     double pDifuso, pEspecular, pRefraccion;
@@ -51,6 +53,10 @@ public:
     void setDifuso(Color _difuso);
     void setEspecular(Color _especular);
     void setRefraccion(Color _refraccion);
+
+    double getIndiceRefraccion() const {
+        return indiceRefraccion;
+    }
 
     // Ruleta rusa para decidir que componente hay que calcular
     Componentes ruletaRusa() const;

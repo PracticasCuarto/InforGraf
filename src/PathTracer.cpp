@@ -121,22 +121,23 @@ Color PathTracer::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, 
 }
 
 // Función para calcular la luz de un objeto en un punto de intersección
-Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin, const int& iteracion) const {
+Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin) const {
     Color resultado = Color(0, 0, 0);
 
     // Comprobar a que clase pertenece el material y en funcion de su clase calcular
     // la luz directa
     Componentes tipo = materialObjeto.ruletaRusa();
     if (tipo == DIFUSO) {
-        resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin, iteracion);
+        resultado = calcularComponenteDifusa(materialObjeto, puntoInterseccion, normal, origin);
         resultado *= 1 / materialObjeto.pDifuso;
     }
     else if (tipo == ESPECULAR) {
-        resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wo, normal, iteracion);
+        resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wo, normal);
         resultado *= 1 / materialObjeto.pEspecular;
     }
     else if (tipo == REFRACCION) {
-        // resultado = calcularComponenteEspecular(materialObjeto, puntoInterseccion, wi, normal, normal);
+        resultado = calcularComponenteRefractante(materialObjeto, puntoInterseccion, wo, normal);
+        resultado *= 1 / materialObjeto.pRefraccion;
     }
     else if (tipo == ABSORCION) {
         // Se absorbe la luz luego no se hace nada
@@ -148,7 +149,7 @@ Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Mater
 }
 
 // Función para calcular el color de un píxel
-Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin, const int& iteracion) const {
+Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin) const {
     // Definir valores iniciales
     Material material = Material();
     float distancia = INFINITY;
@@ -159,6 +160,60 @@ Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin, cons
 
     // Calcular la interseccion del rayo con todos los objetos de la escena
     // y guardar la interseccion más cercana
+    interseccionRayoEscena(rayo, origin, material, distancia, puntoInterseccion, normal, indiceResultado, indice);
+
+    if (distancia == INFINITY) {
+        // No hay interseccion
+        cout << "No hay interseccion" << endl;
+        return Color(0, 0, 0);
+    }
+    else if (objetos[indiceResultado]->esFuenteLuz()) {
+        // Es una fuente de luz directa
+        return objetos[indiceResultado]->getMaterial().getDifuso();
+    }
+    else {
+        return nextEventEstimation(puntoInterseccion, material, normal, rayo.getDireccion(), origin);
+    }
+}
+
+// Función para calcular la componente difusa de un material
+Color PathTracer::calcularComponenteDifusa(const Material& material, const Punto& puntoInterseccion, const Direccion& normal, const Punto& origin) const {
+    // Dividir cada componente del color entre pi
+    Color difuso = material.getDifuso();
+    Color BRDF = calcularMaterialDifuso(difuso, puntoInterseccion);
+
+    Direccion wo = (origin - puntoInterseccion).normalizar();
+
+    // Calcular luz directa
+    Color resultado = luzDirecta(puntoInterseccion, BRDF, normal);
+
+    // Calcular luz indirecta
+    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
+    Color color = calcularColorPixel(rayo, puntoInterseccion);
+
+
+    resultado += color * BRDF * M_PI;
+    return resultado;
+}
+
+// Calcular componente especular de un material
+Color PathTracer::calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const {
+    // Calcular la direccion del rayo reflejado
+    Direccion wi = wo - (n * (2 * (wo * n)));
+    wi = wi.normalizar();
+
+    // Lanzar un rayo a la escena
+    Rayo rayo = Rayo(puntoInterseccion, wi);
+    Color color = calcularColorPixel(rayo, puntoInterseccion);
+
+    Color especular = material.getEspecular();
+    return (especular * color);// / (n * wi);
+
+}
+
+// Calcular la interseccion del rayo con todos los objetos de la escena
+// y guardar la interseccion más cercana, junto con su informacion
+void PathTracer::interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, float& distancia, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado, int& indice) const {
     for (Geometria* objeto : objetos) {
         indice++;
         Punto puntoInterseccionObjeto = objeto->interseccion(rayo);
@@ -178,74 +233,92 @@ Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin, cons
         }
     }
 
-    if (distancia == INFINITY) {
-        // No hay interseccion
-        return Color(0, 0, 0);
+}
+
+// Función para calcular la direccion del rayo entrante en una refraccion
+Direccion rayoEntranteRefraccion(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
+    // cout << "IOR: " << ior << endl;
+    double cosi = (wo * n);
+    if (cosi > 1) {
+        cosi = 1;
     }
-    else if (objetos[indiceResultado]->esFuenteLuz()) {
-        // Es una fuente de luz directa
-        return objetos[indiceResultado]->getMaterial().getDifuso();
+    else if (cosi < -1) {
+        cosi = -1;
     }
-    else if (iteracion >= 10) {
-        return Color(0, 0, 0);
+
+    double indiceRefraccionActual = 1.0f, indiceRefraccionSiguiente = indiceRefraccion;
+    cosi = -cosi;
+    double coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
+    double k = 1 - ((coeficienteRefraccion * coeficienteRefraccion) * (1 - (cosi * cosi)));
+
+    Direccion resultado = Direccion(-INFINITY, -INFINITY, -INFINITY);
+
+    if (k < 0) {
+        cout << "Reflexion total MALA" << endl;
+        return Direccion(-INFINITY, -INFINITY, -INFINITY);
     }
     else {
-        return nextEventEstimation(puntoInterseccion, material, normal, rayo.getDireccion(), origin, iteracion);
+        resultado = (wo * coeficienteRefraccion) + (n * ((coeficienteRefraccion * cosi) - std::sqrt(k)));
+        return resultado;
     }
 }
 
-// Función para calcular la componente difusa de un material
-Color PathTracer::calcularComponenteDifusa(const Material& material, const Punto& puntoInterseccion, const Direccion& normal, const Punto& origin, const int& iteracion) const {
-    // Dividir cada componente del color entre pi
-    Color difuso = material.getDifuso();
-    Color BRDF = calcularMaterialDifuso(difuso, puntoInterseccion);
+// https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel.html
 
-    Direccion wo = (origin - puntoInterseccion).normalizar();
+// Función para calcular la direccion del rayo saliente en una refraccion
+Direccion rayoSalienteRefraccion(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
+    double cosi = (wo * n);
+    if (cosi > 1) {
+        cosi = 1;
+    }
+    else if (cosi < -1) {
+        cosi = -1;
+    }
 
-    // Calcular luz directa
-    Color resultado = luzDirecta(puntoInterseccion, BRDF, normal);
+    double indiceRefraccionActual = indiceRefraccion, indiceRefraccionSiguiente = 1.0f;
+    Direccion normal = Direccion(-n.x, -n.y, -n.z);
+    double coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
 
-    // Calcular luz indirecta
-    Rayo rayo = generarRayoAleatorio(puntoInterseccion, normal);
-    Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
+    double k = 1 - ((coeficienteRefraccion * coeficienteRefraccion) * (1 - (cosi * cosi)));
 
-
-    resultado += color * BRDF * M_PI;
-    return resultado;
-}
-
-// Calcular componente especular de un material
-Color PathTracer::calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const {
-    // Calcular la direccion del rayo reflejado
-    Direccion wi = wo - (n * (2 * (wo * n)));
-    wi = wi.normalizar();
-
-    // Lanzar un rayo a la escena
-    Rayo rayo = Rayo(puntoInterseccion, wi);
-    Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
-
-    Color especular = material.getEspecular();
-    return (especular * color);// / (n * wi);
-
+    if (k < 0) {
+        cout << "Reflexion total" << endl;
+        return Direccion(-INFINITY, -INFINITY, -INFINITY);
+    }
+    else {
+        Direccion resultado = (wo * coeficienteRefraccion) + (normal * ((coeficienteRefraccion * cosi) - std::sqrt(k)));
+        return resultado;
+    }
 }
 
 // Calcular componente refractante de un material
-Color PathTracer::calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const {
+Color PathTracer::calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const {
 
-    // int indiceRefraccion =
-        // Diferenciar si estamos entrando o saliendo del objeto
-
-
-        // Calcular la direccion del rayo reflejado
-
-    Direccion wi = wo - (n * (2 * (wo * n)));
-    wi = wi.normalizar();
+    Direccion direccionRayoEntrante = rayoEntranteRefraccion(wo, n, material.getIndiceRefraccion());
+    if (direccionRayoEntrante.x == -INFINITY) {
+        return Color(0, 0, 0);
+    }
 
     // Lanzar un rayo a la escena
-    Rayo rayo = Rayo(puntoInterseccion, wi);
-    Color color = calcularColorPixel(rayo, puntoInterseccion, iteracion + 1);
+    Rayo rayoEntrante = Rayo(puntoInterseccion, direccionRayoEntrante);
 
-    Color especular = material.getEspecular();
-    return especular * color;
+    // Definir valores iniciales
+    float distancia = INFINITY;
+    Punto puntoInterseccionActual = Punto(-INFINITY, -INFINITY, -INFINITY);
+    Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+    int indice = -1;
+    Material basura = Material();
+    interseccionRayoEscena(rayoEntrante, puntoInterseccion, basura, distancia, puntoInterseccionActual, normal, indice, indice);
 
+    Direccion direccionRayoSaliente = rayoSalienteRefraccion(direccionRayoEntrante, normal, material.getIndiceRefraccion());
+    if (direccionRayoSaliente.x == -INFINITY) {
+        return Color(0, 0, 0);
+    }
+
+    // Lanzar un rayo a la escena
+    Rayo rayoSaliente = Rayo(puntoInterseccion, direccionRayoSaliente);
+    Color color = calcularColorPixel(rayoSaliente, puntoInterseccion);
+    return color;
+    // Color refraccion = material.getRefraccion();
+    // return (refraccion * color);
 }

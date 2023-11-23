@@ -53,9 +53,9 @@ Componentes Material::ruletaRusa() const {
     else if (aleatorio <= pDifuso + pEspecular) {
         return ESPECULAR;
     }
-    // else if (aleatorio <= pDifuso + pEspecular + pRefraccion) {
-    //     return REFRACCION;
-    // }
+    else if (aleatorio <= pDifuso + pEspecular + pRefraccion) {
+        return REFRACCION;
+    }
     else {
         return ABSORCION;
     }

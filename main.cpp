@@ -17,6 +17,7 @@
 #include "src/Materiales/Material.hpp"
 #include "src/Materiales/Difuso.hpp"
 #include "src/Materiales/Plastico.hpp"
+#include "src/Materiales/Dielectrico.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -79,7 +80,8 @@ int main(int argc, char* argv[]) {
     Difuso amarilloMat = Difuso(amarillo, negro);
     // Difuso rosaMat = Difuso(rosa, negro);
     Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
-    Difuso azulMat = Difuso(azul, negro);
+    Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.8);
+    // Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
     Difuso verdeMat = Difuso(verde, negro);
     Difuso blancoMat = Difuso(blanco, negro);

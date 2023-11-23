@@ -74,7 +74,7 @@ Color Camara::calcularColorPixelAA(int i, int j) const {
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        Color color = pathTracerLocal.calcularColorPixel(rayo, origin, 0);
+        Color color = pathTracerLocal.calcularColorPixel(rayo, origin);
 
         // Sumar el color al resultado
         colorSum += color;

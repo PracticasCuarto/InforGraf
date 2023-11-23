@@ -6,14 +6,8 @@
 class Difuso : public Material {
 public:
     // Constructor completo
-    Difuso() {}
+    Difuso();
 
     // Constructor con colores
-    Difuso(Color _difuso, Color _coeficienteEmision) : Material(_difuso, Color(0, 0, 0), Color(0, 0, 0), _coeficienteEmision) {
-        tipo = DIFUSO_PURO;
-        pDifuso = 0.7;
-        pEspecular = 0;
-        pRefraccion = 0;
-    }
-
+    Difuso(Color _difuso, Color _coeficienteEmision);
 };

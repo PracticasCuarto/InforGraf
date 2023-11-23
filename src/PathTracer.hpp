@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include "RandomNumber.hpp"
 #include "Geometria.hpp"
 #include "FuenteLuz.hpp"
@@ -33,19 +34,22 @@ public:
     Color luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const;
 
     // Función para calcular la luz de un objeto en un punto de intersección
-    Color nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wi, const Punto& origin, const int& iteracion) const;
+    Color nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wi, const Punto& origin) const;
 
     // Función para calcular el color de un píxel
-    Color calcularColorPixel(const Rayo& rayo, const Punto& origin, const int& iteracion) const;
+    Color calcularColorPixel(const Rayo& rayo, const Punto& origin) const;
 
     // Función para calcular la componente difusa de un material
-    Color calcularComponenteDifusa(const Material& material, const Punto& puntoInterseccion, const Direccion& normal, const Punto& origin, const int& iteracion) const;
+    Color calcularComponenteDifusa(const Material& material, const Punto& puntoInterseccion, const Direccion& normal, const Punto& origin) const;
 
     // Calcular componente especular de un material
-    Color calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const;
+    Color calcularComponenteEspecular(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const;
 
     // Calcular componente refractante de un material
-    Color calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n, const int& iteracion) const;
+    Color calcularComponenteRefractante(const Material& material, const Punto& puntoInterseccion, const Direccion& wo, const Direccion& n) const;
+
+    // Calcular la interseccion del rayo con todos los objetos de la escena y guardar la interseccion más cercana, junto con su informacion
+    void interseccionRayoEscena(const Rayo& rayo, const Punto& origin, Material& material, float& distancia, Punto& puntoInterseccion, Direccion& normal, int& indiceResultado, int& indice) const;
 
 };
 

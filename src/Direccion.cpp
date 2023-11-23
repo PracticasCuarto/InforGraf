@@ -133,9 +133,25 @@ Direccion Direccion::cambioBase(const Matriz matriz) const {
 }
 
 // Devuelve el angulo que forman dos vectores
+// double Direccion::angulo(const Direccion& otroDireccion) const {
+//     // Devolver el angulo en grados
+//     return acos((*this * otroDireccion) / (modulo() * otroDireccion.modulo())) * 180 / M_PI;
+// }
+
 double Direccion::angulo(const Direccion& otroDireccion) const {
-    // Devolver el angulo en grados
-    return acos((*this * otroDireccion) / (modulo() * otroDireccion.modulo())) * 180 / M_PI;
+    // Calcular el ángulo en radianes
+    double angulo_rad = acos((*this * otroDireccion) / (modulo() * otroDireccion.modulo()));
+
+    // Convertir el ángulo de radianes a grados
+    double angulo_grados = angulo_rad * 180.0 / M_PI;
+
+    // Determinar el cuadrante
+    if (otroDireccion.y < 0) {
+        // Si el otro vector está en el tercer o cuarto cuadrante, ajustar el ángulo
+        angulo_grados = 360.0 - angulo_grados;
+    }
+
+    return angulo_grados;
 }
 
 // Sobrecarga del operador de salida por pantalla
