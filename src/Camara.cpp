@@ -64,7 +64,7 @@ void Camara::setPathTracer() {
 Color Camara::calcularColorPixelAA(int i, int j) const {
     Color colorSum = Color(0, 0, 0);
 
-    for (int n = 0; n < numRayos; n++) {
+    for (int n = 0; n < numMuestras; n++) {
         // Lanzar rayos a lugares aleatorios dentro del píxel
         double y = 1.0 - (2.0 * i / height - (random_double() / height));
         double x = 1.0 - (2.0 * j / width - (random_double() / width));
@@ -81,7 +81,7 @@ Color Camara::calcularColorPixelAA(int i, int j) const {
     }
 
     // Calcular el promedio de los colores
-    colorSum /= numRayos;
+    colorSum /= numMuestras;
 
     return colorSum;
 }
@@ -102,7 +102,7 @@ void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int i
     }
 }
 
-ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes) {
+ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion) {
     unsigned int numCores = std::thread::hardware_concurrency();
     if (numCores == 0) {
         // No se puede determinar el número de cores
@@ -133,6 +133,6 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
     }
 
     // Crear la imagenHDR
-    ImagenHDR imagen = ImagenHDR(matrizImagen, width, height, 0, 255);
+    ImagenHDR imagen = ImagenHDR(matrizImagen, width, height, 0, resolucion);
     return imagen;
 }
