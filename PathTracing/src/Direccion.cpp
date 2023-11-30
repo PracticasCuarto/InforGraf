@@ -47,6 +47,23 @@ bool Direccion::operator==(const Direccion& otroDireccion) const {
     return (x == otroDireccion.x && y == otroDireccion.y && z == otroDireccion.z);
 }
 
+// Sobrecarga del operador de acceso con corchetes
+double Direccion::operator[](const int& i) const {
+    if (i == 0) {
+        return x;
+    }
+    else if (i == 1) {
+        return y;
+    }
+    else if (i == 2) {
+        return z;
+    }
+    else {
+        cout << "Error: Direccion::operator[]: i must be 0, 1 or 2" << endl;
+        exit(1);
+    }
+}
+
 // Sobrecarga del operador de multiplicación vectorial (producto cruzado)
 Direccion Direccion::cross(const Direccion& otroDireccion) const {
     double nuevoX = (y * otroDireccion.z) - (z * otroDireccion.y);
