@@ -4,7 +4,7 @@
 using namespace std;
 
 // Constructor 
-Photon::Photon(Punto _position, Direccion _wi, Material _flux) : photonPosition(_position), wi(_wi), flux(_flux) {}
+Photon::Photon(Punto _position, Direccion _wi, Color _flux) : photonPosition(_position), wi(_wi), flux(_flux) {}
 
 // Getters
 Punto Photon::getPosition() const {
@@ -15,7 +15,7 @@ Direccion Photon::getWi() const {
     return wi;
 }
 
-Material Photon::getFlux() const {
+Color Photon::getFlux() const {
     return flux;
 }
 

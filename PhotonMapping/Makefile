@@ -1,6 +1,6 @@
 # Compilador y opciones de compilación
 CXX = g++
-CXXFLAGS = -std=c++14 -O3 -pthread
+CXXFLAGS = -std=c++17 -O3 -pthread
 
 # Directorio de objetos y ejecutables
 OBJDIR = exec

@@ -2,7 +2,7 @@
 #define PHOTON_HPP
 
 #include <iostream>
-#include "../../PathTracing/src/Geometria.hpp"
+#include "Geometria.hpp"
 
 using namespace std;
 
@@ -10,15 +10,15 @@ class Photon {
 private:
     Punto photonPosition;
     Direccion wi;
-    Material flux;
+    Color flux;
 
 public:
     Photon();
-    Photon(Punto position, Direccion wi, Material flux);
+    Photon(Punto position, Direccion wi, Color flux);
 
     Punto getPosition() const;
     Direccion getWi() const;
-    Material getFlux() const;
+    Color getFlux() const;
 
     // Acceder a la posición del photon en la dimensión i
     double position(const int i) const;
