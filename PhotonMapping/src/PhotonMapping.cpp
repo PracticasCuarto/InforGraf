@@ -4,6 +4,11 @@
 
 using namespace std;
 
+PhotonMapping::PhotonMapping() {
+    // Create the empty list
+    photonsList = vector<Photon>();
+}
+
 // Constructor
 PhotonMapping::PhotonMapping(vector<Geometria*> _objects, vector<FuenteLuz*> _sources, int _numPhotons,
     int _maxBounces, double _nphotons_estimate, double _radius_estimate) :
@@ -115,14 +120,9 @@ Color calculateDiffuseMaterial(const Color& color) {
 
 // Method to search for the nearest neighbors of the photon map
 vecPhotons PhotonMapping::search_nearest(const PhotonMap& map, const Photon& photon) const {
+
     // Position to look for the nearest photons
     Punto query_position = photon.getPosition();
-
-    // Maximum number of photons to look for
-    unsigned long nphotons_estimate = 100.0;
-
-    // Maximum distance to look for photons
-    float radius_estimate = 1.0;
 
     // nearest is the nearest photons returned by the KDTree
     auto nearest = map.nearest_neighbors(query_position,
@@ -133,7 +133,7 @@ vecPhotons PhotonMapping::search_nearest(const PhotonMap& map, const Photon& pho
 }
 
 // Method to generate the photon map given the light sources and the objects of the scene
-PhotonMap PhotonMapping::generatePhotonMap() {
+void PhotonMapping::generatePhotonMap() {
     double totalEmissions = calculateTotalEmissions();
 
     // For each light source calculate the amount of photons to emit
@@ -157,9 +157,18 @@ PhotonMap PhotonMapping::generatePhotonMap() {
 
     }
 
+    // Show the photon map generated
+    // for (Photon photon : photonsList) {
+    //     cout << "POSITION: " << photon.getPosition().x << " " << photon.getPosition().y << " " << photon.getPosition().z << endl;
+    //     cout << "PLEX: " << photon.getFlux().r << " " << photon.getFlux().g << " " << photon.getFlux().b << endl;
+    // }
+
     // Create the photon map
-    PhotonMap map = PhotonMap(photonsList, PhotonAxisPosition());
-    return map;
+    map = PhotonMap(photonsList, PhotonAxisPosition());
+    cout << "Photon map generated" << endl;
+
+    // Destroy photon list
+    photonsList.clear();
 }
 
 // Method to emit a photon from a light source
@@ -179,25 +188,27 @@ void PhotonMapping::emitPhoton(const Punto& origin, const Color& flux, const int
     else {
         nextEventEstimation(point, material, normal, ray.getDireccion(), flux, bounce);
     }
-
 }
 
 // Method to calculate the light of a photon in a point of intersection
 void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux, const int& bounce) {
     // Check the type of the material
-    Componentes type = material.ruletaRusa();
+    // Componentes type = material.ruletaRusa();
+    Componentes type = DIFUSO;
     if (type == DIFUSO) {
+        // Bounce the photon and calculate the next event estimation
+        Color BRDF = calculateDiffuseMaterial(material.getDifuso());
+        Color fluxActual = flux * BRDF * M_PI;
         // Store the photon in the photon map
-        Photon photonNow = Photon(intersectionPoint, wo, flux);
+        Photon photonNow = Photon(intersectionPoint, wo, fluxActual);
         photonsList.push_back(photonNow);
 
         if (bounce < maxBounces) {
-            // Bounce the photon and calculate the next event estimation
-            Color BRDF = calculateDiffuseMaterial(material.getDifuso());
+
 
             // Generate the ray
             Rayo ray = randomRayCosine(intersectionPoint, normal);
-            emitPhoton(intersectionPoint, flux * BRDF * M_PI, numPhotons, ray, bounce + 1);
+            emitPhoton(intersectionPoint, fluxActual, numPhotons, ray, bounce + 1);
         }
     }
     else if (type == ESPECULAR) {
@@ -208,6 +219,7 @@ void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Mat
     }
     else if (type == ABSORCION) {
         // The light is absorbed so nothing is done
+        cout << "The light is absorbed" << endl;
     }
     else {
         cout << "Error: tipo de material no reconocido" << endl;
@@ -276,9 +288,7 @@ Color PhotonMapping::calculateDiffuseComponent(const Material& material, const P
 
     // Calculate the indirect light
     Rayo ray = randomRayCosine(intersectionPoint, normal);
-    // Pregunta: En que influye el flujo del foton para los calculos
-    //         : Que radio poner
-    //Color color = emitPhoton(intersectionPoint, ? ? ? ? , numPhotons);
+
 
     // result += color * BRDF * M_PI;
     return result;
@@ -325,3 +335,48 @@ bool PhotonMapping::intersectionRayScene(const Rayo& ray, const Punto& origin, M
     }
     return result;
 }
+
+// PHASE 2: Calculation of the radiance of the scene
+
+// Method to calculate the color of a pixel
+Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
+    // Calculate the intersection of the ray with all the objects of the scene
+    Punto point = Punto(-INFINITY, -INFINITY, -INFINITY);
+    Material material = Material();
+    Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+    int index = -1;
+    bool intersects = intersectionRayScene(ray, ray.getOrigen(), material, point, normal, index);
+
+    if (!intersects) {
+        // There is no intersection
+        cout << "There is no intersection (Camera)" << endl;
+        return Color(0, 0, 0);
+    }
+    else {
+        if (material.tipo == DIFUSO_PURO) {
+            // Search for the nearest photons in a radius of radius_estimate
+            vecPhotons nearest = search_nearest(map, Photon(point, Direccion(0, 0, 0), Color(0, 0, 0)));
+
+            // Calculate the color of the pixel using the nearest photons
+            Color color = Color(0, 0, 0);
+            int sum = 0;
+            for (const Photon* photon : nearest) {
+                //cout << "Near photon: " << photon->getPosition().x << " " << photon->getPosition().y << " " << photon->getPosition().z << endl;
+                color += photon->getFlux();
+                sum++;
+            }
+
+            if (sum > 0) {
+                color = color / sum;
+            }
+
+            return color;
+
+        }
+
+        cout << "Material no tenido en cuenta" << endl;
+        return Color(0, 0, 0);
+    }
+}
+
+

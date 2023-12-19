@@ -32,4 +32,6 @@
 *.app
 
 # Ppms
-./photonMapping/ppms/*.ppm
+./PhotonMapping/ppms/*.ppm
+./PathTracing/ppms/*.ppm
+*.ppm

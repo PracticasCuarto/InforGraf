@@ -3,21 +3,21 @@
 #include <vector>
 #include <getopt.h>
 
-#include "../PathTracing/src/Direccion.hpp"
-#include "../PathTracing/src/ImagenHDR/ImagenHDR.hpp"
-#include "../PathTracing/src/Punto.hpp"
-#include "../PathTracing/src/Matriz.hpp"
-#include "../PathTracing/src/ImagenHDR/LectorHDR.hpp"
-#include "../PathTracing/src/ImagenHDR/EscritorHDR.hpp"
-#include "../PathTracing/src/ImagenHDR/ToneMapping.hpp"
-#include "../PathTracing/src/Geometria.hpp"
-#include "../PathTracing/src/Camara.hpp"
-#include "../PathTracing/src/FuenteLuz.hpp"
-#include "../PathTracing/src/Color.hpp"
-#include "../PathTracing/src/Materiales/Material.hpp"
-#include "../PathTracing/src/Materiales/Difuso.hpp"
-#include "../PathTracing/src/Materiales/Plastico.hpp"
-#include "../PathTracing/src/Materiales/Dielectrico.hpp"
+#include "src/Direccion.hpp"
+#include "src/ImagenHDR/ImagenHDR.hpp"
+#include "src/Punto.hpp"
+#include "src/Matriz.hpp"
+#include "src/ImagenHDR/LectorHDR.hpp"
+#include "src/ImagenHDR/EscritorHDR.hpp"
+#include "src/ImagenHDR/ToneMapping.hpp"
+#include "src/Geometria.hpp"
+#include "src/Camara.hpp"
+#include "src/FuenteLuz.hpp"
+#include "src/Color.hpp"
+#include "src/Materiales/Material.hpp"
+#include "src/Materiales/Difuso.hpp"
+#include "src/Materiales/Plastico.hpp"
+#include "src/Materiales/Dielectrico.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -69,18 +69,18 @@ int main(int argc, char* argv[]) {
     Color azul = Color(0.5882, 0.8392, 0.9);
     Color rojo = Color(0.6, 0, 0);
     Color verde = Color(0, 0.6, 0);
-    Color blanco = Color(0.9, 0.9, 0.9);
+    Color blanco = Color(0.7, 0.7, 0.7);
     Color negro = Color(0, 0, 0);
     Color naranja = Color(0.9, 0.502, 0);
-    Color gris = Color(0.8039, 0.8039, 0.8039);
+    Color gris = Color(0.6039, 0.6039, 0.6039);
     Color turquesa = Color(0.451, 0.902, 0.9804);
 
     // Materiales difusos
     Difuso amarilloMat = Difuso(amarillo, negro);
-    // Difuso rosaMat = Difuso(rosa, negro);
-    Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
-    Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.5);
-    // Difuso azulMat = Difuso(azul, negro);
+    Difuso rosaMat = Difuso(rosa, negro);
+    // Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
+    // Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.5);
+    Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
     Difuso verdeMat = Difuso(verde, negro);
     Difuso blancoMat = Difuso(blanco, negro);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
-    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion);
+    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 2000000, 7, 10, 0.3);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     //toneMapping.ecualizacion();

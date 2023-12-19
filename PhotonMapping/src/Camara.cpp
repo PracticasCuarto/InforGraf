@@ -56,8 +56,8 @@ void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
     fuentes = _fuentes;
 }
 
-void Camara::setPathTracer() {
-    pathTracerLocal = PathTracer(objetos, fuentes);
+void Camara::setPhotonMapping(const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate) {
+    photonMappingLocal = PhotonMapping(objetos, fuentes, numPhotons, maxBounces, nphotons_estimate, radius_estimate);
 }
 
 // Función para calcular el color de un píxel con anti-aliasing
@@ -74,7 +74,7 @@ Color Camara::calcularColorPixelAA(int i, int j) const {
         Direccion direccionRayoBase = direccionRayo.cambioBase(base);
 
         Rayo rayo = Rayo(origin, direccionRayoBase);
-        Color color = pathTracerLocal.calcularColorPixel(rayo, origin);
+        Color color = photonMappingLocal.calculatePixelColor(rayo);
 
         // Sumar el color al resultado
         colorSum += color;
@@ -102,24 +102,27 @@ void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int i
     }
 }
 
-ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion) {
+ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate) {
     unsigned int numCores = std::thread::hardware_concurrency();
     if (numCores == 0) {
         // No se puede determinar el número de cores
         numCores = 1;
     }
-    numCores = 1;
 
     // Asignar los objetos y las fuentes de luz
     setObjetos(objetos);
     setFuentes(fuentes);
 
-    // Crear el path tracer
-    setPathTracer();
+    // Crear el photon mapping
+    setPhotonMapping(numPhotons, maxBounces, nphotons_estimate, radius_estimate);
+
+    // Generate the photon map
+    photonMappingLocal.generatePhotonMap();
 
     vector<vector<double>> matrizImagen(height, vector<double>(3 * width)); // Inicializar matriz de imagen
     vector<thread> threads;
 
+    cout << "Calculando imagen HDR..." << endl;
     int filasPorHilo = height / numCores;
     for (int i = 0; i < numCores; i++) {
         int inicioFila = i * filasPorHilo;

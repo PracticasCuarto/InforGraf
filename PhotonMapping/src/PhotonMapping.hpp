@@ -42,12 +42,16 @@ public:
     PhotonMapping(vector<Geometria*> objects, vector<FuenteLuz*> sources,
         int numPhotons, int maxBounces, double nphotons_estimate, double radius_estimate);
 
+    // Empty constructor
+    PhotonMapping();
+
+    // PHASE 1: Generation of the photon map
 
     // Method to search for the nearest neighbors of the photon map
     vecPhotons search_nearest(const PhotonMap& map, const Photon& photon) const;
 
     // Method to generate the photon map given the light sources and the objects of the scene
-    PhotonMap generatePhotonMap();
+    void generatePhotonMap();
 
     // Method to calculate the total emissions of the light sources
     double calculateTotalEmissions();
@@ -74,6 +78,10 @@ public:
     // Method to calculate if the ray that joins a point and the light has any collision on its way
     bool intersectsObjectBeforeSource(const Punto& intersectionPoint, const Direccion& direction, const Punto& sourceOrigin) const;
 
+    // PHASE 2: Calculation of the radiance of the scene
+
+    // Method to calculate the color of a pixel given a ray
+    Color calculatePixelColor(const Rayo& ray) const;
 
 };
 

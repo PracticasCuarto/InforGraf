@@ -11,7 +11,7 @@
 #include "Geometria.hpp"
 #include "Matriz.hpp"
 #include "FuenteLuz.hpp"
-#include "PathTracer.hpp"
+#include "PhotonMapping.hpp"
 using namespace std;
 
 class Material;
@@ -27,7 +27,7 @@ private:
     vector<Geometria*> objetos;
     vector<FuenteLuz*> fuentes;
 
-    PathTracer pathTracerLocal;
+    PhotonMapping photonMappingLocal;
 public:
     int width, height;
 
@@ -41,10 +41,12 @@ public:
     void setObjetos(const vector<Geometria*>& _objetos);
     void setFuentes(const vector<FuenteLuz*>& _fuentes);
 
-    void setPathTracer();
+
+
+    void setPhotonMapping(const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate);
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
-    ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion);
+    ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate);
 
     // Función para calcular el color de un píxel con anti-aliasing
     Color calcularColorPixelAA(int i, int j) const;
