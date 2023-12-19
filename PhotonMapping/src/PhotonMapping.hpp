@@ -34,13 +34,12 @@ private:
     vector<Geometria*> objects;
     vector<FuenteLuz*> sources;
     int numPhotons;
-    int maxBounces;
     double nphotons_estimate;
     double radius_estimate;
 
 public:
     PhotonMapping(vector<Geometria*> objects, vector<FuenteLuz*> sources,
-        int numPhotons, int maxBounces, double nphotons_estimate, double radius_estimate);
+        int numPhotons, double nphotons_estimate, double radius_estimate);
 
     // Empty constructor
     PhotonMapping();
@@ -57,14 +56,14 @@ public:
     double calculateTotalEmissions();
 
     // Method to emit a photon from a light source
-    void emitPhoton(const Punto& origin, const Color& flux, const int& numPhotons, const Rayo& ray, const int& bounce);
+    void emitPhoton(const Color& flux, const Rayo& ray);
 
     // Method to calculate the intersection of the ray with all the objects of the scene
     // and save the closest intersection, along with its information
-    bool intersectionRayScene(const Rayo& ray, const Punto& origin, Material& material, Punto& intersectionPoint, Direccion& normal, int& resultIndex) const;
+    bool intersectionRayScene(const Rayo& ray, Material& material, Punto& intersectionPoint, Direccion& normal, int& resultIndex) const;
 
     // Method to calculate the light of a photon in a point of intersection
-    void nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux, const int& bounce);
+    void nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux);
 
     // Method to calculate the diffuse component of a material
     Color calculateDiffuseComponent(const Material& material, const Punto& intersectionPoint, const Direccion& normal, const Punto& origin, const int& numPhotons) const;

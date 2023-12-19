@@ -11,9 +11,9 @@ PhotonMapping::PhotonMapping() {
 
 // Constructor
 PhotonMapping::PhotonMapping(vector<Geometria*> _objects, vector<FuenteLuz*> _sources, int _numPhotons,
-    int _maxBounces, double _nphotons_estimate, double _radius_estimate) :
+    double _nphotons_estimate, double _radius_estimate) :
     objects(_objects), sources(_sources), numPhotons(_numPhotons),
-    maxBounces(_maxBounces), nphotons_estimate(_nphotons_estimate),
+    nphotons_estimate(_nphotons_estimate),
     radius_estimate(_radius_estimate) {
 
     // Create the empty list
@@ -108,6 +108,32 @@ Rayo randomRayCosine(const Punto& intersectionPoint, const Direccion& normal) {
     return Rayo(intersectionPoint, rayDirection);
 }
 
+// Función para calcular la direccion del rayo entrante en una refraccion
+Direccion refractedRay(const Direccion& wo, const Direccion& n, const double& refractiveIndex) {
+    Direccion woNormal = wo.normalizar();
+    Direccion nNormal = n.normalizar();
+    double cosi = ((woNormal * -1) * nNormal);
+    Direccion normal = nNormal;
+    double refractiveIndexActual = 1.0f, refractiveIndexSiguiente = refractiveIndex;
+    double coeficienteRefraccion;
+
+    if (cosi < 0) {
+        // Saliendo
+        cosi = abs(cosi);
+        coeficienteRefraccion = refractiveIndexSiguiente / refractiveIndexActual;
+        normal = Direccion(-n.x, -n.y, -n.z).normalizar();
+    }
+    else {
+        // Entrando
+        coeficienteRefraccion = refractiveIndexActual / refractiveIndexSiguiente;
+    }
+    double sinI = sqrt(1 - (cosi * cosi));
+    double sinT = coeficienteRefraccion * sinI;
+    double cosT = sqrt(1 - (sinT * sinT));
+
+    return  ((woNormal * coeficienteRefraccion) + (normal * ((coeficienteRefraccion * cosi) - cosT))).normalizar();
+}
+
 // Method to calculate the BRDF of a diffuse material
 Color calculateDiffuseMaterial(const Color& color) {
     // Divide each component of the color by pi
@@ -152,7 +178,7 @@ void PhotonMapping::generatePhotonMap() {
             // Create the ray photon
             Rayo ray = randomRay(Direccion(0, 1, 0), origin);
             // Emit photons
-            emitPhoton(origin, flux, photonsToEmit, ray, 0);
+            emitPhoton(flux, ray);
         }
 
     }
@@ -172,13 +198,13 @@ void PhotonMapping::generatePhotonMap() {
 }
 
 // Method to emit a photon from a light source
-void PhotonMapping::emitPhoton(const Punto& origin, const Color& flux, const int& numPhotons, const Rayo& ray, const int& bounce) {
+void PhotonMapping::emitPhoton(const Color& flux, const Rayo& ray) {
     // Calculate the intersection of the ray with all the objects of the scene
     Punto point = Punto(-INFINITY, -INFINITY, -INFINITY);
     Material material = Material();
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
     int index = -1;
-    bool intersects = intersectionRayScene(ray, origin, material, point, normal, index);
+    bool intersects = intersectionRayScene(ray, material, point, normal, index);
 
     if (!intersects) {
         // There is no intersection
@@ -186,15 +212,14 @@ void PhotonMapping::emitPhoton(const Punto& origin, const Color& flux, const int
         return;
     }
     else {
-        nextEventEstimation(point, material, normal, ray.getDireccion(), flux, bounce);
+        nextEventEstimation(point, material, normal, ray.getDireccion(), flux);
     }
 }
 
 // Method to calculate the light of a photon in a point of intersection
-void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux, const int& bounce) {
+void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux) {
     // Check the type of the material
-    // Componentes type = material.ruletaRusa();
-    Componentes type = DIFUSO;
+    Componentes type = material.ruletaRusa();
     if (type == DIFUSO) {
         // Bounce the photon and calculate the next event estimation
         Color BRDF = calculateDiffuseMaterial(material.getDifuso());
@@ -203,23 +228,24 @@ void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Mat
         Photon photonNow = Photon(intersectionPoint, wo, fluxActual);
         photonsList.push_back(photonNow);
 
-        if (bounce < maxBounces) {
-
-
-            // Generate the ray
-            Rayo ray = randomRayCosine(intersectionPoint, normal);
-            emitPhoton(intersectionPoint, fluxActual, numPhotons, ray, bounce + 1);
-        }
+        // Generate the ray
+        Rayo ray = randomRayCosine(intersectionPoint, normal);
+        emitPhoton(flux * BRDF * M_PI, ray);
     }
     else if (type == ESPECULAR) {
-        //result = calcularComponenteEspecular(material, intersectionPoint, wo, normal);
+        // Calculate the new direction of the photon
+        Direccion wi = wo - (normal * (2 * (wo * normal)));
+        wi = wi.normalizar();
+
+        // Send the new photon to the scene
+        Rayo ray = Rayo(intersectionPoint, wi);
+        emitPhoton(flux, ray);
     }
     else if (type == REFRACCION) {
         //result = calcularComponenteRefractante(material, intersectionPoint, wo, normal);
     }
     else if (type == ABSORCION) {
         // The light is absorbed so nothing is done
-        cout << "The light is absorbed" << endl;
     }
     else {
         cout << "Error: tipo de material no reconocido" << endl;
@@ -309,10 +335,12 @@ double PhotonMapping::calculateTotalEmissions() {
 
 // Calculate the intersection of the ray with all the objects of the scene
 // and save the closest intersection, along with its information
-bool PhotonMapping::intersectionRayScene(const Rayo& ray, const Punto& origin, Material& material, Punto& intersectionPoint, Direccion& normal, int& resultIndex) const {
+bool PhotonMapping::intersectionRayScene(const Rayo& ray, Material& material, Punto& intersectionPoint, Direccion& normal, int& resultIndex) const {
     float distance = INFINITY;
     int index = -1;
     bool result = false;
+
+    Punto origin = ray.getOrigen();
 
     for (Geometria* object : objects) {
         index++;
@@ -338,6 +366,16 @@ bool PhotonMapping::intersectionRayScene(const Rayo& ray, const Punto& origin, M
 
 // PHASE 2: Calculation of the radiance of the scene
 
+Rayo specularReflectionRay(const Rayo& ray, const Direccion& wo, const Direccion& normal, const Punto& point) {
+    // Calculate the new direction of the photon
+    Direccion wi = ray.getDireccion() - (normal * (2 * (ray.getDireccion() * normal)));
+    wi = wi.normalizar();
+
+    // Send the new photon to the scene
+    return Rayo(point, wi);
+}
+
+
 // Method to calculate the color of a pixel
 Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
     // Calculate the intersection of the ray with all the objects of the scene
@@ -345,7 +383,7 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
     Material material = Material();
     Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
     int index = -1;
-    bool intersects = intersectionRayScene(ray, ray.getOrigen(), material, point, normal, index);
+    bool intersects = intersectionRayScene(ray, material, point, normal, index);
 
     if (!intersects) {
         // There is no intersection
@@ -353,30 +391,74 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
         return Color(0, 0, 0);
     }
     else {
-        if (material.tipo == DIFUSO_PURO) {
+        Componentes type = material.ruletaRusa();
+
+        if (type == DIFUSO) {
             // Search for the nearest photons in a radius of radius_estimate
             vecPhotons nearest = search_nearest(map, Photon(point, Direccion(0, 0, 0), Color(0, 0, 0)));
 
             // Calculate the color of the pixel using the nearest photons
             Color color = Color(0, 0, 0);
-            int sum = 0;
             for (const Photon* photon : nearest) {
                 //cout << "Near photon: " << photon->getPosition().x << " " << photon->getPosition().y << " " << photon->getPosition().z << endl;
-                color += photon->getFlux();
-                sum++;
-            }
+                Color kernel = photon->getFlux();
+                kernel /= (M_PI * radius_estimate * radius_estimate);
 
-            if (sum > 0) {
-                color = color / sum;
+                Color BRDF = calculateDiffuseMaterial(material.getDifuso());
+
+                color += kernel * BRDF;
             }
 
             return color;
 
         }
+        else if (type == ESPECULAR) {
+            Rayo ray = specularReflectionRay(ray, ray.getDireccion(), normal, point);
+            calculatePixelColor(ray);
+        }
+        else if (type == REFRACCION) {
+            // Direccion direccionRayoEntrante = refractedRay(wo, normal, material.getIndiceRefraccion());
+            // if (direccionRayoEntrante.x == -INFINITY) {
+            //     return Color(0, 0, 0);
+            // }
 
-        cout << "Material no tenido en cuenta" << endl;
-        return Color(0, 0, 0);
+            // // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
+            // // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
+
+            // Direccion normalNegada = Direccion(-n.x, -n.y, -n.z);
+            // Punto puntoInterseccionActualizado = puntoInterseccion + normalNegada * 0.0002;
+            // // Lanzar un rayo a la escena
+            // Rayo rayoEntrante = Rayo(puntoInterseccionActualizado, direccionRayoEntrante);
+
+            // // Definir valores iniciales
+            // float distancia = INFINITY;
+            // Punto puntoInterseccionActual = Punto(-INFINITY, -INFINITY, -INFINITY);
+            // Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+            // int indice = -1;
+            // Material basura = Material();
+            // interseccionRayoEscena(rayoEntrante, puntoInterseccionActualizado, basura, puntoInterseccionActual, normal, indice);
+
+            // Direccion direccionRayoSaliente = rayoRefraccion(direccionRayoEntrante, normal, material.getrefractiveIndex());
+            // if (direccionRayoSaliente.x == -INFINITY) {
+            //     return Color(0, 0, 0);
+            // }
+
+            // // cout << "Direccion del rayo saliente: " << direccionRayoSaliente.x << " " << direccionRayoSaliente.y << " " << direccionRayoSaliente.z << endl;
+
+            // // Lanzar un rayo a la escena
+            // Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
+            // Color color = calcularColorPixel(rayoSaliente, puntoInterseccionActual);
+        }
+        else if (type == ABSORCION) {
+            // The light is absorbed so nothing is done
+        }
+        else {
+            cout << "Error: tipo de material no reconocido" << endl;
+
+        }
+
     }
-}
 
+    return Color(0, 0, 0);
+}
 

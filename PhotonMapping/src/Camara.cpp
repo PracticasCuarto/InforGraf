@@ -56,8 +56,8 @@ void Camara::setFuentes(const vector<FuenteLuz*>& _fuentes) {
     fuentes = _fuentes;
 }
 
-void Camara::setPhotonMapping(const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate) {
-    photonMappingLocal = PhotonMapping(objetos, fuentes, numPhotons, maxBounces, nphotons_estimate, radius_estimate);
+void Camara::setPhotonMapping(const int numPhotons, const double nphotons_estimate, const double radius_estimate) {
+    photonMappingLocal = PhotonMapping(objetos, fuentes, numPhotons, nphotons_estimate, radius_estimate);
 }
 
 // Función para calcular el color de un píxel con anti-aliasing
@@ -102,7 +102,7 @@ void Camara::calcularRegionDePixeles(vector<vector<double>>& matrizImagen, int i
     }
 }
 
-ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate) {
+ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const double nphotons_estimate, const double radius_estimate) {
     unsigned int numCores = std::thread::hardware_concurrency();
     if (numCores == 0) {
         // No se puede determinar el número de cores
@@ -114,7 +114,7 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
     setFuentes(fuentes);
 
     // Crear el photon mapping
-    setPhotonMapping(numPhotons, maxBounces, nphotons_estimate, radius_estimate);
+    setPhotonMapping(numPhotons, nphotons_estimate, radius_estimate);
 
     // Generate the photon map
     photonMappingLocal.generatePhotonMap();

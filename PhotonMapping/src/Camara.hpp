@@ -43,10 +43,10 @@ public:
 
 
 
-    void setPhotonMapping(const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate);
+    void setPhotonMapping(const int numPhotons, const double nphotons_estimate, const double radius_estimate);
 
     // Función para calcular la interseccion de todos los objetos de la imagen con la camara
-    ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const int maxBounces, const double nphotons_estimate, const double radius_estimate);
+    ImagenHDR renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuentes, const int resolucion, const int numPhotons, const double nphotons_estimate, const double radius_estimate);
 
     // Función para calcular el color de un píxel con anti-aliasing
     Color calcularColorPixelAA(int i, int j) const;

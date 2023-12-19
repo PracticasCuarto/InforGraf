@@ -23,9 +23,9 @@ int main(int argc, char* argv[]) {
 
     // Leer los parametros de entrada
 
-    int ancho = 512;         // Valor predeterminado para el ancho
-    int alto = 512;          // Valor predeterminado para el alto
-    string nombre = "imagenEscena";      // Nombre del archivo de salida
+    int ancho = 256;         // Valor predeterminado para el ancho
+    int alto = 256;          // Valor predeterminado para el alto
+    string nombre = "imagenEscenaPocha";      // Nombre del archivo de salida
     int resolucion = 255;     // Valor predeterminado para la resolución de color
     int muestras = 64;      // Valor predeterminado para el número de muestras por píxel nRayos
 
@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 
     // Materiales difusos
     Difuso amarilloMat = Difuso(amarillo, negro);
-    Difuso rosaMat = Difuso(rosa, negro);
-    // Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
+    // Difuso rosaMat = Difuso(rosa, negro);
+    Plastico rosaMat = Plastico(rosa * 0.5, rosa * 0.5, negro);
     // Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.5);
     Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
-    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 2000000, 7, 10, 0.3);
+    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 100000, 200, 0.3);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     //toneMapping.ecualizacion();
