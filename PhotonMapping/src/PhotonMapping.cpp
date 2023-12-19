@@ -108,24 +108,33 @@ Rayo randomRayCosine(const Punto& intersectionPoint, const Direccion& normal) {
     return Rayo(intersectionPoint, rayDirection);
 }
 
+Rayo specularReflectionRay(const Rayo& ray, const Direccion& normal, const Punto& point) {
+    // Calculate the new direction of the photon
+    Direccion wi = ray.getDireccion() - (normal * (2 * (ray.getDireccion() * normal)));
+    wi = wi.normalizar();
+
+    // Send the new photon to the scene
+    return Rayo(point, wi);
+}
+
 // Función para calcular la direccion del rayo entrante en una refraccion
-Direccion refractedRay(const Direccion& wo, const Direccion& n, const double& refractiveIndex) {
+Direccion rayRefraction(const Direccion& wo, const Direccion& n, const double& indiceRefraccion) {
     Direccion woNormal = wo.normalizar();
     Direccion nNormal = n.normalizar();
     double cosi = ((woNormal * -1) * nNormal);
     Direccion normal = nNormal;
-    double refractiveIndexActual = 1.0f, refractiveIndexSiguiente = refractiveIndex;
+    double indiceRefraccionActual = 1.0f, indiceRefraccionSiguiente = indiceRefraccion;
     double coeficienteRefraccion;
 
     if (cosi < 0) {
         // Saliendo
         cosi = abs(cosi);
-        coeficienteRefraccion = refractiveIndexSiguiente / refractiveIndexActual;
+        coeficienteRefraccion = indiceRefraccionSiguiente / indiceRefraccionActual;
         normal = Direccion(-n.x, -n.y, -n.z).normalizar();
     }
     else {
         // Entrando
-        coeficienteRefraccion = refractiveIndexActual / refractiveIndexSiguiente;
+        coeficienteRefraccion = indiceRefraccionActual / indiceRefraccionSiguiente;
     }
     double sinI = sqrt(1 - (cosi * cosi));
     double sinT = coeficienteRefraccion * sinI;
@@ -242,7 +251,35 @@ void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Mat
         emitPhoton(flux, ray);
     }
     else if (type == REFRACCION) {
-        //result = calcularComponenteRefractante(material, intersectionPoint, wo, normal);
+        Direccion direccionRayoEntrante = rayRefraction(wo, normal, material.getIndiceRefraccion());
+        if (direccionRayoEntrante.x == -INFINITY) {
+            return;
+        }
+
+        // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
+        // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
+
+        Direccion normalNegada = Direccion(-normal.x, -normal.y, -normal.z);
+        Punto puntoInterseccionActualizado = intersectionPoint + normalNegada * 0.0002;
+        // Lanzar un rayo a la escena
+        Rayo rayoEntrante = Rayo(puntoInterseccionActualizado, direccionRayoEntrante);
+
+        // Definir valores iniciales
+        float distancia = INFINITY;
+        Punto puntoInterseccionActual = Punto(-INFINITY, -INFINITY, -INFINITY);
+        Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+        int indice = -1;
+        Material basura = Material();
+        intersectionRayScene(rayoEntrante, basura, puntoInterseccionActual, normal, indice);
+
+        Direccion direccionRayoSaliente = rayRefraction(direccionRayoEntrante, normal, material.getIndiceRefraccion());
+        if (direccionRayoSaliente.x == -INFINITY) {
+            return;
+        }
+
+        // Lanzar un rayo a la escena
+        Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
+        emitPhoton(flux, rayoSaliente);
     }
     else if (type == ABSORCION) {
         // The light is absorbed so nothing is done
@@ -366,16 +403,6 @@ bool PhotonMapping::intersectionRayScene(const Rayo& ray, Material& material, Pu
 
 // PHASE 2: Calculation of the radiance of the scene
 
-Rayo specularReflectionRay(const Rayo& ray, const Direccion& wo, const Direccion& normal, const Punto& point) {
-    // Calculate the new direction of the photon
-    Direccion wi = ray.getDireccion() - (normal * (2 * (ray.getDireccion() * normal)));
-    wi = wi.normalizar();
-
-    // Send the new photon to the scene
-    return Rayo(point, wi);
-}
-
-
 // Method to calculate the color of a pixel
 Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
     // Calculate the intersection of the ray with all the objects of the scene
@@ -413,41 +440,40 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
 
         }
         else if (type == ESPECULAR) {
-            Rayo ray = specularReflectionRay(ray, ray.getDireccion(), normal, point);
-            calculatePixelColor(ray);
+            // Send the new photon to the scene
+            Rayo newRay = specularReflectionRay(ray, normal, point);
+            return calculatePixelColor(newRay);
         }
         else if (type == REFRACCION) {
-            // Direccion direccionRayoEntrante = refractedRay(wo, normal, material.getIndiceRefraccion());
-            // if (direccionRayoEntrante.x == -INFINITY) {
-            //     return Color(0, 0, 0);
-            // }
+            Direccion direccionRayoEntrante = rayRefraction(ray.getDireccion(), normal, material.getIndiceRefraccion());
+            if (direccionRayoEntrante.x == -INFINITY) {
+                return Color(0, 0, 0);
+            }
 
-            // // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
-            // // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
+            // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
+            // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
 
-            // Direccion normalNegada = Direccion(-n.x, -n.y, -n.z);
-            // Punto puntoInterseccionActualizado = puntoInterseccion + normalNegada * 0.0002;
-            // // Lanzar un rayo a la escena
-            // Rayo rayoEntrante = Rayo(puntoInterseccionActualizado, direccionRayoEntrante);
+            Direccion normalNegada = Direccion(-normal.x, -normal.y, -normal.z);
+            Punto puntoInterseccionActualizado = point + normalNegada * 0.0002;
+            // Lanzar un rayo a la escena
+            Rayo rayoEntrante = Rayo(puntoInterseccionActualizado, direccionRayoEntrante);
 
-            // // Definir valores iniciales
-            // float distancia = INFINITY;
-            // Punto puntoInterseccionActual = Punto(-INFINITY, -INFINITY, -INFINITY);
-            // Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
-            // int indice = -1;
-            // Material basura = Material();
-            // interseccionRayoEscena(rayoEntrante, puntoInterseccionActualizado, basura, puntoInterseccionActual, normal, indice);
+            // Definir valores iniciales
+            float distancia = INFINITY;
+            Punto puntoInterseccionActual = Punto(-INFINITY, -INFINITY, -INFINITY);
+            Direccion normal = Direccion(-INFINITY, -INFINITY, -INFINITY);
+            int indice = -1;
+            Material basura = Material();
+            intersectionRayScene(rayoEntrante, basura, puntoInterseccionActual, normal, indice);
 
-            // Direccion direccionRayoSaliente = rayoRefraccion(direccionRayoEntrante, normal, material.getrefractiveIndex());
-            // if (direccionRayoSaliente.x == -INFINITY) {
-            //     return Color(0, 0, 0);
-            // }
+            Direccion direccionRayoSaliente = rayRefraction(direccionRayoEntrante, normal, material.getIndiceRefraccion());
+            if (direccionRayoSaliente.x == -INFINITY) {
+                return Color(0, 0, 0);
+            }
 
-            // // cout << "Direccion del rayo saliente: " << direccionRayoSaliente.x << " " << direccionRayoSaliente.y << " " << direccionRayoSaliente.z << endl;
-
-            // // Lanzar un rayo a la escena
-            // Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
-            // Color color = calcularColorPixel(rayoSaliente, puntoInterseccionActual);
+            // Lanzar un rayo a la escena
+            Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
+            return calculatePixelColor(rayoSaliente);
         }
         else if (type == ABSORCION) {
             // The light is absorbed so nothing is done
@@ -461,4 +487,5 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
 
     return Color(0, 0, 0);
 }
+
 
