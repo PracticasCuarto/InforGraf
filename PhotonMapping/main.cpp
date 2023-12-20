@@ -39,25 +39,34 @@ const Color grisOscuro = Color(0.4039, 0.4039, 0.4039);
 const Color amatista = Color(0.7765, 0.451, 1);
 const Color eclipse = Color(0.6823, 0.2156, 1);
 
+const Color verdeOscuro = Color(0.18, 0.8156, 0.1372);
+const Color azulClaro = Color(0.086, 0.690, 0.972);
 
 // Materiales difusos
-const Difuso amarilloMat = Difuso(amarillo, negro);
+const Difuso amarilloMatDifuso = Difuso(amarillo, negro);
 const Difuso rosaMatDifuso = Difuso(rosa, negro);
-const Plastico rosaMat = Plastico(rosa * 0.2, rosa * 0.8, negro);
-const Dielectrico azulMat = Dielectrico(azul * 0.2, azul * 0.8, negro, 1.5);
 const Difuso azulMatDifuso = Difuso(azul, negro);
-const Difuso rojoMat = Difuso(rojo, negro);
-const Difuso verdeMat = Difuso(verde, negro);
-const Difuso blancoMat = Difuso(blanco, negro);
-const Difuso negroMat = Difuso(negro, negro);
-const Difuso naranjaMat = Difuso(naranja, negro);
-const Difuso turquesaMat = Difuso(turquesa, negro);
-const Difuso grisMat = Difuso(gris, negro);
-const Difuso grisOscuroMat = Difuso(gris, negro);
-const Difuso amatistaMat = Difuso(amatista, negro);
-const Difuso eclipseMat = Difuso(amatista, negro);
+const Difuso rojoMatDifuso = Difuso(rojo, negro);
+const Difuso verdeMatDifuso = Difuso(verde, negro);
+const Difuso blancoMatDifuso = Difuso(blanco, negro);
+const Difuso negroMatDifuso = Difuso(negro, negro);
+const Difuso naranjaMatDifuso = Difuso(naranja, negro);
+const Difuso turquesaMatDifuso = Difuso(turquesa, negro);
+const Difuso grisMatDifuso = Difuso(gris, negro);
+const Difuso grisOscuroMatDifuso = Difuso(gris, negro);
+const Difuso amatistaMatDifuso = Difuso(amatista, negro);
+const Difuso eclipseMatDifuso = Difuso(amatista, negro);
+const Difuso azulClaroMatDifuso = Difuso(azulClaro, negro);
+const Difuso verdeOscuroMatDifuso = Difuso(verdeOscuro, negro);
 
+// Materiales plastico
 const Plastico espejo = Plastico(blanco * 0, blanco, negro);
+const Plastico rosaMatPlastico = Plastico(rosa * 0.2, rosa * 0.8, negro);
+const Plastico verdeOscuroMatPlastico = Plastico(verdeOscuro * 0.4, verdeOscuro * 0.6, negro);
+const Plastico turquesaMatPlastico = Plastico(turquesa * 0.4, turquesa * 0.6, negro);
+
+// Materiales dielectricos
+const Dielectrico azulMatDielectrico = Dielectrico(azul * 0.2, azul * 0.8, negro, 1.5);
 
 // Escena de la kernel box
 void kernelBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
@@ -73,15 +82,15 @@ void kernelBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    esfera->setMaterial(rosaMat);
-    esfera2->setMaterial(azulMat);
-    plano->setMaterial(grisMat);
-    suelo->setMaterial(grisMat);
-    planoIzquierda->setMaterial(rojoMat);
-    planoDerecha->setMaterial(verdeMat);
+    esfera->setMaterial(rosaMatPlastico);
+    esfera2->setMaterial(azulMatDielectrico);
+    plano->setMaterial(grisMatDifuso);
+    suelo->setMaterial(grisMatDifuso);
+    planoIzquierda->setMaterial(rojoMatDifuso);
+    planoDerecha->setMaterial(verdeMatDifuso);
 
 
     objetos.push_back(esfera);
@@ -113,15 +122,15 @@ void kernelBoxEspejo(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    esfera->setMaterial(rosaMat);
-    esfera2->setMaterial(azulMat);
+    esfera->setMaterial(rosaMatPlastico);
+    esfera2->setMaterial(azulMatDielectrico);
     plano->setMaterial(espejo);
-    suelo->setMaterial(grisMat);
-    planoIzquierda->setMaterial(rojoMat);
-    planoDerecha->setMaterial(verdeMat);
+    suelo->setMaterial(grisMatDifuso);
+    planoIzquierda->setMaterial(rojoMatDifuso);
+    planoDerecha->setMaterial(verdeMatDifuso);
 
 
     objetos.push_back(esfera);
@@ -150,21 +159,19 @@ void cilindroCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     Cilindro* cilindro = new Cilindro(Punto(0.0, -1.4, -0.25), 0.3, 3);
 
     Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0));
-
     Plano* planoIzquierda = new Plano(1.0, Direccion(1.0, 0.0, 0.0));
-
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
     esfera->setMaterial(rosaMatDifuso);
     esfera2->setMaterial(rosaMatDifuso);
     cilindro->setMaterial(azulMatDifuso);
-    plano->setMaterial(grisMat);
-    suelo->setMaterial(grisMat);
-    planoIzquierda->setMaterial(rojoMat);
-    planoDerecha->setMaterial(verdeMat);
+    plano->setMaterial(grisMatDifuso);
+    suelo->setMaterial(grisMatDifuso);
+    planoIzquierda->setMaterial(rojoMatDifuso);
+    planoDerecha->setMaterial(verdeMatDifuso);
 
     objetos.push_back(esfera);
     objetos.push_back(esfera2);
@@ -179,6 +186,9 @@ void cilindroCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
 
     fuentes.push_back(blanca);
 }
+
+
+
 
 // Escena con columnas
 void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
@@ -198,29 +208,56 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     Triangulo* triangulo1 = new Triangulo(Punto(-0.3, -0.3, 1.8), Punto(0.3, 0.5, 1.8), Punto(-0.3, 0.5, 1.8));
     Triangulo* triangulo2 = new Triangulo(Punto(-0.3, -0.3, 1.8), Punto(0.3, -0.3, 1.8), Punto(0.3, 0.5, 1.8));
 
+    // Crear una esfera de radio 0.3 en el centro de la escena
+    // Esfera* esferaCentro = new Esfera(Punto(0.0, -0.7, 0.0), 0.3);
+    /* FRONTAL */
+    // Primera fila
+    Esfera* esfera1 = new Esfera(Punto(-0.45, -0.9, -0.1), 0.15);
+    Esfera* esfera2 = new Esfera(Punto(-0.15, -0.9, -0.1), 0.15);
+    Esfera* esfera3 = new Esfera(Punto(0.15, -0.9, -0.1), 0.15);
+    Esfera* esfera4 = new Esfera(Punto(0.45, -0.9, -0.1), 0.15);
+    // Segunda fila
+    Esfera* esfera5 = new Esfera(Punto(-0.30, -0.7, 0.05), 0.15);
+    Esfera* esfera6 = new Esfera(Punto(-0.00, -0.7, 0.05), 0.15);
+    Esfera* esfera7 = new Esfera(Punto(0.30, -0.7, 0.05), 0.15);
+    // Tercera fila
+    Esfera* esfera8 = new Esfera(Punto(-0.15, -0.5, 0.2), 0.15);
+    Esfera* esfera9 = new Esfera(Punto(0.15, -0.5, 0.2), 0.15);    
+    // Cuarta fila
+    Esfera* esfera10 = new Esfera(Punto(0.0, -0.3, 0.35), 0.15);
 
-    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1));
+    // Cilindro en la cima
+    // Cilindro* cilindroCima = new Cilindro(Punto(0.0, -1.4, 2), 0.8, 2.5);
 
-    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0));
 
-    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0));
+    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), espejo, false);
+    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
+    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
 
-    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMat, false);
-    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0));
+    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
 
-    plano->setMaterial(grisMat);
-    suelo->setMaterial(grisMat);
-    planoIzquierda->setMaterial(rojoMat);
-    planoDerecha->setMaterial(verdeMat);
-    cilindroIzq1->setMaterial(amatistaMat);
-    cilindroIzq2->setMaterial(eclipseMat);
-    cilindroIzq3->setMaterial(amatistaMat);
-    cilindroDcha1->setMaterial(amatistaMat);
-    cilindroDcha2->setMaterial(eclipseMat);
-    cilindroDcha3->setMaterial(amatistaMat);
+    cilindroIzq1->setMaterial(amatistaMatDifuso);
+    cilindroIzq2->setMaterial(eclipseMatDifuso);
+    cilindroIzq3->setMaterial(amatistaMatDifuso);
+    cilindroDcha1->setMaterial(amatistaMatDifuso);
+    cilindroDcha2->setMaterial(eclipseMatDifuso);
+    cilindroDcha3->setMaterial(amatistaMatDifuso);
     triangulo1->setMaterial(espejo);
     triangulo2->setMaterial(espejo);
+    // esferaCentro->setMaterial(turquesaMatDielectrico);
+    esfera1->setMaterial(azulClaroMatDifuso);
+    esfera2->setMaterial(verdeOscuroMatDifuso);
+    esfera3->setMaterial(azulClaroMatDifuso);
+    esfera4->setMaterial(verdeOscuroMatDifuso);
 
+    esfera5->setMaterial(turquesaMatPlastico);
+    esfera6->setMaterial(turquesaMatPlastico);
+    esfera7->setMaterial(turquesaMatPlastico);
+
+    esfera8->setMaterial(turquesaMatPlastico);
+    esfera9->setMaterial(turquesaMatPlastico);
+    esfera10->setMaterial(espejo);
 
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
@@ -233,8 +270,17 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     objetos.push_back(cilindroDcha1);
     objetos.push_back(cilindroDcha2);
     objetos.push_back(cilindroDcha3);
-    objetos.push_back(triangulo1);
-    // objetos.push_back(triangulo2);
+    // objetos.push_back(esferaCentro);
+    objetos.push_back(esfera1);
+    objetos.push_back(esfera2);
+    objetos.push_back(esfera3);
+    objetos.push_back(esfera4);
+    objetos.push_back(esfera5);
+    objetos.push_back(esfera6);
+    objetos.push_back(esfera7);
+    objetos.push_back(esfera8);
+    objetos.push_back(esfera9);
+    objetos.push_back(esfera10);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);

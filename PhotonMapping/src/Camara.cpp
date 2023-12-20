@@ -108,7 +108,8 @@ ImagenHDR Camara::renderizar(vector<Geometria*> objetos, vector<FuenteLuz*> fuen
         // No se puede determinar el número de cores
         numCores = 1;
     }
-
+    
+    // numCores = 1;
     // Asignar los objetos y las fuentes de luz
     setObjetos(objetos);
     setFuentes(fuentes);
