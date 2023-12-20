@@ -112,6 +112,32 @@ public:
 
 };
 
+// Clase cilindro que hereda de Geometria
+class Cilindro : public Geometria {
+private:
+    Punto centro;
+    double radio;
+    double altura;
+public:
+    // Constructor del cilindro
+    Cilindro(Punto _centro, double _radio, double _altura);
+
+    // Constructor del cilindro con color
+    Cilindro(Punto _centro, double _radio, double _altura, Material _material);
+    // Constructor del cilindro con color y fuente de luz
+    Cilindro(Punto _centro, double _radio, double _altura, Material _material, bool _fuenteLuz);
+
+    // Getters del cilindro
+    Punto getCentro() const;
+    double getRadio() const;
+    double getAltura() const;
+
+    Punto interseccion(const Rayo& rayo) const;
+
+    // Dado un punto del cilindro devuelva la direccion normal (con respecto al origen)
+    Direccion getNormal(const Punto& punto) const;
+};
+
 class Rayo {
 private:
     Punto origen;

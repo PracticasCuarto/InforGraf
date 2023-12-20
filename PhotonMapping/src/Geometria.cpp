@@ -109,6 +109,35 @@ Direccion Triangulo::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
+// --------------------- CILINDRO ---------------------
+
+// Constructor Cilindro
+Cilindro::Cilindro(Punto _centro, double _radio, double _altura) : Geometria(), centro(_centro), radio(_radio), altura(_altura) {}
+
+// Constructor Cilindro con color
+Cilindro::Cilindro(Punto _centro, double _radio, double _altura, Material _material) : Geometria(), centro(_centro), radio(_radio), altura(_altura) {
+    setMaterial(_material);
+}
+
+// Getters del Cilindro
+Punto Cilindro::getCentro() const {
+    return centro;
+}
+
+double Cilindro::getRadio() const {
+    return radio;
+}
+
+double Cilindro::getAltura() const {
+    return altura;
+}
+
+// Dado un punto del cilindro devuelva la direccion normal (con respecto al origen)
+Direccion Cilindro::getNormal(const Punto& punto) const {
+    Direccion normal = punto - centro;
+    return normal.normalizar();
+}
+
 // --------------------- RAYO ---------------------
 
 // Constructor Rayo
@@ -257,6 +286,7 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
     }
 
     double t = f * (edge2 * q);
+    // t = -t;
 
     if (t > EPSILON) {
         Punto puntoInterseccion = rayOrigin + (rayDirection * t);
@@ -265,4 +295,68 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
     else {
         return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
     }
+}
+
+
+// Calcular intersección de un Rayo con un cilindro
+Punto Cilindro::interseccion(const Rayo& rayo) const {
+    float t0, t1; // soluciones para t si el rayo intersecta
+    Direccion L = rayo.getOrigen() - centro; // L será el vector que apunta del centro del cilindro al origen de la camara
+    Direccion direccionRayo = rayo.getDireccion();
+
+    // Calcula el coseno del ángulo entre L y direccionRayo
+    float coseno_angulo = (L * direccionRayo) / (L.modulo() * direccionRayo.modulo());
+
+    // Convierte el coseno del ángulo a grados
+    float angulo = acos(coseno_angulo) * (180.0 / M_PI);
+
+    // Si el ángulo es menor a 90 grados, el rayo va hacia atrás
+    if (angulo < 90) {
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
+
+    // Calcula el discriminante de la ecuación cuadrática
+    float a = direccionRayo.x * direccionRayo.x + direccionRayo.z * direccionRayo.z;
+    float b = 2 * (direccionRayo.x * L.x + direccionRayo.z * L.z);
+    float c = L.x * L.x + L.z * L.z - radio * radio;
+
+    // Usa la función resolverCuadratica para calcular las soluciones
+    if (!resolverCuadratica(a, b, c, t0, t1)) {
+        // No hay intersección
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
+
+    bool dentro = false;
+
+    // Comprobar que son iguales
+    if (L.modulo() <= radio) {
+        dentro = true;
+    }
+
+    Punto puntoInterseccion = Punto(-INFINITY, -INFINITY, -INFINITY);
+
+    // Devolver la solución más cercana al origen del rayo
+    if (t0 < t1) {
+        if (!dentro) {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t0;
+        }
+        else {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t1;
+        }
+    }
+    else {
+        if (!dentro) {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t1;
+        }
+        else {
+            puntoInterseccion = rayo.getOrigen() + direccionRayo * t0;
+        }
+    }
+
+    // Comprobar que el punto de intersección está dentro de la altura del cilindro
+    if (puntoInterseccion.y < centro.y || puntoInterseccion.y > centro.y + altura) {
+        return Punto(-INFINITY, -INFINITY, -INFINITY);
+    }
+
+    return puntoInterseccion;
 }

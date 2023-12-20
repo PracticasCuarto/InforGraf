@@ -11,6 +11,8 @@
 
 using namespace std;
 
+const int MODO = 1; // 0 = Event estimation, 1 = Luz directa sin primer rebote
+
 /*
     An additional struct that allows the KD-Tree to access your photon position
 */
@@ -56,14 +58,14 @@ public:
     double calculateTotalEmissions();
 
     // Method to emit a photon from a light source
-    void emitPhoton(const Color& flux, const Rayo& ray);
+    void emitPhoton(const Color& flux, const Rayo& ray, const bool firstIter);
 
     // Method to calculate the intersection of the ray with all the objects of the scene
     // and save the closest intersection, along with its information
     bool intersectionRayScene(const Rayo& ray, Material& material, Punto& intersectionPoint, Direccion& normal, int& resultIndex) const;
 
     // Method to calculate the light of a photon in a point of intersection
-    void nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux);
+    void nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux, const bool firstIteration);
 
     // Method to calculate the diffuse component of a material
     Color calculateDiffuseComponent(const Material& material, const Punto& intersectionPoint, const Direccion& normal, const Punto& origin, const int& numPhotons) const;

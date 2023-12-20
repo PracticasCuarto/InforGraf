@@ -187,16 +187,10 @@ void PhotonMapping::generatePhotonMap() {
             // Create the ray photon
             Rayo ray = randomRay(Direccion(0, 1, 0), origin);
             // Emit photons
-            emitPhoton(flux, ray);
+            emitPhoton(flux, ray, true);
         }
 
     }
-
-    // Show the photon map generated
-    // for (Photon photon : photonsList) {
-    //     cout << "POSITION: " << photon.getPosition().x << " " << photon.getPosition().y << " " << photon.getPosition().z << endl;
-    //     cout << "PLEX: " << photon.getFlux().r << " " << photon.getFlux().g << " " << photon.getFlux().b << endl;
-    // }
 
     // Create the photon map
     map = PhotonMap(photonsList, PhotonAxisPosition());
@@ -207,7 +201,7 @@ void PhotonMapping::generatePhotonMap() {
 }
 
 // Method to emit a photon from a light source
-void PhotonMapping::emitPhoton(const Color& flux, const Rayo& ray) {
+void PhotonMapping::emitPhoton(const Color& flux, const Rayo& ray, const bool firstIter) {
     // Calculate the intersection of the ray with all the objects of the scene
     Punto point = Punto(-INFINITY, -INFINITY, -INFINITY);
     Material material = Material();
@@ -221,25 +215,29 @@ void PhotonMapping::emitPhoton(const Color& flux, const Rayo& ray) {
         return;
     }
     else {
-        nextEventEstimation(point, material, normal, ray.getDireccion(), flux);
+        nextEventEstimation(point, material, normal, ray.getDireccion(), flux, firstIter);
     }
 }
 
 // Method to calculate the light of a photon in a point of intersection
-void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux) {
+void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Material& material, const Direccion& normal, const Direccion& wo, const Color& flux, const bool firstIter) {
     // Check the type of the material
     Componentes type = material.ruletaRusa();
     if (type == DIFUSO) {
+
         // Bounce the photon and calculate the next event estimation
         Color BRDF = calculateDiffuseMaterial(material.getDifuso());
         Color fluxActual = flux * BRDF * M_PI;
-        // Store the photon in the photon map
-        Photon photonNow = Photon(intersectionPoint, wo, fluxActual);
-        photonsList.push_back(photonNow);
+
+        if (!firstIter || MODO == 0) {
+            // Store the photon in the photon map
+            Photon photonNow = Photon(intersectionPoint, wo, fluxActual);
+            photonsList.push_back(photonNow);
+        }
 
         // Generate the ray
         Rayo ray = randomRayCosine(intersectionPoint, normal);
-        emitPhoton(flux * BRDF * M_PI, ray);
+        emitPhoton(flux * BRDF * M_PI, ray, false);
     }
     else if (type == ESPECULAR) {
         // Calculate the new direction of the photon
@@ -248,7 +246,7 @@ void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Mat
 
         // Send the new photon to the scene
         Rayo ray = Rayo(intersectionPoint, wi);
-        emitPhoton(flux, ray);
+        emitPhoton(flux, ray, firstIter);
     }
     else if (type == REFRACCION) {
         Direccion direccionRayoEntrante = rayRefraction(wo, normal, material.getIndiceRefraccion());
@@ -279,7 +277,7 @@ void PhotonMapping::nextEventEstimation(const Punto intersectionPoint, const Mat
 
         // Lanzar un rayo a la escena
         Rayo rayoSaliente = Rayo(puntoInterseccionActual, direccionRayoSaliente);
-        emitPhoton(flux, rayoSaliente);
+        emitPhoton(flux, rayoSaliente, firstIter);
     }
     else if (type == ABSORCION) {
         // The light is absorbed so nothing is done
@@ -436,6 +434,12 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
                 color += kernel * BRDF;
             }
 
+            if (MODO == 1) {
+                Color BRDF = calculateDiffuseMaterial(material.getDifuso());
+                // Calculate the direct light
+                color += directLight(point, BRDF, normal);
+            }
+
             return color;
 
         }
@@ -449,9 +453,6 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
             if (direccionRayoEntrante.x == -INFINITY) {
                 return Color(0, 0, 0);
             }
-
-            // cout << "Direccion rayo original: " << wo.x << " " << wo.y << " " << wo.z << endl;
-            // cout << "Direccion del rayo entrante: " << direccionRayoEntrante.x << " " << direccionRayoEntrante.y << " " << direccionRayoEntrante.z << endl;
 
             Direccion normalNegada = Direccion(-normal.x, -normal.y, -normal.z);
             Punto puntoInterseccionActualizado = point + normalNegada * 0.0002;

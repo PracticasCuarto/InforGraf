@@ -86,6 +86,7 @@ public:
     Punto interseccion(const Rayo& rayo) const;
 };
 
+// Clase Triangulo que hereda de Geometria
 class Triangulo : public Geometria {
 private:
     Punto vertice1;

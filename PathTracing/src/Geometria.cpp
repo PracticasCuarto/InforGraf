@@ -50,7 +50,7 @@ Direccion Esfera::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
-// // --------------------- PLANO ---------------------
+// --------------------- PLANO ---------------------
 
 // Constructor plano
 Plano::Plano(double _distanciaOrigen, Direccion _normal) : Geometria(), distanciaOrigen(_distanciaOrigen), normal(_normal) {}
@@ -108,6 +108,7 @@ Direccion Triangulo::getNormal(const Punto& punto) const {
     Direccion normal = (vertice2 - vertice1).cross(vertice3 - vertice1);
     return normal.normalizar();
 }
+
 
 // --------------------- RAYO ---------------------
 
@@ -220,6 +221,7 @@ Punto Esfera::interseccion(const Rayo& rayo) const {
     return puntoInterseccion;
 }
 
+// Calcular intersección de un Rayo con un triangulo
 Punto Triangulo::interseccion(const Rayo& rayo) const {
     Punto v1 = getVertice1();
     Punto v2 = getVertice2();
@@ -266,3 +268,4 @@ Punto Triangulo::interseccion(const Rayo& rayo) const {
         return Punto(-INFINITY, -INFINITY, -INFINITY); // Devolver un punto nulo si no hay intersección
     }
 }
+
