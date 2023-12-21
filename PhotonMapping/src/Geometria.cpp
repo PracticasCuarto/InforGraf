@@ -138,6 +138,31 @@ Direccion Cilindro::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
+// --------------------- CUBO ---------------------
+
+// Constructor del cubo
+Cubo::Cubo(Punto _centro, double _lado) : Geometria(), centro(_centro), lado(_lado) {}
+
+// Constructor del cubo con color
+Cubo::Cubo(Punto _centro, double _lado, Material _material) : Geometria(), centro(_centro), lado(_lado) {
+    setMaterial(_material);
+}
+
+// Getters del cubo
+Punto Cubo::getCentro() const {
+    return centro;
+}
+
+double Cubo::getLado() const {
+    return lado;
+}
+
+// Dado un punto del cubo devuelva la direccion normal (con respecto al origen)
+Direccion Cubo::getNormal(const Punto& punto) const {
+    Direccion normal = punto - centro;
+    return normal.normalizar();
+}
+
 // --------------------- RAYO ---------------------
 
 // Constructor Rayo
@@ -360,3 +385,117 @@ Punto Cilindro::interseccion(const Rayo& rayo) const {
 
     return puntoInterseccion;
 }
+
+// Calcular intersección de un Rayo con un cubo
+Punto Cubo::interseccion(const Rayo& rayo) const {
+    // Transformar el rayo al espacio local del cubo
+    Direccion direccionRayo = rayo.getDireccion();
+    Punto origenRayo = rayo.getOrigen();
+    
+    Punto origenLocal = Punto(
+        origenRayo.x - centro.x,
+        origenRayo.y - centro.y,
+        origenRayo.z - centro.z
+    );
+
+    Direccion direccionLocal = Direccion(
+        direccionRayo.x / lado,
+        direccionRayo.y / lado,
+        direccionRayo.z / lado
+    );
+    
+    // Calcular intersección con el cubo en el espacio local
+    double tmin = -INFINITY, tmax = INFINITY;
+    
+    for (int i = 0; i < 3; ++i) {
+        if (fabs(direccionLocal[i]) < 1e-6) {
+            if (origenLocal[i] < -lado / 2.0 || origenLocal[i] > lado / 2.0) {
+                // El rayo es paralelo a una cara del cubo y está fuera del cubo
+                return Punto(-INFINITY, -INFINITY, -INFINITY);
+            }
+        } else {
+            double ood = 1.0 / direccionLocal[i];
+            double t1 = (-lado / 2.0 - origenLocal[i]) * ood;
+            double t2 = (lado / 2.0 - origenLocal[i]) * ood;
+            
+            if (t1 > t2) {
+                std::swap(t1, t2);
+            }
+            
+            tmin = std::max(tmin, t1);
+            tmax = std::min(tmax, t2);
+            
+            if (tmin > tmax) {
+                // El rayo no intersecta con el cubo
+                return Punto(-INFINITY, -INFINITY, -INFINITY);
+            }
+        }
+    }
+    
+    // Calcular el punto de intersección en el espacio local
+    Punto puntoInterseccionLocal = origenLocal + direccionLocal * tmin;
+    
+    // Transformar el punto de intersección al espacio global
+    Punto puntoInterseccionGlobal = Punto(
+        puntoInterseccionLocal.x + centro.x,
+        puntoInterseccionLocal.y + centro.y,
+        puntoInterseccionLocal.z + centro.z
+    );
+    
+    return puntoInterseccionGlobal;
+}
+
+
+// // Calcular intersección de un Rayo con un cubo
+// Punto Cubo::interseccion(const Rayo& rayo) const {
+//     Direccion direccionRayo = rayo.getDireccion();
+//     Punto origenRayo = rayo.getOrigen();
+
+//     double tNear = -INFINITY;
+//     double tFar = INFINITY;
+
+//     // Verificar cada plano del cubo
+//     for (int i = 0; i < 3; ++i) {
+//         double invD = 1.0 / direccionRayo[i];
+//         double t0 = (getCentro()[i] - getLado() / 2.0 - origenRayo[i]) * invD;
+//         double t1 = (getCentro()[i] + getLado() / 2.0 - origenRayo[i]) * invD;
+
+//         if (t0 > t1) {
+//             std::swap(t0, t1);
+//         }
+
+//         tNear = std::max(tNear, t0);
+//         tFar = std::min(tFar, t1);
+
+//         if (tNear > tFar) {
+//             // No hay intersección con este plano
+//             return Punto(-INFINITY, -INFINITY, -INFINITY);
+//         }
+//     }
+
+//     // Verificar si el punto de intersección está dentro del rango del cubo en todas las dimensiones
+//     if (tNear > 0) {
+//         Punto puntoInterseccion = origenRayo + direccionRayo * tNear;
+
+//         if (puntoInterseccion.x < getCentro().x - getLado() / 2.0 || puntoInterseccion.x > getCentro().x + getLado() / 2.0) {
+//             // El punto de intersección está fuera del rango del cubo
+//             return Punto(-INFINITY, -INFINITY, -INFINITY);
+//         }
+
+//         if (puntoInterseccion.y < getCentro().y - getLado() / 2.0 || puntoInterseccion.y > getCentro().y + getLado() / 2.0) {
+//             // El punto de intersección está fuera del rango del cubo
+//             return Punto(-INFINITY, -INFINITY, -INFINITY);
+//         }
+
+//         if (puntoInterseccion.z < getCentro().z - getLado() / 2.0 || puntoInterseccion.z > getCentro().z + getLado() / 2.0) {
+//             // El punto de intersección está fuera del rango del cubo
+//             return Punto(-INFINITY, -INFINITY, -INFINITY);
+//         }
+        
+
+//         return puntoInterseccion;
+//     }
+
+//     // El rayo no intersecta el cubo
+//     return Punto(-INFINITY, -INFINITY, -INFINITY);
+// }

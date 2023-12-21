@@ -138,6 +138,28 @@ public:
     Direccion getNormal(const Punto& punto) const;
 };
 
+// Clase cubo que hereda de Geometria
+class Cubo : public Geometria {
+private:
+    Punto centro;
+    double lado; // Longitud de un lado del cubo
+public:
+    // Constructor del cubo
+    Cubo(Punto _centro, double _lado);
+
+    // Constructor del cubo con color
+    Cubo(Punto _centro, double _lado, Material _material);
+
+    // Getters del cubo
+    Punto getCentro() const;
+    double getLado() const;
+
+    // Implementaciones de los métodos virtuales heredados
+    Punto interseccion(const Rayo& rayo) const override;
+    Direccion getNormal(const Punto& punto) const override;
+};
+
+
 class Rayo {
 private:
     Punto origen;

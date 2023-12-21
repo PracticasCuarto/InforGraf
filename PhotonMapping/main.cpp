@@ -32,7 +32,7 @@ const Color rojo = Color(0.6, 0, 0);
 const Color verde = Color(0, 0.6, 0);
 const Color blanco = Color(0.7, 0.7, 0.7);
 const Color negro = Color(0, 0, 0);
-const Color naranja = Color(0.9, 0.502, 0);
+const Color naranja = Color(1, 0.502, 0);
 const Color gris = Color(0.6039, 0.6039, 0.6039);
 const Color turquesa = Color(0.451, 0.902, 0.9804);
 const Color grisOscuro = Color(0.4039, 0.4039, 0.4039);
@@ -310,124 +310,46 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     fuentes.push_back(naranjaLuz);
 }
 
-// Escena con esferas y suelo espejo
-void arbolNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
-    // Primera fila
-    Esfera* esfera1 = new Esfera(Punto(-0.30, -0.4, -0.1), 0.1);
-    Esfera* esfera2 = new Esfera(Punto(-0.10, -0.4, -0.1), 0.1);
-    Esfera* esfera3 = new Esfera(Punto(0.10, -0.4, -0.1), 0.1);
-    Esfera* esfera4 = new Esfera(Punto(0.30, -0.4, -0.1), 0.1);
-    // Segunda fila
-    Esfera* esfera5 = new Esfera(Punto(-0.20, -0.22, -0.1), 0.1);
-    Esfera* esfera6 = new Esfera(Punto(-0.00, -0.22, -0.1), 0.1);
-    Esfera* esfera7 = new Esfera(Punto(0.20, -0.22, -0.1), 0.1);
-    // Tercera fila
-    Esfera* esfera8 = new Esfera(Punto(-0.1, -0.04, -0.1), 0.1);
-    Esfera* esfera9 = new Esfera(Punto(0.1, -0.04, -0.1), 0.1);    
-    // Cuarta fila
-    Esfera* esfera10 = new Esfera(Punto(0.0, 0.14, -0.1), 0.1);
-
-
-    // Cilindro en el centro
-    Cilindro* cilindroTallo = new Cilindro(Punto(0.0, -0.9, -0.1), 0.1, 0.4, marronMatDifuso);
-
+// Funcion para añadir al vector de objetos las esferas de la escena
+void crearArbolNavidad(vector<Geometria*>& objetos) {
+    // Cilindro para el tallo
+    Cilindro* cilindroTallo = new Cilindro(Punto(-0.25, -0.9, -0.1), 0.1, 0.4, marronMatDifuso);
     // Triangulo que ocupe la misma superficie que todas las esferas
-    Triangulo* trianguloTotal = new Triangulo(Punto(-0.3, -0.5, -0.2), Punto(0.0, 0.1, -0.2), Punto(0.3, -0.5, -0.2));
-    Esfera* esferaIzq = new Esfera(Punto(-0.3, -0.5, -0.2), 0.05);
-    Esfera* esferaDcha = new Esfera(Punto(0.3, -0.5, -0.2), 0.05);
-    Esfera* esferaArriba = new Esfera(Punto(0.0, 0.1, -0.2), 0.05);
-    // Esfera en el centro del triangulo
-    Esfera* esferaCentroIzq = new Esfera(Punto(-0.06, -0.2, -0.2), 0.03);
-    Esfera* esferaCentroDcha = new Esfera(Punto(0.06, -0.2, -0.2), 0.03);
+    Triangulo* trianguloTotal = new Triangulo(Punto(-0.55, -0.5, -0.2), Punto(-0.25, 0.1, -0.2), Punto(0.05, -0.5, -0.2), verdeOscuroMatPlastico);
+    Esfera* esferaIzq = new Esfera(Punto(-0.55, -0.5, -0.2), 0.05, naranjaMatPlastico);
+    Esfera* esferaDcha = new Esfera(Punto(0.05, -0.5, -0.2), 0.05, naranjaMatPlastico);
+    Esfera* esferaArriba = new Esfera(Punto(-0.25, 0.1, -0.2), 0.05, naranjaMatPlastico);
+    // Para la carita sonriente
+    Esfera* esferaCentroIzq = new Esfera(Punto(-0.31, -0.2, -0.2), 0.03, rojoMatDifuso);
+    Esfera* esferaCentroDcha = new Esfera(Punto(-0.19, -0.2, -0.2), 0.03, rojoMatDifuso);
+    Esfera* esferaCara1 = new Esfera(Punto(-0.35, -0.3, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara2 = new Esfera(Punto(-0.34, -0.31, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara3 = new Esfera(Punto(-0.33, -0.32, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara4 = new Esfera(Punto(-0.32, -0.33, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara5 = new Esfera(Punto(-0.31, -0.34, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara6 = new Esfera(Punto(-0.30, -0.35, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara7 = new Esfera(Punto(-0.29, -0.36, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara8 = new Esfera(Punto(-0.28, -0.37, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara9 = new Esfera(Punto(-0.27, -0.38, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara10 = new Esfera(Punto(-0.26, -0.39, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara11 = new Esfera(Punto(-0.25, -0.4, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara12 = new Esfera(Punto(-0.24, -0.39, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara13 = new Esfera(Punto(-0.23, -0.38, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara14 = new Esfera(Punto(-0.22, -0.37, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara15 = new Esfera(Punto(-0.21, -0.36, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara16 = new Esfera(Punto(-0.20, -0.35, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara17 = new Esfera(Punto(-0.19, -0.34, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara18 = new Esfera(Punto(-0.18, -0.33, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara19 = new Esfera(Punto(-0.17, -0.32, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara20 = new Esfera(Punto(-0.16, -0.31, -0.2), 0.01, rojoMatDifuso);
+    Esfera* esferaCara21 = new Esfera(Punto(-0.15, -0.3, -0.2), 0.01, rojoMatDifuso);
 
-    Esfera* esferaCara1 = new Esfera(Punto(-0.1, -0.3, -0.2), 0.01);
-    Esfera* esferaCara2 = new Esfera(Punto(-0.09, -0.31, -0.2), 0.01);
-    Esfera* esferaCara3 = new Esfera(Punto(-0.08, -0.32, -0.2), 0.01);
-    Esfera* esferaCara4 = new Esfera(Punto(-0.07, -0.33, -0.2), 0.01);
-    Esfera* esferaCara5 = new Esfera(Punto(-0.06, -0.34, -0.2), 0.01);
-    Esfera* esferaCara6 = new Esfera(Punto(-0.05, -0.35, -0.2), 0.01);
-    Esfera* esferaCara7 = new Esfera(Punto(-0.04, -0.36, -0.2), 0.01);
-    Esfera* esferaCara8 = new Esfera(Punto(-0.03, -0.37, -0.2), 0.01);
-    Esfera* esferaCara9 = new Esfera(Punto(-0.02, -0.38, -0.2), 0.01);
-    Esfera* esferaCara10 = new Esfera(Punto(-0.01, -0.39, -0.2), 0.01);
-    Esfera* esferaCara11 = new Esfera(Punto(0.0, -0.4, -0.2), 0.01);
-    Esfera* esferaCara12 = new Esfera(Punto(0.01, -0.39, -0.2), 0.01);
-    Esfera* esferaCara13 = new Esfera(Punto(0.02, -0.38, -0.2), 0.01);
-    Esfera* esferaCara14 = new Esfera(Punto(0.03, -0.37, -0.2), 0.01);
-    Esfera* esferaCara15 = new Esfera(Punto(0.04, -0.36, -0.2), 0.01);
-    Esfera* esferaCara16 = new Esfera(Punto(0.05, -0.35, -0.2), 0.01);
-    Esfera* esferaCara17 = new Esfera(Punto(0.06, -0.34, -0.2), 0.01);
-    Esfera* esferaCara18 = new Esfera(Punto(0.07, -0.33, -0.2), 0.01);
-    Esfera* esferaCara19 = new Esfera(Punto(0.08, -0.32, -0.2), 0.01);
-    Esfera* esferaCara20 = new Esfera(Punto(0.09, -0.31, -0.2), 0.01);
-    Esfera* esferaCara21 = new Esfera(Punto(0.1, -0.3, -0.2), 0.01);
-
-
-
-    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), blancoMatDifuso, false);
-    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
-    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
-
-    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
-    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), blancoMatDifuso, false);
-
-    esfera1->setMaterial(verdeOscuroMatPlastico);
-    esfera2->setMaterial(verdeOscuroMatPlastico);
-    esfera3->setMaterial(verdeOscuroMatPlastico);
-    esfera4->setMaterial(verdeOscuroMatPlastico);
-
-    esfera5->setMaterial(verdeOscuroMatPlastico);
-    esfera6->setMaterial(verdeOscuroMatPlastico);
-    esfera7->setMaterial(verdeOscuroMatPlastico);
-
-    esfera8->setMaterial(verdeOscuroMatPlastico);
-    esfera9->setMaterial(verdeOscuroMatPlastico);
-
-    esfera10->setMaterial(verdeOscuroMatPlastico);
-    trianguloTotal->setMaterial(verdeOscuroMatPlastico);
-    esferaIzq->setMaterial(naranjaMatPlastico);
-    esferaDcha->setMaterial(naranjaMatPlastico);
-    esferaArriba->setMaterial(naranjaMatPlastico);
-    esferaCentroIzq->setMaterial(rojoMatDifuso);
-    esferaCentroDcha->setMaterial(rojoMatDifuso);
-    esferaCara1->setMaterial(rojoMatDifuso);
-    esferaCara2->setMaterial(rojoMatDifuso);
-    esferaCara3->setMaterial(rojoMatDifuso);
-    esferaCara4->setMaterial(rojoMatDifuso);
-    esferaCara5->setMaterial(rojoMatDifuso);
-    esferaCara6->setMaterial(rojoMatDifuso);
-    esferaCara7->setMaterial(rojoMatDifuso);
-    esferaCara8->setMaterial(rojoMatDifuso);
-    esferaCara9->setMaterial(rojoMatDifuso);
-    esferaCara10->setMaterial(rojoMatDifuso);
-    esferaCara11->setMaterial(rojoMatDifuso);
-    esferaCara12->setMaterial(rojoMatDifuso);
-    esferaCara13->setMaterial(rojoMatDifuso);
-    esferaCara14->setMaterial(rojoMatDifuso);
-    esferaCara15->setMaterial(rojoMatDifuso);
-    esferaCara16->setMaterial(rojoMatDifuso);
-    esferaCara17->setMaterial(rojoMatDifuso);
-    esferaCara18->setMaterial(rojoMatDifuso);
-    esferaCara19->setMaterial(rojoMatDifuso);
-    esferaCara20->setMaterial(rojoMatDifuso);
-    esferaCara21->setMaterial(rojoMatDifuso);
-
-
-    objetos.push_back(plano);
-    objetos.push_back(planoDerecha);
-    objetos.push_back(planoIzquierda);
-    objetos.push_back(techo);
-    objetos.push_back(suelo);
-    // objetos.push_back(esfera1);
-    // objetos.push_back(esfera2);
-    // objetos.push_back(esfera3);
-    // objetos.push_back(esfera4);
-    // objetos.push_back(esfera5);
-    // objetos.push_back(esfera6);
-    // objetos.push_back(esfera7);
-    // objetos.push_back(esfera8);
-    // objetos.push_back(esfera9);
-    // objetos.push_back(esfera10);
+    // Cubos que son los regalos
+    Cubo* regalo1 = new Cubo(Punto(-0.48, -0.85, -0.2), 0.15, naranjaMatDifuso);
+    Cubo* regalo2 = new Cubo(Punto(-0.68, -0.85, -0.2), 0.15, rosaMatDifuso);
+    Cubo* regalo3 = new Cubo(Punto(-0.6, -0.75, 0.0), 0.23, turquesaMatDifuso);
+    Cubo* regaloEncima = new Cubo(Punto(-0.58, -0.72, -0.2), 0.12, amarilloMatDifuso);
+    
     objetos.push_back(cilindroTallo);
     objetos.push_back(trianguloTotal);
     objetos.push_back(esferaIzq);
@@ -456,8 +378,81 @@ void arbolNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     objetos.push_back(esferaCara19);
     objetos.push_back(esferaCara20);
     objetos.push_back(esferaCara21);
+    objetos.push_back(regalo1);
+    objetos.push_back(regalo2);
+    objetos.push_back(regalo3);
+    objetos.push_back(regaloEncima);
+}
 
+// Función para crear el muñeco de nieve
+void crearMunyecoNieve(vector<Geometria*>& objetos) {
+    // Muñeco de nieve con 3 esferas (el cuerpo)
+    Esfera* esferaNieve1 = new Esfera(Punto(0.5, -0.7, 0.3), 0.22, blancoTotalMatDifuso);
+    Esfera* esferaNieve2 = new Esfera(Punto(0.5, -0.45, 0.3), 0.18, blancoTotalMatDifuso);
+    Esfera* esferaNieve3 = new Esfera(Punto(0.5, -0.23, 0.3), 0.15, blancoTotalMatDifuso);
+    // Botones negros del muñeco
+    Esfera* boton1 = new Esfera(Punto(0.48, -0.7, 0.1), 0.036, negroMatDifuso);
+    Esfera* boton2 = new Esfera(Punto(0.48, -0.6, 0.1), 0.035, negroMatDifuso);
+    Esfera* boton3 = new Esfera(Punto(0.48, -0.5, 0.1), 0.035, negroMatDifuso);
+    Esfera* boton4 = new Esfera(Punto(0.48, -0.4, 0.1), 0.035, negroMatDifuso);
+    // Cara del muñeco de nieve
+    Esfera* esferaCentroIzq = new Esfera(Punto(0.42, -0.18, 0.1), 0.03, azulClaroMatDifuso);
+    Esfera* esferaCentroDcha = new Esfera(Punto(0.54, -0.18, 0.1), 0.03, azulClaroMatDifuso);
+    // Esferas para la nariz
+    Esfera* esferaNariz1 = new Esfera(Punto(0.48, -0.23, 0.1), 0.02, naranjaMatDifuso);
+    Esfera* esferaNariz2 = new Esfera(Punto(0.48, -0.23, 0.07), 0.02, naranjaMatDifuso);
+    // Cilindro de poca altura para el sombrero
+    Cilindro* sombreroGrande = new Cilindro(Punto(0.442, -0.08, -0.1), 0.16, 0.02, negroMatDifuso);
+    Cilindro* sombreroEncima = new Cilindro(Punto(0.445, -0.062, -0.1), 0.08, 0.12, negroMatDifuso);
+    // Cilindro para los brazos
+    Cilindro* brazoIzq = new Cilindro(Punto(0.26, -0.38, -0.1), 0.065, 0.018, negroMatDifuso);
+    Cilindro* brazoDcha = new Cilindro(Punto(0.65, -0.38, -0.1), 0.065, 0.018, negroMatDifuso);
+    // Esferas para las manos
+    Esfera* manoIzq = new Esfera(Punto(0.195, -0.365, -0.1), 0.022, negroMatDifuso);
+    Esfera* manoDcha = new Esfera(Punto(0.705, -0.365, -0.1), 0.022, negroMatDifuso);
+    // Cilindro fino para simular bufanda entre la 2 y 3 esfera
+    Cilindro* bufanda = new Cilindro(Punto(0.442, -0.29, -0.1), 0.14, 0.02, rojoMatDifuso);
 
+    objetos.push_back(esferaNieve1);
+    objetos.push_back(esferaNieve2);
+    objetos.push_back(esferaNieve3);
+    objetos.push_back(boton1);
+    objetos.push_back(boton2);
+    objetos.push_back(boton3);
+    objetos.push_back(boton4);
+    objetos.push_back(esferaCentroIzq);
+    objetos.push_back(esferaCentroDcha);
+    objetos.push_back(esferaNariz1);
+    objetos.push_back(esferaNariz2);
+    objetos.push_back(sombreroGrande);
+    objetos.push_back(sombreroEncima);
+    objetos.push_back(brazoIzq);
+    objetos.push_back(brazoDcha);
+    objetos.push_back(manoIzq);
+    objetos.push_back(manoDcha);
+    objetos.push_back(bufanda);
+}
+
+// Escena del arbol y muñeco de nieve
+void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+    // Crear el arbol de navidad
+    crearArbolNavidad(objetos);
+    crearMunyecoNieve(objetos);
+
+    
+    // Planos
+    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), blancoMatDifuso, false);
+    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
+    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
+    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
+
+    objetos.push_back(plano);
+    objetos.push_back(planoDerecha);
+    objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
+    objetos.push_back(suelo);
+ 
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
@@ -515,7 +510,7 @@ int main(int argc, char* argv[]) {
 
     //kernelBox(objetos, fuentes);
     //columnasCornellBox(objetos, fuentes);
-    arbolNavidad(objetos, fuentes);
+    escenaNavidad(objetos, fuentes);
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
