@@ -124,6 +124,7 @@ Color PathTracer::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, 
 Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin) const {
     Color resultado = Color(0, 0, 0);
 
+
     // Comprobar a que clase pertenece el material y en funcion de su clase calcular
     // la luz directa
     Componentes tipo = materialObjeto.ruletaRusa();

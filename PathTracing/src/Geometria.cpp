@@ -28,6 +28,11 @@ void Geometria::setMaterial(Material _material) {
     material = _material;
 }
 
+void Geometria::setTextura(ImagenHDR _textura) {
+    textura = _textura;
+    tieneTextura = true;
+}
+
 // --------------------- ESFERA ---------------------
 
 // Constructor esfera
@@ -99,6 +104,10 @@ Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3) : vertice1(_p1), vertice2(
 // Constructor Triangulo con color
 Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, Material _material) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
     setMaterial(_material);
+}
+
+Triangulo::Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, ImagenHDR _textura) : vertice1(_vertice1), vertice2(_vertice2), vertice3(_vertice3) {
+    setTextura(_textura);
 }
 
 // Getters del Triangulo

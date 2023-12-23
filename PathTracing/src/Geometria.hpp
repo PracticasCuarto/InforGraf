@@ -18,8 +18,10 @@ class Geometria {
 protected:
     Material material;
     bool fuenteLuz;
+
     ImagenHDR textura;
     bool tieneTextura;
+
 public:
     // Constructor completo
     Geometria();
@@ -38,12 +40,13 @@ public:
 
     // Setters del material
     void setMaterial(Material _material);
-
-    // Getters del color
-    Material getMaterial() const;
+    void setTextura(ImagenHDR _textura);
 
     // Devuelve el color de la textura en un punto
     virtual Color getColor(const Punto& punto) const = 0;
+
+    // Getters del color
+    Material getMaterial() const;
 
     virtual ~Geometria() {}
 };
@@ -69,9 +72,10 @@ public:
     Punto getCentro() const;
     double getRadio() const;
 
+    Color getColor(const Punto& punto) const;
+
     Punto interseccion(const Rayo& rayo) const;
     Direccion getNormal(const Punto& punto) const;
-    Color getColor(const Punto& punto) const;
 };
 
 // Clase Plano que hereda de Geometria
@@ -91,10 +95,11 @@ public:
     double getDistanciaOrigen() const;
     Direccion getNormal() const;
 
+    Color getColor(const Punto& punto) const;
+
     Direccion getNormal(const Punto& punto) const;
 
     Punto interseccion(const Rayo& rayo) const;
-    Color getColor(const Punto& punto) const;
 };
 
 // Clase Triangulo que hereda de Geometria
@@ -112,6 +117,10 @@ public:
     // Constructor del triangulo con color y fuente de luz
     Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, Material _material, bool _fuenteLuz);
 
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, ImagenHDR _textura);
+
+    Color getColor(const Punto& punto) const;
+
     // Getters del triangulo
     Punto getVertice1() const;
     Punto getVertice2() const;
@@ -121,10 +130,6 @@ public:
 
     // Dado un punto del triangulo devuelva la direccion normal (con respecto al origen)
     Direccion getNormal(const Punto& punto) const;
-
-    // Dado un punto en el que se ha intersectado con el triangulo, devolver el color
-    // asociado a su textura en ese punto
-    Color getColor(const Punto& punto) const;
 
 };
 
