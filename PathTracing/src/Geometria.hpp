@@ -7,6 +7,7 @@
 #include "Direccion.hpp"
 #include "Color.hpp"
 #include "Materiales/Material.hpp"
+#include "ImagenHDR/ImagenHDR.hpp"
 
 using namespace std;
 
@@ -17,12 +18,17 @@ class Geometria {
 protected:
     Material material;
     bool fuenteLuz;
+    ImagenHDR textura;
+    bool tieneTextura;
 public:
     // Constructor completo
     Geometria();
 
     // Constructor con material
     Geometria(Material _material);
+
+    // Constructor con textura
+    Geometria(ImagenHDR _textura);
 
     virtual Punto interseccion(const Rayo& rayo) const = 0;
 

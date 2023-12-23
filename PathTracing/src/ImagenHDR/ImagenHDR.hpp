@@ -18,6 +18,8 @@ private:
     double resolucionColor;
 public:
 
+    ImagenHDR();
+
     // Constructor por defecto
     ImagenHDR(vector<vector<double>>& matriz, int ancho, int alto, double valorMaximo, double resolucionColor);
 

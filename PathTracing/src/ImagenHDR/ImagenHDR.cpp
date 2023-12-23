@@ -4,6 +4,12 @@
 
 using namespace std;
 
+// Constructor vacio
+ImagenHDR::ImagenHDR() {
+
+}
+
+
 // Constructor por defecto
 ImagenHDR::ImagenHDR(vector<vector<double>>& _matriz, int ancho, int alto, double valorMaximo, double resolucionColor) : matriz(_matriz), ancho(ancho), alto(alto), valorMaximo(valorMaximo), resolucionColor(resolucionColor) {}
 

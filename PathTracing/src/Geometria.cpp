@@ -6,10 +6,15 @@
 using namespace std;
 
 // Constructor de Geometria
-Geometria::Geometria() : material(Material()), fuenteLuz(false) {}
+Geometria::Geometria() : material(Material()), fuenteLuz(false), tieneTextura(false) {}
 
 // Constructor de Geometria con material
-Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false) {}
+Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false), tieneTextura(false) {}
+
+// Constructor con textura
+Geometria::Geometria(ImagenHDR _textura) : textura(_textura), fuenteLuz(false), tieneTextura(true) {
+    // Material puramente difuso
+}
 
 // Getters del material
 Material Geometria::getMaterial() const {
