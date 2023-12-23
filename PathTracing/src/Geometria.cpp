@@ -12,9 +12,7 @@ Geometria::Geometria() : material(Material()), fuenteLuz(false), tieneTextura(fa
 Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false), tieneTextura(false) {}
 
 // Constructor con textura
-Geometria::Geometria(ImagenHDR _textura) : textura(_textura), fuenteLuz(false), tieneTextura(true) {
-    // Material puramente difuso
-}
+Geometria::Geometria(ImagenHDR _textura) : textura(_textura), fuenteLuz(false), tieneTextura(true) {}
 
 // Getters del material
 Material Geometria::getMaterial() const {
@@ -112,6 +110,34 @@ Punto Triangulo::getVertice3() const {
 Direccion Triangulo::getNormal(const Punto& punto) const {
     Direccion normal = (vertice2 - vertice1).cross(vertice3 - vertice1);
     return normal.normalizar();
+}
+
+// Dado un punto en el que se ha intersectado con el triangulo, devolver el color
+// asociado a su textura en ese punto
+Color Triangulo::getColor(const Punto& punto) const {
+    // Calcular las coordenadas baricéntricas del punto
+    Direccion v0 = vertice2 - vertice1;
+    Direccion v1 = vertice3 - vertice1;
+    Direccion v2 = punto - vertice1;
+
+    double d00 = v0 * v0;
+    double d01 = v0 * v1;
+    double d11 = v1 * v1;
+    double d20 = v2 * v0;
+    double d21 = v2 * v1;
+    double denom = d00 * d11 - d01 * d01;
+
+    double v = (d11 * d20 - d01 * d21) / denom;
+    double w = (d00 * d21 - d01 * d20) / denom;
+    double u = 1.0f - v - w;
+
+    // Calcular las coordenadas de la textura
+    double x = u * textura.getAncho() + v * textura.getAncho() + w * textura.getAncho();
+    double y = u * textura.getAlto() + v * textura.getAlto() + w * textura.getAlto();
+
+    // Devolver el color de la textura en ese punto
+    vector<double> result = textura.getPixel(x, y);
+    return Color(result[0], result[1], result[2]);
 }
 
 

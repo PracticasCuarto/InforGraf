@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, true);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
     esfera->setMaterial(rosaMat);

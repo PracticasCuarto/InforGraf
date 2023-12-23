@@ -25,10 +25,10 @@ public:
 
     // Getters
     vector<vector<double>> getMatriz();
-    int getAncho();
-    int getAlto();
-    double getValorMaximo();
-    double getResolucionColor();
+    int getAncho() const;
+    int getAlto() const;
+    double getValorMaximo() const;
+    double getResolucionColor() const;
 
     // Setters
     void setMatriz(vector<vector<double>>& matriz);
@@ -38,6 +38,9 @@ public:
 
     // Sobrecargar operacion de desigualdad (!=)
     bool operator!=(ImagenHDR& imagen);
+
+    // Funcion que dado una coordenada "x" y una "y" devuelve el pixel correspondiente
+    vector<double> getPixel(int fila, int columna) const;
 };
 
 #endif

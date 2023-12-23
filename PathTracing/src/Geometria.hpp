@@ -117,6 +117,10 @@ public:
     // Dado un punto del triangulo devuelva la direccion normal (con respecto al origen)
     Direccion getNormal(const Punto& punto) const;
 
+    // Dado un punto en el que se ha intersectado con el triangulo, devolver el color
+    // asociado a su textura en ese punto
+    Color getColor(const Punto& punto) const;
+
 };
 
 class Rayo {
