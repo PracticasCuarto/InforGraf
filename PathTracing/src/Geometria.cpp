@@ -53,6 +53,10 @@ Direccion Esfera::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
+Color Esfera::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
+}
+
 // --------------------- PLANO ---------------------
 
 // Constructor plano
@@ -80,6 +84,10 @@ Direccion Plano::getNormal() const {
 
 Direccion Plano::getNormal(const Punto& punto) const {
     return normal;
+}
+
+Color Plano::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
 }
 
 

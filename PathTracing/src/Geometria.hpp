@@ -42,6 +42,9 @@ public:
     // Getters del color
     Material getMaterial() const;
 
+    // Devuelve el color de la textura en un punto
+    virtual Color getColor(const Punto& punto) const = 0;
+
     virtual ~Geometria() {}
 };
 
@@ -68,6 +71,7 @@ public:
 
     Punto interseccion(const Rayo& rayo) const;
     Direccion getNormal(const Punto& punto) const;
+    Color getColor(const Punto& punto) const;
 };
 
 // Clase Plano que hereda de Geometria
@@ -90,6 +94,7 @@ public:
     Direccion getNormal(const Punto& punto) const;
 
     Punto interseccion(const Rayo& rayo) const;
+    Color getColor(const Punto& punto) const;
 };
 
 // Clase Triangulo que hereda de Geometria
