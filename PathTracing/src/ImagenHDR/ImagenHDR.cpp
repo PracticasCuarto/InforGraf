@@ -37,9 +37,10 @@ double ImagenHDR::getResolucionColor() const {
 // Funcion que dado una coordenada "x" y una "y" devuelve el pixel correspondiente
 vector<double> ImagenHDR::getPixel(int fila, int columna) const {
     vector<double> result;
-    result.push_back(matriz[fila][columna * 3]);
-    result.push_back(matriz[fila][columna * 3 + 1]);
-    result.push_back(matriz[fila][columna * 3 + 2]);
+
+    result.push_back(matriz[columna][fila * 3]);
+    result.push_back(matriz[columna][fila * 3 + 1]);
+    result.push_back(matriz[columna][fila * 3 + 2]);
 
     return result;
 }

@@ -23,6 +23,10 @@ bool Geometria::esFuenteLuz() const {
     return fuenteLuz;
 }
 
+bool Geometria::tieneTexturaObjeto() const {
+    return tieneTextura;
+}
+
 // Setters del material
 void Geometria::setMaterial(Material _material) {
     material = _material;
@@ -131,29 +135,34 @@ Direccion Triangulo::getNormal(const Punto& punto) const {
 
 // Dado un punto en el que se ha intersectado con el triangulo, devolver el color
 // asociado a su textura en ese punto
+// Color Triangulo::getColor(const Punto& punto) const {
+
+//     // Devolver el color de la textura en ese punto
+//     vector<double> result = textura.getPixel(x, y);
+//     return Color(result[0], result[1], result[2]);
+// }
 Color Triangulo::getColor(const Punto& punto) const {
-    // Calcular las coordenadas baricéntricas del punto
-    Direccion v0 = vertice2 - vertice1;
-    Direccion v1 = vertice3 - vertice1;
-    Direccion v2 = punto - vertice1;
 
-    double d00 = v0 * v0;
-    double d01 = v0 * v1;
-    double d11 = v1 * v1;
-    double d20 = v2 * v0;
-    double d21 = v2 * v1;
-    double denom = d00 * d11 - d01 * d01;
+    // Calcular las coordenadas baricentricas del punto
+    // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
 
-    double v = (d11 * d20 - d01 * d21) / denom;
-    double w = (d00 * d21 - d01 * d20) / denom;
-    double u = 1.0f - v - w;
+    Punto A = vertice1;
+    Punto B = vertice2;
+    Punto C = vertice3;
 
-    // Calcular las coordenadas de la textura
-    double x = u * textura.getAncho() + v * textura.getAncho() + w * textura.getAncho();
-    double y = u * textura.getAlto() + v * textura.getAlto() + w * textura.getAlto();
+    double baryA = ((B.y - C.y) * (punto.x - C.x) + (C.x - B.x) * (punto.y - C.y)) / ((B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y));
+    double baryB = ((C.y - A.y) * (punto.x - C.x) + (A.x - C.x) * (punto.y - C.y)) / ((B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y));
+    double baryC = 1 - baryA - baryB;
 
-    // Devolver el color de la textura en ese punto
-    vector<double> result = textura.getPixel(x, y);
+    double x = baryA * vertice1.x + baryB * vertice2.x + baryC * vertice3.x;
+    double y = baryA * vertice1.y + baryB * vertice2.y + baryC * vertice3.y;
+
+    // cout << "x: " << x << endl;
+    // cout << "y: " << y << endl;
+    // Obtener el color de la textura en ese punto
+    vector<double> result = textura.getPixel(x * textura.getAlto(), y * textura.getAncho());
+
+    // Crear y devolver el objeto Color
     return Color(result[0], result[1], result[2]);
 }
 

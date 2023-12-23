@@ -34,7 +34,7 @@ public:
     Color luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, const Direccion& normal) const;
 
     // Función para calcular la luz de un objeto en un punto de intersección
-    Color nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wi, const Punto& origin) const;
+    Color nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wi, const Punto& origin, const int& indiceResultado) const;
 
     // Función para calcular el color de un píxel
     Color calcularColorPixel(const Rayo& rayo, const Punto& origin) const;

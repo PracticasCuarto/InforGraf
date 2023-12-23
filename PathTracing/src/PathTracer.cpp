@@ -121,8 +121,17 @@ Color PathTracer::luzDirecta(const Punto& puntoInterseccion, const Color& BRDF, 
 }
 
 // Función para calcular la luz de un objeto en un punto de intersección
-Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin) const {
+Color PathTracer::nextEventEstimation(const Punto puntoInterseccion, const Material& materialObjeto, const Direccion& normal, const Direccion& wo, const Punto& origin, const int& indiceResultado) const {
     Color resultado = Color(0, 0, 0);
+
+    // Comprobar si el objeto tiene textura
+    Geometria* objetoResultado = objetos[indiceResultado];
+    if (objetoResultado != nullptr && objetoResultado->tieneTexturaObjeto()) {
+        // cout << "Tiene textura el objeto numero " << indiceResultado << endl;
+        Color color = objetoResultado->getColor(puntoInterseccion);
+        resultado = color;
+        return resultado;
+    }
 
 
     // Comprobar a que clase pertenece el material y en funcion de su clase calcular
@@ -171,7 +180,7 @@ Color PathTracer::calcularColorPixel(const Rayo& rayo, const Punto& origin) cons
         return objetos[indiceResultado]->getMaterial().getDifuso();
     }
     else {
-        return nextEventEstimation(puntoInterseccion, material, normal, rayo.getDireccion(), origin);
+        return nextEventEstimation(puntoInterseccion, material, normal, rayo.getDireccion(), origin, indiceResultado);
     }
 }
 
@@ -232,8 +241,6 @@ bool PathTracer::interseccionRayoEscena(const Rayo& rayo, const Punto& origin, M
             puntoInterseccion = puntoInterseccion + normal * 0.0001;
             indiceResultado = indice;
             resultado = true;
-
-
         }
     }
     return resultado;

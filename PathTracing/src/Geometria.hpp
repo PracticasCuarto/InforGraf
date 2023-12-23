@@ -42,6 +42,8 @@ public:
     void setMaterial(Material _material);
     void setTextura(ImagenHDR _textura);
 
+    bool tieneTexturaObjeto() const;
+
     // Devuelve el color de la textura en un punto
     virtual Color getColor(const Punto& punto) const = 0;
 

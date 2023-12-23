@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    Triangulo* triangulo = new Triangulo(Punto(-0.2, 0.7, 0.25), Punto(0.5, -0.9, 0.5), Punto(-0.5, 0.0, 0.25), textura);
+    Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
 
     esfera->setMaterial(rosaMat);
     esfera2->setMaterial(azulMat);
