@@ -314,11 +314,18 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
 void crearArbolNavidad(vector<Geometria*>& objetos) {
     // Cilindro para el tallo
     Cilindro* cilindroTallo = new Cilindro(Punto(-0.25, -0.9, -0.1), 0.1, 0.4, marronMatDifuso);
-    // Triangulo que ocupe la misma superficie que todas las esferas
-    Triangulo* trianguloTotal = new Triangulo(Punto(-0.55, -0.5, -0.2), Punto(-0.25, 0.1, -0.2), Punto(0.05, -0.5, -0.2), verdeOscuroMatPlastico);
-    Esfera* esferaIzq = new Esfera(Punto(-0.55, -0.5, -0.2), 0.05, naranjaMatPlastico);
-    Esfera* esferaDcha = new Esfera(Punto(0.05, -0.5, -0.2), 0.05, naranjaMatPlastico);
-    Esfera* esferaArriba = new Esfera(Punto(-0.25, 0.1, -0.2), 0.05, naranjaMatPlastico);
+    // Hacer el árbol con 3 triángulos de diferente tamaño uno encima de otro
+    Triangulo* trianguloGrande = new Triangulo(Punto(-0.65, -0.5, -0.2), Punto(-0.25, 0.1, -0.2), Punto(0.15, -0.5, -0.2), verdeOscuroMatPlastico);
+    Triangulo* trianguloMediano = new Triangulo(Punto(-0.65, -0.3, -0.2), Punto(-0.25, 0.2, -0.2), Punto(0.15, -0.3, -0.2), verdeOscuroMatPlastico);
+    Triangulo* trianguloPequenio = new Triangulo(Punto(-0.65, -0.1, -0.2), Punto(-0.25, 0.3, -0.2), Punto(0.15, -0.1, -0.2), verdeOscuroMatPlastico);
+
+    Esfera* esferaIzq = new Esfera(Punto(-0.63, -0.5, -0.2), 0.05, naranjaMatPlastico);
+    Esfera* esferaIzq2 = new Esfera(Punto(-0.63, -0.3, -0.2), 0.05, turquesaMatPlastico);
+    Esfera* esferaIzq3 = new Esfera(Punto(-0.63, -0.1, -0.2), 0.05, azulClaroMatPlastico);
+    Esfera* esferaDcha = new Esfera(Punto(0.12, -0.5, -0.2), 0.05, amarilloMatPlastico);
+    Esfera* esferaDcha2 = new Esfera(Punto(0.12, -0.3, -0.2), 0.05, rosaMatPlastico);
+    Esfera* esferaDcha3 = new Esfera(Punto(0.12, -0.1, -0.2), 0.05, rojoMatPlastico);
+
     // Para la carita sonriente
     Esfera* esferaCentroIzq = new Esfera(Punto(-0.31, -0.2, -0.2), 0.03, rojoMatDifuso);
     Esfera* esferaCentroDcha = new Esfera(Punto(-0.19, -0.2, -0.2), 0.03, rojoMatDifuso);
@@ -351,10 +358,16 @@ void crearArbolNavidad(vector<Geometria*>& objetos) {
     Cubo* regaloEncima = new Cubo(Punto(-0.58, -0.72, -0.2), 0.12, amarilloMatDifuso);
     
     objetos.push_back(cilindroTallo);
-    objetos.push_back(trianguloTotal);
+    objetos.push_back(trianguloGrande);
+    objetos.push_back(trianguloMediano);
+    objetos.push_back(trianguloPequenio);
     objetos.push_back(esferaIzq);
+    objetos.push_back(esferaIzq2);
+    objetos.push_back(esferaIzq3);
     objetos.push_back(esferaDcha);
-    objetos.push_back(esferaArriba);
+    objetos.push_back(esferaDcha2);
+    objetos.push_back(esferaDcha3);
+
     objetos.push_back(esferaCentroIzq);
     objetos.push_back(esferaCentroDcha);
     objetos.push_back(esferaCara1);
