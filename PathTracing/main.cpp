@@ -59,7 +59,8 @@ int main(int argc, char* argv[]) {
     LectorHDR lector;
     LectorHDR lectorTextura;
 
-    ImagenHDR textura = lectorTextura.leerImagenHDR("texturas/imagenSalida.ppm");
+    // ImagenHDR textura = lectorTextura.leerImagenHDR("texturas/imagenSalida.ppm");
+    // ImagenHDR textura = lectorTextura.leerImagenHDR("ppms/imagenSalida.ppm");
 
     // ImagenHDR imagen = lector.leerImagenHDR("ppms/seymour_park.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
@@ -87,6 +88,8 @@ int main(int argc, char* argv[]) {
     Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.5);
     // Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
+    Difuso rosadifuso = Difuso(rosa, negro);
+    Difuso azulDifuso = Difuso(azul, negro);
     Difuso verdeMat = Difuso(verde, negro);
     Difuso blancoMat = Difuso(blanco, negro);
     Difuso negroMat = Difuso(negro, negro);
@@ -110,10 +113,12 @@ int main(int argc, char* argv[]) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
+    // Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
 
     esfera->setMaterial(rosaMat);
     esfera2->setMaterial(azulMat);
+    // esfera->setMaterial(rosadifuso);
+    // esfera2->setMaterial(azulDifuso);
     plano->setMaterial(grisMat);
     suelo->setMaterial(grisMat);
     planoIzquierda->setMaterial(rojoMat);
@@ -127,7 +132,7 @@ int main(int argc, char* argv[]) {
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
-    objetos.push_back(triangulo);
+    // objetos.push_back(triangulo);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
