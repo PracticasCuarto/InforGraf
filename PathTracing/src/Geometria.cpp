@@ -6,10 +6,13 @@
 using namespace std;
 
 // Constructor de Geometria
-Geometria::Geometria() : material(Material()), fuenteLuz(false) {}
+Geometria::Geometria() : material(Material()), fuenteLuz(false), tieneTextura(false) {}
 
 // Constructor de Geometria con material
-Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false) {}
+Geometria::Geometria(Material _material) : material(_material), fuenteLuz(false), tieneTextura(false) {}
+
+// Constructor con textura
+Geometria::Geometria(ImagenHDR _textura) : textura(_textura), fuenteLuz(false), tieneTextura(true) {}
 
 // Getters del material
 Material Geometria::getMaterial() const {
@@ -20,9 +23,18 @@ bool Geometria::esFuenteLuz() const {
     return fuenteLuz;
 }
 
+bool Geometria::tieneTexturaObjeto() const {
+    return tieneTextura;
+}
+
 // Setters del material
 void Geometria::setMaterial(Material _material) {
     material = _material;
+}
+
+void Geometria::setTextura(ImagenHDR _textura) {
+    textura = _textura;
+    tieneTextura = true;
 }
 
 // --------------------- ESFERA ---------------------
@@ -48,6 +60,10 @@ double Esfera::getRadio() const {
 Direccion Esfera::getNormal(const Punto& punto) const {
     Direccion normal = punto - centro;
     return normal.normalizar();
+}
+
+Color Esfera::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
 }
 
 // --------------------- PLANO ---------------------
@@ -79,6 +95,10 @@ Direccion Plano::getNormal(const Punto& punto) const {
     return normal;
 }
 
+Color Plano::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
+}
+
 
 // --------------------- TRIANGULO ---------------------
 
@@ -88,6 +108,10 @@ Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3) : vertice1(_p1), vertice2(
 // Constructor Triangulo con color
 Triangulo::Triangulo(Punto _p1, Punto _p2, Punto _p3, Material _material) : vertice1(_p1), vertice2(_p2), vertice3(_p3) {
     setMaterial(_material);
+}
+
+Triangulo::Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, ImagenHDR _textura) : vertice1(_vertice1), vertice2(_vertice2), vertice3(_vertice3) {
+    setTextura(_textura);
 }
 
 // Getters del Triangulo
@@ -107,6 +131,39 @@ Punto Triangulo::getVertice3() const {
 Direccion Triangulo::getNormal(const Punto& punto) const {
     Direccion normal = (vertice2 - vertice1).cross(vertice3 - vertice1);
     return normal.normalizar();
+}
+
+// Dado un punto en el que se ha intersectado con el triangulo, devolver el color
+// asociado a su textura en ese punto
+// Color Triangulo::getColor(const Punto& punto) const {
+
+//     // Devolver el color de la textura en ese punto
+//     vector<double> result = textura.getPixel(x, y);
+//     return Color(result[0], result[1], result[2]);
+// }
+Color Triangulo::getColor(const Punto& punto) const {
+
+    // Calcular las coordenadas baricentricas del punto
+    // https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
+
+    Punto A = vertice1;
+    Punto B = vertice2;
+    Punto C = vertice3;
+
+    double baryA = ((B.y - C.y) * (punto.x - C.x) + (C.x - B.x) * (punto.y - C.y)) / ((B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y));
+    double baryB = ((C.y - A.y) * (punto.x - C.x) + (A.x - C.x) * (punto.y - C.y)) / ((B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y));
+    double baryC = 1 - baryA - baryB;
+
+    double x = baryA * vertice1.x + baryB * vertice2.x + baryC * vertice3.x;
+    double y = baryA * vertice1.y + baryB * vertice2.y + baryC * vertice3.y;
+
+    // cout << "x: " << x << endl;
+    // cout << "y: " << y << endl;
+    // Obtener el color de la textura en ese punto
+    vector<double> result = textura.getPixel(x * textura.getAlto(), y * textura.getAncho());
+
+    // Crear y devolver el objeto Color
+    return Color(result[0], result[1], result[2]);
 }
 
 

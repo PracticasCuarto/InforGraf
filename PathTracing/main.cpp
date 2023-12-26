@@ -57,6 +57,10 @@ int main(int argc, char* argv[]) {
 
     // Probar a leer la imagen "ppms/forest_path.ppm"
     LectorHDR lector;
+    LectorHDR lectorTextura;
+
+    ImagenHDR textura = lectorTextura.leerImagenHDR("texturas/imagenSalida.ppm");
+
     // ImagenHDR imagen = lector.leerImagenHDR("ppms/seymour_park.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
     EscritorHDR escritor;
@@ -106,6 +110,8 @@ int main(int argc, char* argv[]) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
+    Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
+
     esfera->setMaterial(rosaMat);
     esfera2->setMaterial(azulMat);
     plano->setMaterial(grisMat);
@@ -121,6 +127,7 @@ int main(int argc, char* argv[]) {
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
+    objetos.push_back(triangulo);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));

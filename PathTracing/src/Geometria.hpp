@@ -7,6 +7,7 @@
 #include "Direccion.hpp"
 #include "Color.hpp"
 #include "Materiales/Material.hpp"
+#include "ImagenHDR/ImagenHDR.hpp"
 
 using namespace std;
 
@@ -17,12 +18,19 @@ class Geometria {
 protected:
     Material material;
     bool fuenteLuz;
+
+    ImagenHDR textura;
+    bool tieneTextura;
+
 public:
     // Constructor completo
     Geometria();
 
     // Constructor con material
     Geometria(Material _material);
+
+    // Constructor con textura
+    Geometria(ImagenHDR _textura);
 
     virtual Punto interseccion(const Rayo& rayo) const = 0;
 
@@ -32,6 +40,12 @@ public:
 
     // Setters del material
     void setMaterial(Material _material);
+    void setTextura(ImagenHDR _textura);
+
+    bool tieneTexturaObjeto() const;
+
+    // Devuelve el color de la textura en un punto
+    virtual Color getColor(const Punto& punto) const = 0;
 
     // Getters del color
     Material getMaterial() const;
@@ -60,6 +74,8 @@ public:
     Punto getCentro() const;
     double getRadio() const;
 
+    Color getColor(const Punto& punto) const;
+
     Punto interseccion(const Rayo& rayo) const;
     Direccion getNormal(const Punto& punto) const;
 };
@@ -81,6 +97,8 @@ public:
     double getDistanciaOrigen() const;
     Direccion getNormal() const;
 
+    Color getColor(const Punto& punto) const;
+
     Direccion getNormal(const Punto& punto) const;
 
     Punto interseccion(const Rayo& rayo) const;
@@ -100,6 +118,10 @@ public:
     Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, Material _material);
     // Constructor del triangulo con color y fuente de luz
     Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, Material _material, bool _fuenteLuz);
+
+    Triangulo(Punto _vertice1, Punto _vertice2, Punto _vertice3, ImagenHDR _textura);
+
+    Color getColor(const Punto& punto) const;
 
     // Getters del triangulo
     Punto getVertice1() const;
