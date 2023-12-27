@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <getopt.h>
+#include <chrono>
 
 #include "src/Direccion.hpp"
 #include "src/ImagenHDR/ImagenHDR.hpp"
@@ -82,10 +83,10 @@ int main(int argc, char* argv[]) {
 
     // Materiales difusos
     Difuso amarilloMat = Difuso(amarillo, negro);
-    // Difuso rosaMat = Difuso(rosa, negro);
-    Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
-    Dielectrico azulMat = Dielectrico(azul * 0, azul * 1, negro, 1.5);
-    // Difuso azulMat = Difuso(azul, negro);
+    Difuso rosaMat = Difuso(rosa, negro);
+    // Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
+    // Dielectrico azulMat = Dielectrico(azul * 0.2, azul * 0.8, negro, 1.5);
+    Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
     Difuso verdeMat = Difuso(verde, negro);
     Difuso blancoMat = Difuso(blanco, negro);
@@ -110,7 +111,7 @@ int main(int argc, char* argv[]) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
+    // Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25), textura);
 
     esfera->setMaterial(rosaMat);
     esfera2->setMaterial(azulMat);
@@ -127,7 +128,7 @@ int main(int argc, char* argv[]) {
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
-    objetos.push_back(triangulo);
+    // objetos.push_back(triangulo);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
@@ -137,7 +138,16 @@ int main(int argc, char* argv[]) {
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion);
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+
+    std::cout << "Tiempo de renderizado: " << duration_ms.count() << " ms" << std::endl;
+
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     //toneMapping.ecualizacion();
