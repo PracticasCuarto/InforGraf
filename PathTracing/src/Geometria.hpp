@@ -135,6 +135,53 @@ public:
 
 };
 
+// Clase cilindro que hereda de Geometria
+class Cilindro : public Geometria {
+private:
+    Punto centro;
+    double radio;
+    double altura;
+public:
+    // Constructor del cilindro
+    Cilindro(Punto _centro, double _radio, double _altura);
+
+    // Constructor del cilindro con color
+    Cilindro(Punto _centro, double _radio, double _altura, Material _material);
+    // Constructor del cilindro con color y fuente de luz
+    Cilindro(Punto _centro, double _radio, double _altura, Material _material, bool _fuenteLuz);
+
+    // Getters del cilindro
+    Punto getCentro() const;
+    double getRadio() const;
+    double getAltura() const;
+
+    Punto interseccion(const Rayo& rayo) const;
+
+    // Dado un punto del cilindro devuelva la direccion normal (con respecto al origen)
+    Direccion getNormal(const Punto& punto) const;
+};
+
+// Clase cubo que hereda de Geometria
+class Cubo : public Geometria {
+private:
+    Punto centro;
+    double lado; // Longitud de un lado del cubo
+public:
+    // Constructor del cubo
+    Cubo(Punto _centro, double _lado);
+
+    // Constructor del cubo con color
+    Cubo(Punto _centro, double _lado, Material _material);
+
+    // Getters del cubo
+    Punto getCentro() const;
+    double getLado() const;
+
+    // Implementaciones de los métodos virtuales heredados
+    Punto interseccion(const Rayo& rayo) const override;
+    Direccion getNormal(const Punto& punto) const override;
+};
+
 class Rayo {
 private:
     Punto origen;

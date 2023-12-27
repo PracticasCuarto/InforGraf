@@ -60,7 +60,8 @@ int main(int argc, char* argv[]) {
     LectorHDR lector;
     LectorHDR lectorTextura;
 
-    ImagenHDR textura = lectorTextura.leerImagenHDR("texturas/imagenSalida.ppm");
+    // ImagenHDR textura = lectorTextura.leerImagenHDR("texturas/imagenSalida.ppm");
+    // ImagenHDR textura = lectorTextura.leerImagenHDR("ppms/imagenSalida.ppm");
 
     // ImagenHDR imagen = lector.leerImagenHDR("ppms/seymour_park.ppm");
     // Probar a escribir la imagen "ppms/forest_path.ppm"
@@ -88,6 +89,8 @@ int main(int argc, char* argv[]) {
     // Dielectrico azulMat = Dielectrico(azul * 0.2, azul * 0.8, negro, 1.5);
     Difuso azulMat = Difuso(azul, negro);
     Difuso rojoMat = Difuso(rojo, negro);
+    Difuso rosadifuso = Difuso(rosa, negro);
+    Difuso azulDifuso = Difuso(azul, negro);
     Difuso verdeMat = Difuso(verde, negro);
     Difuso blancoMat = Difuso(blanco, negro);
     Difuso negroMat = Difuso(negro, negro);
@@ -115,6 +118,8 @@ int main(int argc, char* argv[]) {
 
     esfera->setMaterial(rosaMat);
     esfera2->setMaterial(azulMat);
+    // esfera->setMaterial(rosadifuso);
+    // esfera2->setMaterial(azulDifuso);
     plano->setMaterial(grisMat);
     suelo->setMaterial(grisMat);
     planoIzquierda->setMaterial(rojoMat);
