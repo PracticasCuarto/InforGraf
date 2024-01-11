@@ -199,9 +199,6 @@ Direccion Cilindro::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
-Color Cilindro::getColor(const Punto& punto) const {
-    return Color(0, 0, 0);
-}
 
 // --------------------- CUBO ---------------------
 

@@ -157,8 +157,6 @@ public:
     double getRadio() const;
     double getAltura() const;
 
-    Color getColor(const Punto& punto) const;
-
     Punto interseccion(const Rayo& rayo) const;
 
     // Dado un punto del cilindro devuelva la direccion normal (con respecto al origen)
@@ -183,7 +181,6 @@ public:
     Punto getCentro() const;
     double getLado() const;
 
-    Color getColor(const Punto& punto) const;
 
     // Implementaciones de los métodos virtuales heredados
     Punto interseccion(const Rayo& rayo) const override;

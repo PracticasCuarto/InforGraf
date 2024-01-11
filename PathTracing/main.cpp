@@ -339,8 +339,10 @@ void trianguloTextura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) 
 
     // Crear un triangulo con textura
     Triangulo* triangulo = new Triangulo(Punto(0.0, -0.5, 0.0), Punto(0.0, 0.5, 0.0), Punto(0.5, -0.5, 0.0), textura);
+    Triangulo* trianguloGrande = new Triangulo(Punto(-0.65, -0.5, -0.2), Punto(-0.25, 0.1, -0.2), Punto(0.15, -0.5, -0.2), textura);
 
-    objetos.push_back(triangulo);
+
+    objetos.push_back(trianguloGrande);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
@@ -436,87 +438,12 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     objetos.push_back(esfera10);
     // objetos.push_back(trianguloCima);
 
-
-    vector<Geometria*> objetos = vector<Geometria*>();
-    vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
-
     trianguloTextura(objetos, fuentes);
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
 
     fuentes.push_back(blanca);
     fuentes.push_back(naranjaLuz);
-}
-
-void cornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
-    // Colores
-    Color amarillo = Color(0.9, 0.9, 0);
-    Color rosa = Color(0.9961, 0.5373, 0.9098);
-    Color azul = Color(0.5882, 0.8392, 0.9);
-    Color rojo = Color(0.6, 0, 0);
-    Color verde = Color(0, 0.6, 0);
-    Color blanco = Color(0.9, 0.9, 0.9);
-    Color negro = Color(0, 0, 0);
-    Color naranja = Color(0.9, 0.502, 0);
-    Color gris = Color(0.8039, 0.8039, 0.8039);
-    Color turquesa = Color(0.451, 0.902, 0.9804);
-
-    // Materiales difusos
-    Difuso amarilloMat = Difuso(amarillo, negro);
-    Difuso rosaMat = Difuso(rosa, negro);
-    // Plastico rosaMat = Plastico(rosa * 0.3, rosa * 0.7, negro);
-    // Dielectrico azulMat = Dielectrico(azul * 0.2, azul * 0.8, negro, 1.5);
-    Difuso azulMat = Difuso(azul, negro);
-    Difuso rojoMat = Difuso(rojo, negro);
-    Difuso rosadifuso = Difuso(rosa, negro);
-    Difuso azulDifuso = Difuso(azul, negro);
-    Difuso verdeMat = Difuso(verde, negro);
-    Difuso blancoMat = Difuso(blanco, negro);
-    Difuso negroMat = Difuso(negro, negro);
-    Difuso naranjaMat = Difuso(naranja, negro);
-    Difuso turquesaMat = Difuso(turquesa, negro);
-    Difuso grisMat = Difuso(gris, negro);
-
-
-    // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
-    Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
-
-    // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
-    Esfera* esfera2 = new Esfera(Punto(0.5, -0.7, -0.25), 0.3);
-
-    Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0));
-
-    Plano* planoIzquierda = new Plano(1.0, Direccion(1.0, 0.0, 0.0));
-
-    Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
-
-    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMat, false);
-    Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
-
-    Triangulo* triangulo = new Triangulo(Punto(1, 0.1, 0.25), Punto(0.1, 1, 0.25), Punto(0.1, 0.1, 0.25));
-
-    esfera->setMaterial(rosaMat);
-    esfera2->setMaterial(azulMat);
-    // esfera->setMaterial(rosadifuso);
-    // esfera2->setMaterial(azulDifuso);
-    plano->setMaterial(grisMat);
-    suelo->setMaterial(grisMat);
-    planoIzquierda->setMaterial(rojoMat);
-    planoDerecha->setMaterial(verdeMat);
-    triangulo->setMaterial(rosaMat);
-
-    objetos.push_back(esfera);
-    objetos.push_back(esfera2);
-    objetos.push_back(plano);
-    objetos.push_back(planoDerecha);
-    objetos.push_back(planoIzquierda);
-    objetos.push_back(techo);
-    objetos.push_back(suelo);
-    objetos.push_back(triangulo);
-
-    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
-    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
-    fuentes.push_back(blanca);
 }
 
 
@@ -572,7 +499,7 @@ int main(int argc, char* argv[]) {
     vector<Geometria*> objetos = vector<Geometria*>();
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
 
-    cornellBox(objetos, fuentes);
+    trianguloTextura(objetos, fuentes);
     //columnasCornellBox(objetos, fuentes);
     // fuentes.push_back(otra);
 
