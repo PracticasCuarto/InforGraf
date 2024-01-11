@@ -231,11 +231,11 @@ void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes
     Esfera* esfera5 = new Esfera(Punto(-0.30, -0.7, 0.05), 0.15);
 
     Esfera* esfera6 = new Esfera(Punto(-0.00, -0.7, 0.05), 0.15);
-    
+
     Esfera* esfera7 = new Esfera(Punto(0.30, -0.7, 0.05), 0.15);
     // Tercera fila
     Esfera* esfera8 = new Esfera(Punto(-0.15, -0.5, 0.2), 0.15);
-    Esfera* esfera9 = new Esfera(Punto(0.15, -0.5, 0.2), 0.15);    
+    Esfera* esfera9 = new Esfera(Punto(0.15, -0.5, 0.2), 0.15);
     // Cuarta fila
     Esfera* esfera10 = new Esfera(Punto(0.0, -0.25, 0.4), 0.2);
 
@@ -353,7 +353,7 @@ void crearArbolNavidad(vector<Geometria*>& objetos) {
     Cubo* regalo2 = new Cubo(Punto(-0.68, -0.85, -0.2), 0.15, rosaMatDifuso);
     Cubo* regalo3 = new Cubo(Punto(-0.6, -0.75, 0.0), 0.23, turquesaMatDifuso);
     Cubo* regaloEncima = new Cubo(Punto(-0.58, -0.72, -0.2), 0.12, amarilloMatDifuso);
-    
+
     objetos.push_back(cilindroTallo);
     objetos.push_back(trianguloGrande);
     objetos.push_back(trianguloMediano);
@@ -449,7 +449,7 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     crearArbolNavidad(objetos);
     crearMunyecoNieve(objetos);
 
-    
+
     // Planos
     Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), blancoMatDifuso, false);
     Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
@@ -462,13 +462,13 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
- 
+
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
 
     fuentes.push_back(blanca);
-    
+
 }
 
 int main(int argc, char* argv[]) {

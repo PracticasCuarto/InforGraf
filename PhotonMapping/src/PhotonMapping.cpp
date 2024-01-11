@@ -430,14 +430,17 @@ Color PhotonMapping::calculatePixelColor(const Rayo& ray) const {
                 kernel /= (M_PI * radius_estimate * radius_estimate);
 
                 Color BRDF = calculateDiffuseMaterial(material.getDifuso());
-
                 color += kernel * BRDF;
             }
 
             if (MODO == 1) {
+                color *= 5;
+                // cout << "Color antes: " << color.r << " " << color.g << " " << color.b << endl;
                 Color BRDF = calculateDiffuseMaterial(material.getDifuso());
                 // Calculate the direct light
                 color += directLight(point, BRDF, normal);
+
+                // cout << "Color despues: " << color.r << " " << color.g << " " << color.b << endl;
             }
 
             return color;

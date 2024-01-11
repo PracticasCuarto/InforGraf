@@ -189,6 +189,10 @@ double Cilindro::getAltura() const {
     return altura;
 }
 
+Color Cilindro::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
+}
+
 // Dado un punto del cilindro devuelva la direccion normal (con respecto al origen)
 Direccion Cilindro::getNormal(const Punto& punto) const {
     Direccion normal = punto - centro;
@@ -456,7 +460,7 @@ Punto Cubo::interseccion(const Rayo& rayo) const {
     // Transformar el rayo al espacio local del cubo
     Direccion direccionRayo = rayo.getDireccion();
     Punto origenRayo = rayo.getOrigen();
-    
+
     Punto origenLocal = Punto(
         origenRayo.x - centro.x,
         origenRayo.y - centro.y,
@@ -468,44 +472,45 @@ Punto Cubo::interseccion(const Rayo& rayo) const {
         direccionRayo.y / lado,
         direccionRayo.z / lado
     );
-    
+
     // Calcular intersección con el cubo en el espacio local
     double tmin = -INFINITY, tmax = INFINITY;
-    
+
     for (int i = 0; i < 3; ++i) {
         if (fabs(direccionLocal[i]) < 1e-6) {
             if (origenLocal[i] < -lado / 2.0 || origenLocal[i] > lado / 2.0) {
                 // El rayo es paralelo a una cara del cubo y está fuera del cubo
                 return Punto(-INFINITY, -INFINITY, -INFINITY);
             }
-        } else {
+        }
+        else {
             double ood = 1.0 / direccionLocal[i];
             double t1 = (-lado / 2.0 - origenLocal[i]) * ood;
             double t2 = (lado / 2.0 - origenLocal[i]) * ood;
-            
+
             if (t1 > t2) {
                 std::swap(t1, t2);
             }
-            
+
             tmin = std::max(tmin, t1);
             tmax = std::min(tmax, t2);
-            
+
             if (tmin > tmax) {
                 // El rayo no intersecta con el cubo
                 return Punto(-INFINITY, -INFINITY, -INFINITY);
             }
         }
     }
-    
+
     // Calcular el punto de intersección en el espacio local
     Punto puntoInterseccionLocal = origenLocal + direccionLocal * tmin;
-    
+
     // Transformar el punto de intersección al espacio global
     Punto puntoInterseccionGlobal = Punto(
         puntoInterseccionLocal.x + centro.x,
         puntoInterseccionLocal.y + centro.y,
         puntoInterseccionLocal.z + centro.z
     );
-    
+
     return puntoInterseccionGlobal;
 }
