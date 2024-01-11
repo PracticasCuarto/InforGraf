@@ -11,7 +11,7 @@
 
 using namespace std;
 
-const int MODO = 0; // 0 = Event estimation, 1 = Luz directa sin primer rebote
+const int MODO = 1; // 0 = Event estimation, 1 = Luz directa sin primer rebote
 
 /*
     An additional struct that allows the KD-Tree to access your photon position

@@ -195,6 +195,10 @@ Direccion Cilindro::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
+Color Cilindro::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
+}
+
 // --------------------- CUBO ---------------------
 
 // Constructor del cubo
@@ -218,6 +222,10 @@ double Cubo::getLado() const {
 Direccion Cubo::getNormal(const Punto& punto) const {
     Direccion normal = punto - centro;
     return normal.normalizar();
+}
+
+Color Cubo::getColor(const Punto& punto) const {
+    return Color(0, 0, 0);
 }
 
 // --------------------- RAYO ---------------------

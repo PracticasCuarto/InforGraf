@@ -15,7 +15,7 @@ make
 # Comprobamos si la compilación fue exitosa
 if [ $? -eq 0 ]; then
   # Ejecutamos el programa "tests"
-  ./exec/main -a 256 -l 256 -n escenaNavidad -r 255 -m 64
+  ./exec/main -a 256 -l 256 -n cornellBox -r 255 -m 64
 else
   echo "La compilación ha fallado. Por favor, corrige los errores antes de ejecutar el programa."
 fi
