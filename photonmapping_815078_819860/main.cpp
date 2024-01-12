@@ -2,6 +2,7 @@
 #include <cassert>
 #include <vector>
 #include <getopt.h>
+#include <chrono>
 
 #include "src/Direccion.hpp"
 #include "src/ImagenHDR/ImagenHDR.hpp"
