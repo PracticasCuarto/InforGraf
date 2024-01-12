@@ -75,7 +75,7 @@ const Plastico amarilloMatPlastico = Plastico(amarillo * 0.8, amarillo * 0.2, ne
 const Plastico turquesaMatPlastico = Plastico(turquesa * 0.8, turquesa * 0.2, negro);
 const Plastico naranjaMatPlastico = Plastico(naranja * 0.8, naranja * 0.2, negro);
 
-const Plastico rosaMatPlastico = Plastico(rosa * 0.75, rosa * 0.25, negro);
+const Plastico rosaMatPlastico = Plastico(rosa * 0.4, rosa * 0.6, negro);
 const Plastico marronMatPlastico = Plastico(marron * 0.75, marron * 0.25, negro);
 const Plastico rojoMatPlastico = Plastico(rojo * 0.8, rojo * 0.2, negro);
 
@@ -100,8 +100,8 @@ void kernelBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
     Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    esfera->setMaterial(rosaMatDifuso);
-    esfera2->setMaterial(azulMatDifuso);
+    esfera->setMaterial(rosaMatPlastico);
+    esfera2->setMaterial(azulMatDielectrico);
     plano->setMaterial(grisMatDifuso);
     suelo->setMaterial(grisMatDifuso);
     planoIzquierda->setMaterial(rojoMatDifuso);
@@ -527,7 +527,16 @@ int main(int argc, char* argv[]) {
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
-    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 10000, 300, 0.3);
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 100000, 200, 0.3);
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+
+    std::cout << "Tiempo de renderizado: " << duration_ms.count() << " ms" << std::endl;
+
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     //toneMapping.ecualizacion();

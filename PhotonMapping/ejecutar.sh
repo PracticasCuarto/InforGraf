@@ -15,7 +15,7 @@ make
 # Comprobamos si la compilación fue exitosa
 if [ $? -eq 0 ]; then
   # Ejecutamos el programa "tests"
-  ./exec/main -a 512 -l 512 -n cornellBoxDL100K -r 255 -m 64
+  ./exec/main -a 512 -l 512 -n cornellBox -r 255 -m 64
 else
   echo "La compilación ha fallado. Por favor, corrige los errores antes de ejecutar el programa."
 fi
