@@ -455,7 +455,7 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
     Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
     Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
-    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), grisMatDifuso, false);
 
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
@@ -518,13 +518,13 @@ int main(int argc, char* argv[]) {
     vector<Geometria*> objetos = vector<Geometria*>();
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
 
-    cornellBox(objetos, fuentes);
+    // cornellBox(objetos, fuentes);
     //columnasCornellBox(objetos, fuentes);
-    // escenaNavidad(objetos, fuentes);
+    escenaNavidad(objetos, fuentes);
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz
-    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 10000, 20, 0.3);
+    ImagenHDR imagenEscena = camara.renderizar(objetos, fuentes, resolucion, 100000, 200, 0.3);
     ToneMapping toneMapping = ToneMapping(imagenEscena);
     toneMapping.curvaGamma(1 / 2.2);
     //toneMapping.ecualizacion();

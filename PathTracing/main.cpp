@@ -291,17 +291,37 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 }
 
 void textura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+
+    Color verde1 = Color(0.0, 0.5, 0.0);
+    Color verde2 = Color(0.3, 0.7, 0.0);
+    Color verde3 = Color(0.0, 0.9, 0.3);
+    Color verde4 = Color(0.3, 0.7, 0.3);
+
+    const Difuso verde1difuso = Difuso(verde1, negro);
+    const Difuso verde2difuso = Difuso(verde2, negro);
+    const Difuso verde3difuso = Difuso(verde3, negro);
+    const Difuso verde4difuso = Difuso(verde4, negro);
+
     Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0), verdeMatDifuso, false);
+    Plano* planoIzquierda = new Plano(1.0, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
+    Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0), azulClaroMatDifuso, false);
+    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), amarilloMatDifuso, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), naranjaMatDifuso, false);
+    
     objetos.push_back(plano);
+    objetos.push_back(planoDerecha);
+    objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
+    objetos.push_back(suelo);
 
     // colocar 3 esferas en el plano de diferentes colores
     Esfera* esfera1 = new Esfera(Punto(-0.5, -0.0, 0.0), 0.2, blancoMatDifuso);
     Esfera* esfera2 = new Esfera(Punto(0.0, -0.0, 0.0), 0.2, rojoMatDifuso);
     Esfera* esfera3 = new Esfera(Punto(0.5, -0.0, 0.0), 0.2, azulMatDifuso);
 
-    objetos.push_back(esfera1);
-    objetos.push_back(esfera2);
-    objetos.push_back(esfera3);
+    // objetos.push_back(esfera1);
+    // objetos.push_back(esfera2);
+    // objetos.push_back(esfera3);
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // Poner una fuente en cada esquina
@@ -311,6 +331,101 @@ void textura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     fuentes.push_back(blanca);
     fuentes.push_back(otra);
     fuentes.push_back(otra2);
+}
+
+
+
+// Escena con columnas
+void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+    // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
+    //Esfera* esfera = new Esfera(Punto(-0.5, -0.7, -0.25), 0.3);
+
+    //Esfera* esfera2 = new Esfera(Punto(0.5, -0.7, -0.25), 0.3);
+
+    Cilindro* cilindroIzq1 = new Cilindro(Punto(-0.68, -1.4, 1.45), 0.12, 4);
+    Cilindro* cilindroIzq2 = new Cilindro(Punto(-0.78, -1.4, 0.4), 0.12, 4);
+    Cilindro* cilindroIzq3 = new Cilindro(Punto(-0.88, -1.4, -0.35), 0.12, 4);
+
+    Cilindro* cilindroDcha1 = new Cilindro(Punto(0.68, -1.4, 1.45), 0.12, 4);
+    Cilindro* cilindroDcha2 = new Cilindro(Punto(0.78, -1.4, 0.4), 0.12, 4);
+    Cilindro* cilindroDcha3 = new Cilindro(Punto(0.88, -1.4, -0.35), 0.12, 4);
+
+    // Crear una esfera de radio 0.3 en el centro de la escena
+    // Esfera* esferaCentro = new Esfera(Punto(0.0, -0.7, 0.0), 0.3);
+    // Primera fila
+    Esfera* esfera1 = new Esfera(Punto(-0.45, -0.9, -0.1), 0.15);
+    Esfera* esfera2 = new Esfera(Punto(-0.15, -0.9, -0.1), 0.15);
+    Esfera* esfera3 = new Esfera(Punto(0.15, -0.9, -0.1), 0.15);
+    Esfera* esfera4 = new Esfera(Punto(0.45, -0.9, -0.1), 0.15);
+    // Segunda fila
+    Esfera* esfera5 = new Esfera(Punto(-0.30, -0.7, 0.05), 0.15);
+
+    Esfera* esfera6 = new Esfera(Punto(-0.00, -0.7, 0.05), 0.15);
+
+    Esfera* esfera7 = new Esfera(Punto(0.30, -0.7, 0.05), 0.15);
+    // Tercera fila
+    Esfera* esfera8 = new Esfera(Punto(-0.15, -0.5, 0.2), 0.15);
+    Esfera* esfera9 = new Esfera(Punto(0.15, -0.5, 0.2), 0.15);
+    // Cuarta fila
+    Esfera* esfera10 = new Esfera(Punto(0.0, -0.25, 0.4), 0.2);
+
+    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), espejo, false);
+    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
+    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
+
+    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
+
+    cilindroIzq1->setMaterial(amatistaMatDifuso);
+    cilindroIzq2->setMaterial(eclipseMatDifuso);
+    cilindroIzq3->setMaterial(amatistaMatDifuso);
+    cilindroDcha1->setMaterial(amatistaMatDifuso);
+    cilindroDcha2->setMaterial(eclipseMatDifuso);
+    cilindroDcha3->setMaterial(amatistaMatDifuso);
+    // esferaCentro->setMaterial(turquesaMatDielectrico);
+    esfera1->setMaterial(azulClaroMatDifuso);
+    esfera2->setMaterial(verdeOscuroMatDifuso);
+    esfera3->setMaterial(amarilloMatDifuso);
+    esfera4->setMaterial(blancoMatDifuso);
+
+    esfera5->setMaterial(naranjaMatPlastico);
+    esfera6->setMaterial(azulMatDielectrico);
+    esfera7->setMaterial(turquesaMatPlastico);
+
+    esfera8->setMaterial(rosaMatPlastico);
+    esfera9->setMaterial(marronMatPlastico);
+
+    esfera10->setMaterial(espejo);
+
+    objetos.push_back(plano);
+    objetos.push_back(planoDerecha);
+    objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
+    objetos.push_back(suelo);
+    objetos.push_back(cilindroIzq1);
+    objetos.push_back(cilindroIzq2);
+    objetos.push_back(cilindroIzq3);
+    objetos.push_back(cilindroDcha1);
+    objetos.push_back(cilindroDcha2);
+    objetos.push_back(cilindroDcha3);
+    // objetos.push_back(esferaCentro);
+    objetos.push_back(esfera1);
+    objetos.push_back(esfera2);
+    objetos.push_back(esfera3);
+    objetos.push_back(esfera4);
+    objetos.push_back(esfera5);
+    objetos.push_back(esfera6);
+    objetos.push_back(esfera7);
+    objetos.push_back(esfera8);
+    objetos.push_back(esfera9);
+    objetos.push_back(esfera10);
+    // objetos.push_back(trianguloCima);
+
+    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
+    FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
+
+    fuentes.push_back(blanca);
+    fuentes.push_back(naranjaLuz);
 }
 
 void trianguloTextura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
@@ -338,8 +453,7 @@ void trianguloTextura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) 
     ImagenHDR textura = lectorTextura.leerImagenHDR("ppms/textura.ppm");
 
     // Crear un triangulo con textura
-    Triangulo* triangulo = new Triangulo(Punto(0.0, -0.5, 0.0), Punto(0.0, 0.5, 0.0), Punto(0.5, -0.5, 0.0), textura);
-    Triangulo* trianguloGrande = new Triangulo(Punto(-0.65, -0.5, -0.2), Punto(-0.25, 0.1, -0.2), Punto(0.15, -0.5, -0.2), textura);
+    Triangulo* trianguloGrande = new Triangulo(Punto(-0.0, -0.0, 0.2), Punto(-0.0, 0.9, 0.2), Punto(0.9, -0.0, 0.2), textura);
 
 
     objetos.push_back(trianguloGrande);
@@ -351,101 +465,96 @@ void trianguloTextura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) 
     // fuentes.push_back(otra);
 }
 
-// Escena con columnas
-void columnasCornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
-    // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
-    //Esfera* esfera = new Esfera(Punto(-0.5, -0.7, -0.25), 0.3);
+void cilindros(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 
-    //Esfera* esfera2 = new Esfera(Punto(0.5, -0.7, -0.25), 0.3);
+    Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0));
 
-    Cilindro* cilindroIzq1 = new Cilindro(Punto(-0.68, -1.4, 1.45), 0.12, 3);
-    Cilindro* cilindroIzq2 = new Cilindro(Punto(-0.78, -1.4, 0.4), 0.12, 3);
-    Cilindro* cilindroIzq3 = new Cilindro(Punto(-0.88, -1.4, -0.35), 0.12, 3);
+    Plano* planoIzquierda = new Plano(1.0, Direccion(1.0, 0.0, 0.0));
 
-    Cilindro* cilindroDcha1 = new Cilindro(Punto(0.68, -1.4, 1.45), 0.12, 3);
-    Cilindro* cilindroDcha2 = new Cilindro(Punto(0.78, -1.4, 0.4), 0.12, 3);
-    Cilindro* cilindroDcha3 = new Cilindro(Punto(0.88, -1.4, -0.35), 0.12, 3);
+    Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
 
-    // Crear una esfera de radio 0.3 en el centro de la escena
-    // Esfera* esferaCentro = new Esfera(Punto(0.0, -0.7, 0.0), 0.3);
-    // Primera fila
-    Esfera* esfera1 = new Esfera(Punto(-0.45, -0.9, -0.1), 0.15);
-    Esfera* esfera2 = new Esfera(Punto(-0.15, -0.9, -0.1), 0.15);
-    Esfera* esfera3 = new Esfera(Punto(0.15, -0.9, -0.1), 0.15);
-    Esfera* esfera4 = new Esfera(Punto(0.45, -0.9, -0.1), 0.15);
-    // Segunda fila
-    Esfera* esfera5 = new Esfera(Punto(-0.30, -0.7, 0.05), 0.15);
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, true);
+    Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
 
-    Esfera* esfera6 = new Esfera(Punto(-0.00, -0.7, 0.05), 0.15);
+    plano->setMaterial(grisMatDifuso);
+    suelo->setMaterial(grisMatDifuso);
+    planoIzquierda->setMaterial(rojoMatDifuso);
+    planoDerecha->setMaterial(verdeMatDifuso);
 
-    Esfera* esfera7 = new Esfera(Punto(0.30, -0.7, 0.05), 0.15);
-    // Tercera fila
-    Esfera* esfera8 = new Esfera(Punto(-0.15, -0.5, 0.2), 0.15);
-    Esfera* esfera9 = new Esfera(Punto(0.15, -0.5, 0.2), 0.15);
-    // Cuarta fila
-    Esfera* esfera10 = new Esfera(Punto(0.0, -0.25, 0.4), 0.2);
+    // 217,4,61
+    // 3,103,166
+    Color rojo1 = Color(0.85098039215, 0.01, 0.23921568627);
+    Color rojo2 = Color(0.0117, 0.4039, 0.6510);
+
+    const Difuso rojo1difuso = Difuso(rojo1, negro);
+    const Difuso rojo2difuso = Difuso(rojo2, negro);
+
+    // Crear un cilindro a la izquierda
+    Cilindro* cilindroIzq = new Cilindro(Punto(-0.5, -0.7, 0.0), 0.1, 1.2, rojo1difuso);
+    // Crear un cilindro en el centro
+    Cilindro* cilindroCentro = new Cilindro(Punto(0.0, -0.7, 0.0), 0.15, 1.2, rojo2difuso);
+    // Crear un cilindro a la derecha
+    Cilindro* cilindroDcha = new Cilindro(Punto(0.5, -0.7, 0.0), 0.2, 1.2, amarilloMatDifuso);
 
 
-    Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), espejo, false);
-    Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
-    Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
-
-    Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
-    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
-
-    cilindroIzq1->setMaterial(amatistaMatDifuso);
-    cilindroIzq2->setMaterial(eclipseMatDifuso);
-    cilindroIzq3->setMaterial(amatistaMatDifuso);
-    cilindroDcha1->setMaterial(amatistaMatDifuso);
-    cilindroDcha2->setMaterial(eclipseMatDifuso);
-    cilindroDcha3->setMaterial(amatistaMatDifuso);
-    // esferaCentro->setMaterial(turquesaMatDielectrico);
-    esfera1->setMaterial(espejo);
-    esfera2->setMaterial(espejo);
-    esfera3->setMaterial(espejo);
-    esfera4->setMaterial(espejo);
-
-    esfera5->setMaterial(espejo);
-    esfera6->setMaterial(espejo);
-    esfera7->setMaterial(espejo);
-
-    esfera8->setMaterial(espejo);
-    esfera9->setMaterial(espejo);
-
-    esfera10->setMaterial(espejo);
+    objetos.push_back(cilindroCentro);
+    objetos.push_back(cilindroDcha);
+    objetos.push_back(cilindroIzq);
 
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
-    //objetos.push_back(cilindroIzq1);
-    //objetos.push_back(cilindroIzq2);
-    //objetos.push_back(cilindroIzq3);
-    //objetos.push_back(cilindroDcha1);
-    //objetos.push_back(cilindroDcha2);
-    //objetos.push_back(cilindroDcha3);
-    // objetos.push_back(esferaCentro);
-    objetos.push_back(esfera1);
-    objetos.push_back(esfera2);
-    objetos.push_back(esfera3);
-    objetos.push_back(esfera4);
-    objetos.push_back(esfera5);
-    objetos.push_back(esfera6);
-    objetos.push_back(esfera7);
-    objetos.push_back(esfera8);
-    objetos.push_back(esfera9);
-    objetos.push_back(esfera10);
-    // objetos.push_back(trianguloCima);
 
-    trianguloTextura(objetos, fuentes);
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
-    FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
+    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
+    
+    // fuentes.push_back(blanca);
+    // fuentes.push_back(otra);
 
-    fuentes.push_back(blanca);
-    fuentes.push_back(naranjaLuz);
 }
 
+void cubos(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+
+    Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0));
+
+    Plano* planoIzquierda = new Plano(1.0, Direccion(1.0, 0.0, 0.0));
+
+    Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0));
+
+    Plano* techo = new Plano(1.0, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, true);
+    Plano* suelo = new Plano(1.0, Direccion(0.0, 1.0, 0.0));
+
+    plano->setMaterial(grisMatDifuso);
+    suelo->setMaterial(grisMatDifuso);
+    planoIzquierda->setMaterial(rojoMatDifuso);
+    planoDerecha->setMaterial(verdeMatDifuso);
+
+
+    // Crear un cubo a la izquierda
+    // Cubo* cubo2 = new Cubo(Punto(-0.0, -0.0, -0.2), 0.6, azulMatDifuso);
+    Color azulOsc = Color(0.0, 0.0, 0.9);
+    Difuso azulOscDifuso = Difuso(azulOsc, negro);
+
+    Cubo* cubo1 = new Cubo(Punto(-0.48, -0.7, -0.2), 0.4, azulOscDifuso);
+
+    objetos.push_back(cubo1);
+
+    objetos.push_back(plano);
+    objetos.push_back(planoDerecha);
+    objetos.push_back(planoIzquierda);
+    objetos.push_back(techo);
+    objetos.push_back(suelo);
+
+    FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
+    // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
+    
+
+    fuentes.push_back(blanca);
+    // fuentes.push_back(otra);
+
+}
 
 int main(int argc, char* argv[]) {
 
@@ -493,13 +602,19 @@ int main(int argc, char* argv[]) {
     // Probar a escribir la imagen "ppms/forest_path.ppm"
     EscritorHDR escritor;
 
-    // Crear una camara en el origen de la escena
-    Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5), alto, ancho, muestras, resolucion);
-
     vector<Geometria*> objetos = vector<Geometria*>();
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
 
-    trianguloTextura(objetos, fuentes);
+    // textura(objetos, fuentes);
+    // cubos(objetos, fuentes);
+    columnasCornellBox(objetos, fuentes);
+
+    // Crear una camara en el origen de la escena
+    Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5), alto, ancho, muestras, resolucion);
+
+
+
+    // trianguloTextura(objetos, fuentes);
     //columnasCornellBox(objetos, fuentes);
     // fuentes.push_back(otra);
 
