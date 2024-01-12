@@ -79,17 +79,16 @@ const Plastico rosaMatPlastico = Plastico(rosa * 0.4, rosa * 0.6, negro);
 const Plastico marronMatPlastico = Plastico(marron * 0.75, marron * 0.25, negro);
 const Plastico rojoMatPlastico = Plastico(rojo * 0.8, rojo * 0.2, negro);
 
-
 // Materiales dielectricos
 const Dielectrico azulMatDielectrico = Dielectrico(azul * 0.1, azul * 0.9, negro, 1.5);
 
 // Escena de la kernel box
-void kernelBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+void cornellBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
-    Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
+    Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3, rosaMatPlastico);
 
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
-    Esfera* esfera2 = new Esfera(Punto(0.5, -0.7, -0.25), 0.3);
+    Esfera* esfera2 = new Esfera(Punto(0.5, -0.7, -0.25), 0.3, azulMatDielectrico);
 
     Plano* plano = new Plano(1.0, Direccion(0.0, 0.0, -1.0));
 
@@ -124,7 +123,7 @@ void kernelBox(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 }
 
 // Escena de la kernel box
-void kernelBoxEspejo(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
+void cornellBoxEspejo(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     // Crear una esfera en el punto (-0.5 -0.7, 0.25) de radio 0.3
     Esfera* esfera = new Esfera(Punto(-0.5, -0.7, 0.25), 0.3);
 
@@ -458,7 +457,7 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
     Plano* planoDerecha = new Plano(1.1, Direccion(-1.0, 0.0, 0.0), amarilloMatDifuso, false);
     Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), blancoMatDifuso, false);
-    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), espejo, false);
+    Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), grisMatDifuso, false);
 
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
@@ -521,9 +520,9 @@ int main(int argc, char* argv[]) {
     vector<Geometria*> objetos = vector<Geometria*>();
     vector<FuenteLuz*> fuentes = vector<FuenteLuz*>();
 
-    kernelBox(objetos, fuentes);
+    // cornellBox(objetos, fuentes);
     //columnasCornellBox(objetos, fuentes);
-    // escenaNavidad(objetos, fuentes);
+    escenaNavidad(objetos, fuentes);
 
     /*-------- MEDIR TIEMPOS ------- */
     // Comparar cuanto tiempo tarda sin y con area de luz

@@ -199,6 +199,7 @@ Direccion Cilindro::getNormal(const Punto& punto) const {
     return normal.normalizar();
 }
 
+
 // --------------------- CUBO ---------------------
 
 // Constructor del cubo

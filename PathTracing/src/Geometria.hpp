@@ -150,12 +150,12 @@ public:
     // Constructor del cilindro con color y fuente de luz
     Cilindro(Punto _centro, double _radio, double _altura, Material _material, bool _fuenteLuz);
 
+    Color getColor(const Punto& punto) const;
+
     // Getters del cilindro
     Punto getCentro() const;
     double getRadio() const;
     double getAltura() const;
-
-    Color getColor(const Punto& punto) const;
 
     Punto interseccion(const Rayo& rayo) const;
 
@@ -175,11 +175,12 @@ public:
     // Constructor del cubo con color
     Cubo(Punto _centro, double _lado, Material _material);
 
+    Color getColor(const Punto& punto) const;
+
     // Getters del cubo
     Punto getCentro() const;
     double getLado() const;
 
-    Color getColor(const Punto& punto) const;
 
     // Implementaciones de los métodos virtuales heredados
     Punto interseccion(const Rayo& rayo) const override;
