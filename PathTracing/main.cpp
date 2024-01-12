@@ -172,7 +172,7 @@ void crearArbolNavidad(vector<Geometria*>& objetos) {
     Cubo* regalo2 = new Cubo(Punto(-0.68, -0.85, -0.2), 0.15, rosaMatDifuso);
     Cubo* regalo3 = new Cubo(Punto(-0.6, -0.75, 0.0), 0.23, turquesaMatDifuso);
     Cubo* regaloEncima = new Cubo(Punto(-0.58, -0.72, -0.2), 0.12, amarilloMatDifuso);
-    
+
     objetos.push_back(cilindroTallo);
     objetos.push_back(trianguloGrande);
     objetos.push_back(trianguloMediano);
@@ -268,7 +268,7 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     crearArbolNavidad(objetos);
     crearMunyecoNieve(objetos);
 
-    
+
     // Planos
     Plano* plano = new Plano(2, Direccion(0.0, 0.0, -1), blancoMatDifuso, false);
     Plano* planoIzquierda = new Plano(1.1, Direccion(1.0, 0.0, 0.0), rojoMatDifuso, false);
@@ -281,13 +281,13 @@ void escenaNavidad(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     objetos.push_back(planoIzquierda);
     objetos.push_back(techo);
     objetos.push_back(suelo);
- 
+
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     FuenteLuz* naranjaLuz = new FuenteLuz(Punto(0.0, 0.5, -1.5), naranja * 0.7);
 
     fuentes.push_back(blanca);
-    
+
 }
 
 void textura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
@@ -307,7 +307,7 @@ void textura(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
     Plano* planoDerecha = new Plano(1.0, Direccion(-1.0, 0.0, 0.0), azulClaroMatDifuso, false);
     Plano* techo = new Plano(1, Direccion(0.0, -1.0, 0.0), amarilloMatDifuso, false);
     Plano* suelo = new Plano(1, Direccion(0.0, 1.0, 0.0), naranjaMatDifuso, false);
-    
+
     objetos.push_back(plano);
     objetos.push_back(planoDerecha);
     objetos.push_back(planoIzquierda);
@@ -509,7 +509,7 @@ void cilindros(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
-    
+
     // fuentes.push_back(blanca);
     // fuentes.push_back(otra);
 
@@ -549,7 +549,7 @@ void cubos(vector<Geometria*>& objetos, vector<FuenteLuz*>& fuentes) {
 
     FuenteLuz* blanca = new FuenteLuz(Punto(0.0, 0.5, 0), blanco);
     // FuenteLuz* otra = new FuenteLuz(Punto(0.3, 0.5, 0), Color(0, 0, 255));
-    
+
 
     fuentes.push_back(blanca);
     // fuentes.push_back(otra);
@@ -607,7 +607,7 @@ int main(int argc, char* argv[]) {
 
     // textura(objetos, fuentes);
     // cubos(objetos, fuentes);
-    columnasCornellBox(objetos, fuentes);
+    cornellBox(objetos, fuentes);
 
     // Crear una camara en el origen de la escena
     Camara camara(Direccion(-1.0, 0.0, 0.0), Direccion(0.0, 1.0, 0.0), Direccion(0.0, 0.0, 3.0), Punto(0.0, 0.0, -3.5), alto, ancho, muestras, resolucion);

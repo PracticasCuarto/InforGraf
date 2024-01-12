@@ -1,7 +1,7 @@
 # InforGraf
 Informatica Gráfica
 
-Proyecto 1: Path Tracing
+Proyecto 2: Photon Mapping
 
 Instrucciones ejecución: 
 - Ejecutar el script `ejecutar.sh`. Los parámetros de ejecución se pueden modificar en el script.
